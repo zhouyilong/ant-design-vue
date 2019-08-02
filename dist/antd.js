@@ -11752,27 +11752,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
 /* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babel-helper-vue-jsx-merge-props */ "./node_modules/babel-helper-vue-jsx-merge-props/index.js");
-/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! babel-runtime/helpers/toConsumableArray */ "./node_modules/babel-runtime/helpers/toConsumableArray.js");
-/* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var intersperse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! intersperse */ "./node_modules/intersperse/lib/intersperse.js");
-/* harmony import */ var intersperse__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(intersperse__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var lodash_find__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
-/* harmony import */ var lodash_find__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(lodash_find__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _grid_Row__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../grid/Row */ "./components/grid/Row.jsx");
-/* harmony import */ var _grid_Col__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../grid/Col */ "./components/grid/Col.jsx");
-/* harmony import */ var _util_warning__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../_util/warning */ "./components/_util/warning.js");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./constants */ "./components/form/constants.jsx");
-/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _util_getTransitionProps__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../_util/getTransitionProps */ "./components/_util/getTransitionProps.js");
-/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
-/* harmony import */ var _util_vnode__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../_util/vnode */ "./components/_util/vnode.js");
-/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
-
+/* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babel-runtime/helpers/toConsumableArray */ "./node_modules/babel-runtime/helpers/toConsumableArray.js");
+/* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var intersperse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! intersperse */ "./node_modules/intersperse/lib/intersperse.js");
+/* harmony import */ var intersperse__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(intersperse__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var lodash_find__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! lodash/find */ "./node_modules/lodash/find.js");
+/* harmony import */ var lodash_find__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(lodash_find__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _grid_Row__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../grid/Row */ "./components/grid/Row.jsx");
+/* harmony import */ var _grid_Col__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../grid/Col */ "./components/grid/Col.jsx");
+/* harmony import */ var _util_warning__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../_util/warning */ "./components/_util/warning.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./constants */ "./components/form/constants.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+/* harmony import */ var _util_getTransitionProps__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../_util/getTransitionProps */ "./components/_util/getTransitionProps.js");
+/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var _util_vnode__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../_util/vnode */ "./components/_util/vnode.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
 
 
 
@@ -11793,19 +11790,19 @@ __webpack_require__.r(__webpack_exports__);
 
 function noop() {}
 var FormItemProps = {
-  id: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string,
-  prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string,
-  label: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].any,
-  labelCol: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].shape(_grid_Col__WEBPACK_IMPORTED_MODULE_10__["ColProps"]).loose,
-  wrapperCol: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].shape(_grid_Col__WEBPACK_IMPORTED_MODULE_10__["ColProps"]).loose,
-  help: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].any,
-  extra: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].any,
-  validateStatus: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].oneOf(['', 'success', 'warning', 'error', 'validating']),
-  hasFeedback: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].bool,
-  required: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].bool,
-  colon: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].bool,
-  fieldDecoratorId: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string,
-  fieldDecoratorOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].object
+  id: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].string,
+  prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].string,
+  label: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].any,
+  labelCol: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].shape(_grid_Col__WEBPACK_IMPORTED_MODULE_9__["ColProps"]).loose,
+  wrapperCol: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].shape(_grid_Col__WEBPACK_IMPORTED_MODULE_9__["ColProps"]).loose,
+  help: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].any,
+  extra: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].any,
+  validateStatus: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOf(['', 'success', 'warning', 'error', 'validating']),
+  hasFeedback: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].bool,
+  required: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].bool,
+  colon: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].bool,
+  fieldDecoratorId: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].string,
+  fieldDecoratorOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].object
 };
 function comeFromSlot() {
   var vnodes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -11830,8 +11827,8 @@ function comeFromSlot() {
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AFormItem',
   __ANT_FORM_ITEM: true,
-  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_15__["default"]],
-  props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["initDefaultProps"])(FormItemProps, {
+  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_14__["default"]],
+  props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["initDefaultProps"])(FormItemProps, {
     hasFeedback: false,
     prefixCls: 'ant-form',
     colon: true
@@ -11862,8 +11859,8 @@ function comeFromSlot() {
     this.collectFormItemContext(this.$vnode.context, 'delete');
   },
   mounted: function mounted() {
-    Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(this.getControls(this.slotDefault, true).length <= 1, '`Form.Item` cannot generate `validateStatus` and `help` automatically, ' + 'while there are more than one `getFieldDecorator` in it.');
-    Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(!this.fieldDecoratorId, '`fieldDecoratorId` is deprecated. please use `v-decorator={id, options}` instead.');
+    Object(_util_warning__WEBPACK_IMPORTED_MODULE_10__["default"])(this.getControls(this.slotDefault, true).length <= 1, '`Form.Item` cannot generate `validateStatus` and `help` automatically, ' + 'while there are more than one `getFieldDecorator` in it.');
+    Object(_util_warning__WEBPACK_IMPORTED_MODULE_10__["default"])(!this.fieldDecoratorId, '`fieldDecoratorId` is deprecated. please use `v-decorator={id, options}` instead.');
   },
 
   methods: {
@@ -11872,10 +11869,10 @@ function comeFromSlot() {
         var templateContext = this.FormProps.form.templateContext;
 
         var vnodes = Object.values(templateContext.$slots || {}).reduce(function (a, b) {
-          return [].concat(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4___default()(a), babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4___default()(b));
+          return [].concat(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_3___default()(a), babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_3___default()(b));
         }, []);
         var isSlot = comeFromSlot(vnodes, this.$vnode);
-        Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(!isSlot, 'You can not set FormItem from slot, please use slot-scope instead slot');
+        Object(_util_warning__WEBPACK_IMPORTED_MODULE_10__["default"])(!isSlot, 'You can not set FormItem from slot, please use slot-scope instead slot');
         var isSlotScope = false;
         // 进一步判断是否是通过slot-scope传递
         if (!isSlot && this.$vnode.context !== templateContext) {
@@ -11887,13 +11884,13 @@ function comeFromSlot() {
       }
     },
     getHelpMessage: function getHelpMessage() {
-      var help = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getComponentFromProp"])(this, 'help');
+      var help = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getComponentFromProp"])(this, 'help');
       var onlyControl = this.getOnlyControl();
       if (help === undefined && onlyControl) {
         var errors = this.getField().errors;
         if (errors) {
-          return intersperse__WEBPACK_IMPORTED_MODULE_5___default()(errors.map(function (e, index) {
-            return Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["isValidElement"])(e.message) ? Object(_util_vnode__WEBPACK_IMPORTED_MODULE_16__["cloneElement"])(e.message, { key: index }) : e.message;
+          return intersperse__WEBPACK_IMPORTED_MODULE_4___default()(errors.map(function (e, index) {
+            return Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["isValidElement"])(e.message) ? Object(_util_vnode__WEBPACK_IMPORTED_MODULE_15__["cloneElement"])(e.message, { key: index }) : e.message;
           }), ' ');
         } else {
           return '';
@@ -11917,12 +11914,12 @@ function comeFromSlot() {
           continue;
         }
 
-        if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getSlotOptions"])(child).__ANT_FORM_ITEM) {
+        if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getSlotOptions"])(child).__ANT_FORM_ITEM) {
           continue;
         }
-        var children = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getAllChildren"])(child);
+        var children = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getAllChildren"])(child);
         var attrs = child.data && child.data.attrs || {};
-        if (_constants__WEBPACK_IMPORTED_MODULE_12__["FIELD_META_PROP"] in attrs) {
+        if (_constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_META_PROP"] in attrs) {
           // And means FIELD_DATA_PROP in child.props, too.
           controls.push(child);
         } else if (children) {
@@ -11952,10 +11949,10 @@ function comeFromSlot() {
       return this.getChildAttr('id');
     },
     getMeta: function getMeta() {
-      return this.getChildAttr(_constants__WEBPACK_IMPORTED_MODULE_12__["FIELD_META_PROP"]);
+      return this.getChildAttr(_constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_META_PROP"]);
     },
     getField: function getField() {
-      return this.getChildAttr(_constants__WEBPACK_IMPORTED_MODULE_12__["FIELD_DATA_PROP"]);
+      return this.getChildAttr(_constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_DATA_PROP"]);
     },
     onHelpAnimEnd: function onHelpAnimEnd(_key, helpShow) {
       this.helpShow = helpShow;
@@ -11964,39 +11961,32 @@ function comeFromSlot() {
       }
     },
     renderHelp: function renderHelp() {
-      var _this = this;
-
-      var h = this.$createElement;
-
-      var prefixCls = this.prefixCls;
-      var help = this.getHelpMessage();
-      var children = help ? h(
-        'div',
-        { 'class': prefixCls + '-explain', key: 'help' },
-        [help]
+      /** 取消校验提示 by fanjunliang 20190802**/
+      /*const prefixCls = this.prefixCls;
+      const help = this.getHelpMessage();
+      const children = help ? (
+        <div class={`${prefixCls}-explain`} key="help">
+          {help}
+        </div>
       ) : null;
       if (children) {
         this.helpShow = !!children;
       }
-      var transitionProps = Object(_util_getTransitionProps__WEBPACK_IMPORTED_MODULE_14__["default"])('show-help', {
-        afterEnter: function afterEnter() {
-          return _this.onHelpAnimEnd('help', true);
-        },
-        afterLeave: function afterLeave() {
-          return _this.onHelpAnimEnd('help', false);
-        }
+      const transitionProps = getTransitionProps('show-help', {
+        afterEnter: () => this.onHelpAnimEnd('help', true),
+        afterLeave: () => this.onHelpAnimEnd('help', false),
       });
-      return h(
-        'transition',
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_3___default()([transitionProps, { key: 'help' }]),
-        [children]
-      );
+      return (
+        <transition {...transitionProps} key="help">
+          {children}
+        </transition>
+      );*/
     },
     renderExtra: function renderExtra() {
       var h = this.$createElement;
       var prefixCls = this.prefixCls;
 
-      var extra = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getComponentFromProp"])(this, 'extra');
+      var extra = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getComponentFromProp"])(this, 'extra');
       return extra ? h(
         'div',
         { 'class': prefixCls + '-extra' },
@@ -12030,7 +12020,7 @@ function comeFromSlot() {
 
       var classes = props.prefixCls + '-item-control';
       if (validateStatus) {
-        classes = classnames__WEBPACK_IMPORTED_MODULE_7___default()(props.prefixCls + '-item-control', {
+        classes = classnames__WEBPACK_IMPORTED_MODULE_6___default()(props.prefixCls + '-item-control', {
           'has-feedback': props.hasFeedback || validateStatus === 'validating',
           'has-success': validateStatus === 'success',
           'has-warning': validateStatus === 'warning',
@@ -12059,7 +12049,7 @@ function comeFromSlot() {
       var icon = props.hasFeedback && iconType ? h(
         'span',
         { 'class': props.prefixCls + '-item-children-icon' },
-        [h(_icon__WEBPACK_IMPORTED_MODULE_17__["default"], {
+        [h(_icon__WEBPACK_IMPORTED_MODULE_16__["default"], {
           attrs: { type: iconType, theme: iconType === 'loading' ? 'outlined' : 'filled' }
         })]
       ) : null;
@@ -12085,7 +12075,7 @@ function comeFromSlot() {
           on = wrapperCol.on,
           restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2___default()(wrapperCol, ['class', 'style', 'id', 'on']);
 
-      var className = classnames__WEBPACK_IMPORTED_MODULE_7___default()(prefixCls + '-item-control-wrapper', cls);
+      var className = classnames__WEBPACK_IMPORTED_MODULE_6___default()(prefixCls + '-item-control-wrapper', cls);
       var colProps = {
         props: restProps,
         'class': className,
@@ -12095,7 +12085,7 @@ function comeFromSlot() {
         on: on
       };
       return h(
-        _grid_Col__WEBPACK_IMPORTED_MODULE_10__["default"],
+        _grid_Col__WEBPACK_IMPORTED_MODULE_9__["default"],
         colProps,
         [children]
       );
@@ -12125,7 +12115,7 @@ function comeFromSlot() {
     // Resolve duplicated ids bug between different forms
     // https://github.com/ant-design/ant-design/issues/7351
     onLabelClick: function onLabelClick(e) {
-      var label = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getComponentFromProp"])(this, 'label');
+      var label = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getComponentFromProp"])(this, 'label');
       var id = this.id || this.getId();
       if (!id) {
         return;
@@ -12151,7 +12141,7 @@ function comeFromSlot() {
           colon = this.colon,
           id = this.id;
 
-      var label = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getComponentFromProp"])(this, 'label');
+      var label = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getComponentFromProp"])(this, 'label');
       var required = this.isRequired();
 
       var labelColClass = labelCol['class'],
@@ -12160,8 +12150,8 @@ function comeFromSlot() {
           on = labelCol.on,
           restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2___default()(labelCol, ['class', 'style', 'id', 'on']);
 
-      var labelColClassName = classnames__WEBPACK_IMPORTED_MODULE_7___default()(prefixCls + '-item-label', labelColClass);
-      var labelClassName = classnames__WEBPACK_IMPORTED_MODULE_7___default()(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()({}, prefixCls + '-item-required', required));
+      var labelColClassName = classnames__WEBPACK_IMPORTED_MODULE_6___default()(prefixCls + '-item-label', labelColClass);
+      var labelClassName = classnames__WEBPACK_IMPORTED_MODULE_6___default()(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()({}, prefixCls + '-item-required', required));
 
       var labelChildren = label;
       // Keep label is original where there should have no colon
@@ -12180,7 +12170,7 @@ function comeFromSlot() {
       };
 
       return label ? h(
-        _grid_Col__WEBPACK_IMPORTED_MODULE_10__["default"],
+        _grid_Col__WEBPACK_IMPORTED_MODULE_9__["default"],
         colProps,
         [h(
           'label',
@@ -12211,15 +12201,15 @@ function comeFromSlot() {
       var itemClassName = (_itemClassName = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_itemClassName, prefixCls + '-item', true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_itemClassName, prefixCls + '-item-with-help', this.helpShow), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_itemClassName, prefixCls + '-item-no-colon', !props.colon), _itemClassName);
 
       return h(
-        _grid_Row__WEBPACK_IMPORTED_MODULE_9__["default"],
-        { 'class': classnames__WEBPACK_IMPORTED_MODULE_7___default()(itemClassName) },
+        _grid_Row__WEBPACK_IMPORTED_MODULE_8__["default"],
+        { 'class': classnames__WEBPACK_IMPORTED_MODULE_6___default()(itemClassName) },
         [children]
       );
     },
     decoratorOption: function decoratorOption(vnode) {
       if (vnode.data && vnode.data.directives) {
-        var directive = lodash_find__WEBPACK_IMPORTED_MODULE_8___default()(vnode.data.directives, ['name', 'decorator']);
-        Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(!directive || directive && Array.isArray(directive.value), 'Invalid directive: type check failed for directive "decorator". Expected Array, got ' + babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(directive ? directive.value : directive) + '. At ' + vnode.tag + '.');
+        var directive = lodash_find__WEBPACK_IMPORTED_MODULE_7___default()(vnode.data.directives, ['name', 'decorator']);
+        Object(_util_warning__WEBPACK_IMPORTED_MODULE_10__["default"])(!directive || directive && Array.isArray(directive.value), 'Invalid directive: type check failed for directive "decorator". Expected Array, got ' + babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default()(directive ? directive.value : directive) + '. At ' + vnode.tag + '.');
         return directive ? directive.value : null;
       } else {
         return null;
@@ -12231,13 +12221,13 @@ function comeFromSlot() {
       var getFieldDecorator = FormProps.form.getFieldDecorator;
       for (var i = 0, len = vnodes.length; i < len; i++) {
         var vnode = vnodes[i];
-        if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getSlotOptions"])(vnode).__ANT_FORM_ITEM) {
+        if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getSlotOptions"])(vnode).__ANT_FORM_ITEM) {
           break;
         }
         if (vnode.children) {
-          vnode.children = this.decoratorChildren(Object(_util_vnode__WEBPACK_IMPORTED_MODULE_16__["cloneVNodes"])(vnode.children));
+          vnode.children = this.decoratorChildren(Object(_util_vnode__WEBPACK_IMPORTED_MODULE_15__["cloneVNodes"])(vnode.children));
         } else if (vnode.componentOptions && vnode.componentOptions.children) {
-          vnode.componentOptions.children = this.decoratorChildren(Object(_util_vnode__WEBPACK_IMPORTED_MODULE_16__["cloneVNodes"])(vnode.componentOptions.children));
+          vnode.componentOptions.children = this.decoratorChildren(Object(_util_vnode__WEBPACK_IMPORTED_MODULE_15__["cloneVNodes"])(vnode.componentOptions.children));
         }
         var option = this.decoratorOption(vnode);
         if (option && option[0]) {
@@ -12256,14 +12246,14 @@ function comeFromSlot() {
         fieldDecoratorOptions = _fieldDecoratorOption === undefined ? {} : _fieldDecoratorOption,
         FormProps = this.FormProps;
 
-    var child = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["filterEmpty"])($slots['default'] || []);
+    var child = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["filterEmpty"])($slots['default'] || []);
     if (decoratorFormProps.form && fieldDecoratorId && child.length) {
       var getFieldDecorator = decoratorFormProps.form.getFieldDecorator;
       child[0] = getFieldDecorator(fieldDecoratorId, fieldDecoratorOptions)(child[0]);
-      Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(!(child.length > 1), '`autoFormCreate` just `decorator` then first children. but you can use JSX to support multiple children');
+      Object(_util_warning__WEBPACK_IMPORTED_MODULE_10__["default"])(!(child.length > 1), '`autoFormCreate` just `decorator` then first children. but you can use JSX to support multiple children');
       this.slotDefault = child;
     } else if (FormProps.form) {
-      child = Object(_util_vnode__WEBPACK_IMPORTED_MODULE_16__["cloneVNodes"])(child);
+      child = Object(_util_vnode__WEBPACK_IMPORTED_MODULE_15__["cloneVNodes"])(child);
       this.slotDefault = this.decoratorChildren(child);
     } else {
       this.slotDefault = child;

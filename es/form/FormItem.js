@@ -1,7 +1,6 @@
 import _typeof from 'babel-runtime/helpers/typeof';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import intersperse from 'intersperse';
 import PropTypes from '../_util/vue-types';
@@ -190,33 +189,26 @@ export default {
       }
     },
     renderHelp: function renderHelp() {
-      var _this = this;
-
-      var h = this.$createElement;
-
-      var prefixCls = this.prefixCls;
-      var help = this.getHelpMessage();
-      var children = help ? h(
-        'div',
-        { 'class': prefixCls + '-explain', key: 'help' },
-        [help]
+      /** 取消校验提示 by fanjunliang 20190802**/
+      /*const prefixCls = this.prefixCls;
+      const help = this.getHelpMessage();
+      const children = help ? (
+        <div class={`${prefixCls}-explain`} key="help">
+          {help}
+        </div>
       ) : null;
       if (children) {
         this.helpShow = !!children;
       }
-      var transitionProps = getTransitionProps('show-help', {
-        afterEnter: function afterEnter() {
-          return _this.onHelpAnimEnd('help', true);
-        },
-        afterLeave: function afterLeave() {
-          return _this.onHelpAnimEnd('help', false);
-        }
+      const transitionProps = getTransitionProps('show-help', {
+        afterEnter: () => this.onHelpAnimEnd('help', true),
+        afterLeave: () => this.onHelpAnimEnd('help', false),
       });
-      return h(
-        'transition',
-        _mergeJSXProps([transitionProps, { key: 'help' }]),
-        [children]
-      );
+      return (
+        <transition {...transitionProps} key="help">
+          {children}
+        </transition>
+      );*/
     },
     renderExtra: function renderExtra() {
       var h = this.$createElement;
