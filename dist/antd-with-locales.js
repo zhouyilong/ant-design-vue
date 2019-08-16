@@ -19330,7 +19330,8 @@ __webpack_require__.r(__webpack_exports__);
 var MenuMode = _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOf(['vertical', 'vertical-left', 'vertical-right', 'horizontal', 'inline']);
 
 var menuProps = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, _vc_menu_commonPropsType__WEBPACK_IMPORTED_MODULE_11__["default"], {
-  theme: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOf(['light', 'dark']).def('light'),
+  /** 添加theme new-light 没有实际作用，方便项目中更改样式 by zhouyilong 20190815*/
+  theme: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOf(['light', 'dark', 'new-light']).def('light'),
   mode: MenuMode.def('vertical'),
   selectable: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].bool,
   selectedKeys: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].arrayOf(_util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].number])),
@@ -44896,7 +44897,8 @@ __webpack_require__.r(__webpack_exports__);
   subMenuCloseDelay: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].number.def(0.1),
   level: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].number.def(1),
   inlineIndent: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].number.def(24),
-  theme: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].oneOf(['light', 'dark']).def('light'),
+  /** 添加theme new-light 没有实际作用，方便项目中更改样式 by zhouyilong 20190815*/
+  theme: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].oneOf(['light', 'dark', 'new-light']).def('light'),
   getPopupContainer: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
   openTransitionName: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
   forceSubMenuRender: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,

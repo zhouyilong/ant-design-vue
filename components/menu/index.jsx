@@ -18,7 +18,8 @@ export const MenuMode = PropTypes.oneOf([
 
 export const menuProps = {
   ...commonPropsType,
-  theme: PropTypes.oneOf(['light', 'dark']).def('light'),
+  /** 添加theme new-light 没有实际作用，方便项目中更改样式 by zhouyilong 20190815*/
+  theme: PropTypes.oneOf(['light', 'dark', 'new-light']).def('light'),
   mode: MenuMode.def('vertical'),
   selectable: PropTypes.bool,
   selectedKeys: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),

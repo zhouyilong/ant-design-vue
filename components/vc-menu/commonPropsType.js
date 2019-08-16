@@ -27,7 +27,8 @@ export default {
   subMenuCloseDelay: PropTypes.number.def(0.1),
   level: PropTypes.number.def(1),
   inlineIndent: PropTypes.number.def(24),
-  theme: PropTypes.oneOf(['light', 'dark']).def('light'),
+  /** 添加theme new-light 没有实际作用，方便项目中更改样式 by zhouyilong 20190815*/
+  theme: PropTypes.oneOf(['light', 'dark', 'new-light']).def('light'),
   getPopupContainer: PropTypes.func,
   openTransitionName: PropTypes.string,
   forceSubMenuRender: PropTypes.bool,
