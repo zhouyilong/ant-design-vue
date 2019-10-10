@@ -198,8 +198,7 @@ export default {
     },
 
     renderHelp() {
-      /** 取消校验提示 by fanjunliang 20190802**/
-      /*const prefixCls = this.prefixCls;
+      const prefixCls = this.prefixCls;
       const help = this.getHelpMessage();
       const children = help ? (
         <div class={`${prefixCls}-explain`} key="help">
@@ -217,7 +216,7 @@ export default {
         <transition {...transitionProps} key="help">
           {children}
         </transition>
-      );*/
+      );
     },
 
     renderExtra() {
