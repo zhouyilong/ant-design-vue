@@ -8,6 +8,7 @@ import { getOptionProps, initDefaultProps, filterEmpty, getComponentFromProp } f
 import { cloneElement } from '../_util/vnode';
 import TimelineItem from './TimelineItem';
 import Icon from '../icon';
+import { ConfigConsumerProps } from '../config-provider';
 
 export var TimelineProps = {
   prefixCls: PropTypes.string,
@@ -21,19 +22,26 @@ export var TimelineProps = {
 export default {
   name: 'ATimeline',
   props: initDefaultProps(TimelineProps, {
-    prefixCls: 'ant-timeline',
     reverse: false
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   render: function render() {
     var _classNames;
 
     var h = arguments[0];
 
     var _getOptionProps = getOptionProps(this),
-        prefixCls = _getOptionProps.prefixCls,
+        customizePrefixCls = _getOptionProps.prefixCls,
         reverse = _getOptionProps.reverse,
         mode = _getOptionProps.mode,
         restProps = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'reverse', 'mode']);
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('timeline', customizePrefixCls);
 
     var pendingDot = getComponentFromProp(this, 'pendingDot');
     var pending = getComponentFromProp(this, 'pending');

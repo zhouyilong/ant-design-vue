@@ -10,6 +10,8 @@ import Item from './MenuItem';
 import { hasProp } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import commonPropsType from '../vc-menu/commonPropsType';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 export var MenuMode = PropTypes.oneOf(['vertical', 'vertical-left', 'vertical-right', 'horizontal', 'inline']);
 
@@ -24,7 +26,7 @@ export var menuProps = _extends({}, commonPropsType, {
   defaultOpenKeys: PropTypes.array,
   openAnimation: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   openTransitionName: PropTypes.string,
-  prefixCls: PropTypes.string.def('ant-menu'),
+  prefixCls: PropTypes.string,
   multiple: PropTypes.bool,
   inlineIndent: PropTypes.number.def(24),
   inlineCollapsed: PropTypes.bool,
@@ -51,7 +53,7 @@ var Menu = {
         return {};
       } },
     configProvider: { 'default': function _default() {
-        return {};
+        return ConfigConsumerProps;
       } }
   },
   model: {
@@ -220,10 +222,12 @@ var Menu = {
     var collapsedWidth = layoutSiderContext.collapsedWidth;
     var getContextPopupContainer = this.configProvider.getPopupContainer;
     var _$props2 = this.$props,
-        prefixCls = _$props2.prefixCls,
+        customizePrefixCls = _$props2.prefixCls,
         theme = _$props2.theme,
         getPopupContainer = _$props2.getPopupContainer;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('menu', customizePrefixCls);
     var menuMode = this.getRealMenuMode();
     var menuOpenAnimation = this.getMenuOpenAnimation(menuMode);
 
@@ -233,7 +237,8 @@ var Menu = {
       props: _extends({}, omit(this.$props, ['inlineCollapsed']), {
         getPopupContainer: getPopupContainer || getContextPopupContainer,
         openKeys: this.sOpenKeys,
-        mode: menuMode
+        mode: menuMode,
+        prefixCls: prefixCls
       }),
       on: _extends({}, $listeners, {
         select: this.handleSelect,
@@ -275,6 +280,7 @@ var Menu = {
 
 /* istanbul ignore next */
 Menu.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Menu.name, Menu);
   Vue.component(Menu.Item.name, Menu.Item);
   Vue.component(Menu.SubMenu.name, Menu.SubMenu);

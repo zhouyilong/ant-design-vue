@@ -7,6 +7,7 @@ import omit from 'omit.js';
 import Wave from '../_util/wave';
 import { hasProp } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
+import { ConfigConsumerProps } from '../config-provider';
 
 export default {
   name: 'ATag',
@@ -16,11 +17,16 @@ export default {
     event: 'close.visible'
   },
   props: {
-    prefixCls: PropTypes.string.def('ant-tag'),
+    prefixCls: PropTypes.string,
     color: PropTypes.string,
     closable: PropTypes.bool.def(false),
     visible: PropTypes.bool,
     afterClose: PropTypes.func
+  },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   data: function data() {
     var _visible = true;
@@ -74,12 +80,10 @@ export default {
         backgroundColor: color && !isPresetColor ? color : undefined
       };
     },
-    getTagClassName: function getTagClassName() {
+    getTagClassName: function getTagClassName(prefixCls) {
       var _ref;
 
-      var _$props = this.$props,
-          prefixCls = _$props.prefixCls,
-          color = _$props.color;
+      var color = this.$props.color;
 
       var isPresetColor = this.isPresetColor(color);
       return _ref = {}, _defineProperty(_ref, prefixCls, true), _defineProperty(_ref, prefixCls + '-' + color, isPresetColor), _defineProperty(_ref, prefixCls + '-has-color', color && !isPresetColor), _ref;
@@ -99,7 +103,10 @@ export default {
 
   render: function render() {
     var h = arguments[0];
-    var prefixCls = this.$props.prefixCls;
+    var customizePrefixCls = this.$props.prefixCls;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('tag', customizePrefixCls);
     var visible = this.$data._visible;
 
     var tag = h(
@@ -110,7 +117,7 @@ export default {
           value: visible
         }]
       }, { on: omit(this.$listeners, ['close']) }, {
-        'class': this.getTagClassName(),
+        'class': this.getTagClassName(prefixCls),
         style: this.getTagStyle()
       }]),
       [this.$slots['default'], this.renderCloseIcon()]

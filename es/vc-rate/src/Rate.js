@@ -15,6 +15,7 @@ var rateProps = {
   allowClear: PropTypes.bool,
   prefixCls: PropTypes.string,
   character: PropTypes.any,
+  characterRender: PropTypes.func,
   tabIndex: PropTypes.number,
   autoFocus: PropTypes.bool
 };
@@ -88,15 +89,18 @@ export default {
       this.$emit('hoverChange', undefined);
     },
     onClick: function onClick(event, index) {
-      var value = this.getStarValue(index, event.pageX);
+      var allowClear = this.allowClear,
+          value = this.sValue;
+
+      var newValue = this.getStarValue(index, event.pageX);
       var isReset = false;
-      if (this.allowClear) {
-        isReset = value === this.sValue;
+      if (allowClear) {
+        isReset = newValue === value;
       }
       this.onMouseLeave(true);
-      this.changeValue(isReset ? 0 : value);
+      this.changeValue(isReset ? 0 : newValue);
       this.setState({
-        cleanedValue: isReset ? value : null
+        cleanedValue: isReset ? newValue : null
       });
     },
     onFocus: function onFocus() {
@@ -187,6 +191,7 @@ export default {
     var stars = [];
     var disabledClass = disabled ? prefixCls + '-disabled' : '';
     var character = getComponentFromProp(this, 'character');
+    var characterRender = this.characterRender || this.$scopedSlots.characterRender;
     for (var index = 0; index < count; index++) {
       var starProps = {
         props: {
@@ -197,6 +202,7 @@ export default {
           allowHalf: allowHalf,
           value: hoverValue === undefined ? sValue : hoverValue,
           character: character,
+          characterRender: characterRender,
           focused: focused
         },
         on: {

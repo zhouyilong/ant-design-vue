@@ -31,7 +31,7 @@ var defaultProps = {
   pauseOnFocus: PropTypes.bool.def(false),
   // hover是否暂停
   pauseOnHover: PropTypes.bool.def(true),
-  responsive: PropTypes.any.def(null),
+  responsive: PropTypes.array,
   rows: PropTypes.number.def(1),
   rtl: PropTypes.bool.def(false),
   slide: PropTypes.string.def('div'),

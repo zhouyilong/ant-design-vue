@@ -36,7 +36,8 @@ export var ColumnProps = {
   fixed: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['left', 'right'])]),
   filterIcon: PropTypes.any,
   filteredValue: PropTypes.array,
-  sortOrder: PropTypes.oneOf(['ascend', 'descend'])
+  sortOrder: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf(['ascend', 'descend'])]),
+  sortDirections: PropTypes.array
   // children?: ColumnProps<T>[];
   // onCellClick?: (record: T, event: any) => void;
   // onCell?: (record: T) => any;
@@ -110,7 +111,7 @@ export var TableProps = {
   //  onExpand?: (expanded: boolean, record: T) => void;
   // onChange?: (pagination: PaginationProps | boolean, filters: string[], sorter: Object) => any;
   loading: PropTypes.oneOfType([PropTypes.shape(SpinProps).loose, PropTypes.bool]),
-  locale: PropTypes.object,
+  locale: TableLocale,
   indentSize: PropTypes.number,
   // onRowClick?: (record: T, index: number, event: Event) => any;
   customRow: PropTypes.func,
@@ -123,6 +124,7 @@ export var TableProps = {
   scroll: PropTypes.object,
   childrenColumnName: PropTypes.oneOfType([PropTypes.array, PropTypes.string]),
   bodyStyle: PropTypes.any,
+  sortDirections: PropTypes.array,
   expandIcon: PropTypes.func
   // className?: PropTypes.string,
   // style?: React.CSSProperties;

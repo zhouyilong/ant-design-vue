@@ -6,7 +6,9 @@ import MiniSelect from './MiniSelect';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import { getOptionProps } from '../_util/props-util';
 import VcPagination from '../vc-pagination';
+import enUS from '../vc-pagination/locale/en_US';
 import Icon from '../icon';
+import { ConfigConsumerProps } from '../config-provider';
 
 export var PaginationProps = function PaginationProps() {
   return {
@@ -44,14 +46,15 @@ export default {
     prop: 'current',
     event: 'change.current'
   },
-  props: _extends({}, PaginationProps(), {
-    prefixCls: PropTypes.string.def('ant-pagination'),
-    selectPrefixCls: PropTypes.string.def('ant-select')
-  }),
+  props: _extends({}, PaginationProps()),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   methods: {
-    getIconsProps: function getIconsProps() {
+    getIconsProps: function getIconsProps(prefixCls) {
       var h = this.$createElement;
-      var prefixCls = this.$props.prefixCls;
 
       var prevIcon = h(
         'a',
@@ -106,14 +109,23 @@ export default {
       var h = this.$createElement;
 
       var _getOptionProps = getOptionProps(this),
+          customizePrefixCls = _getOptionProps.prefixCls,
+          customizeSelectPrefixCls = _getOptionProps.selectPrefixCls,
           buildOptionText = _getOptionProps.buildOptionText,
           size = _getOptionProps.size,
           customLocale = _getOptionProps.locale,
-          restProps = _objectWithoutProperties(_getOptionProps, ['buildOptionText', 'size', 'locale']);
+          restProps = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'selectPrefixCls', 'buildOptionText', 'size', 'locale']);
+
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('pagination', customizePrefixCls);
+      var selectPrefixCls = getPrefixCls('select', customizeSelectPrefixCls);
 
       var isSmall = size === 'small';
       var paginationProps = {
-        props: _extends({}, restProps, this.getIconsProps(), {
+        props: _extends({
+          prefixCls: prefixCls,
+          selectPrefixCls: selectPrefixCls
+        }, restProps, this.getIconsProps(prefixCls), {
           selectComponentClass: isSmall ? MiniSelect : VcSelect,
           locale: _extends({}, contextLocale, customLocale),
           buildOptionText: buildOptionText || this.$scopedSlots.buildOptionText
@@ -131,7 +143,11 @@ export default {
     var h = arguments[0];
 
     return h(LocaleReceiver, {
-      attrs: { componentName: 'Pagination' },
-      scopedSlots: { 'default': this.renderPagination } });
+      attrs: {
+        componentName: 'Pagination',
+        defaultLocale: enUS
+      },
+      scopedSlots: { 'default': this.renderPagination }
+    });
   }
 };

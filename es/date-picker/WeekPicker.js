@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import Calendar from '../vc-calendar';
 import VcDatePicker from '../vc-calendar/src/Picker';
 import Icon from '../icon';
+import { ConfigConsumerProps } from '../config-provider';
 import { hasProp, getOptionProps, initDefaultProps, getComponentFromProp, isValidElement } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import { WeekPickerProps } from './interface';
@@ -31,6 +32,11 @@ export default {
     format: 'gggg-wo',
     allowClear: true
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     var value = this.value || this.defaultValue;
     if (value && !interopDefault(moment).isMoment(value)) {
@@ -44,11 +50,36 @@ export default {
 
   watch: {
     value: function value(val) {
-      this.setState({ _value: val });
+      var state = { _value: val };
+      this.setState(state);
+      this.prevState = _extends({}, this.$data, state);
     },
     open: function open(val) {
-      this.setState({ _open: val });
+      var state = { _open: val };
+      this.setState(state);
+      this.prevState = _extends({}, this.$data, state);
+    },
+    _open: function _open(val, oldVal) {
+      var _this = this;
+
+      this.$nextTick(function () {
+        if (!hasProp(_this, 'open') && oldVal && !val) {
+          _this.focus();
+        }
+      });
     }
+  },
+  mounted: function mounted() {
+    this.prevState = _extends({}, this.$data);
+  },
+  updated: function updated() {
+    var _this2 = this;
+
+    this.$nextTick(function () {
+      if (!hasProp(_this2, 'open') && _this2.prevState._open && !_this2._open) {
+        _this2.focus();
+      }
+    });
   },
 
   methods: {
@@ -56,8 +87,11 @@ export default {
       var h = this.$createElement;
 
       var selectedValue = this.$data._value;
-      var prefixCls = this.prefixCls;
+      var prefixCls = this._prefixCls,
+          $scopedSlots = this.$scopedSlots;
 
+      var dateRender = this.dateRender || $scopedSlots.dateRender;
+      var dateNode = dateRender ? dateRender(current) : current.date();
       if (selectedValue && current.year() === selectedValue.year() && current.week() === selectedValue.week()) {
         return h(
           'div',
@@ -65,14 +99,14 @@ export default {
           [h(
             'div',
             { 'class': prefixCls + '-date' },
-            [current.date()]
+            [dateNode]
           )]
         );
       }
       return h(
         'div',
         { 'class': prefixCls + '-date' },
-        [current.date()]
+        [dateNode]
       );
     },
     handleChange: function handleChange(value) {
@@ -86,15 +120,23 @@ export default {
         this.setState({ _open: open });
       }
       this.$emit('openChange', open);
-
-      if (!open) {
-        this.focus();
-      }
     },
     clearSelection: function clearSelection(e) {
       e.preventDefault();
       e.stopPropagation();
       this.handleChange(null);
+    },
+    renderFooter: function renderFooter() {
+      var h = this.$createElement;
+      var prefixCls = this._prefixCls,
+          $scopedSlots = this.$scopedSlots;
+
+      var renderExtraFooter = this.renderExtraFooter || $scopedSlots.renderExtraFooter;
+      return renderExtraFooter ? h(
+        'div',
+        { 'class': prefixCls + '-footer-extra' },
+        [renderExtraFooter.apply(undefined, arguments)]
+      ) : null;
     },
     focus: function focus() {
       this.$refs.input.focus();
@@ -110,7 +152,7 @@ export default {
     var props = getOptionProps(this);
     var suffixIcon = getComponentFromProp(this, 'suffixIcon');
     suffixIcon = Array.isArray(suffixIcon) ? suffixIcon[0] : suffixIcon;
-    var prefixCls = this.prefixCls,
+    var customizePrefixCls = this.prefixCls,
         disabled = this.disabled,
         pickerClass = this.pickerClass,
         popupStyle = this.popupStyle,
@@ -123,6 +165,12 @@ export default {
         $data = this.$data,
         $listeners = this.$listeners,
         $scopedSlots = this.$scopedSlots;
+
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('calendar', customizePrefixCls);
+    this._prefixCls = prefixCls;
+
     var pickerValue = $data._value,
         open = $data._open;
     var _$listeners$focus = $listeners.focus,
@@ -146,7 +194,8 @@ export default {
         locale: locale.lang,
         showDateInput: false,
         showToday: false,
-        disabledDate: disabledDate
+        disabledDate: disabledDate,
+        renderFooter: this.renderFooter
       }
     });
     var clearIcon = !disabled && allowClear && $data._value ? h(Icon, {

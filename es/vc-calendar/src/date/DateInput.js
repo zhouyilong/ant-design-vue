@@ -1,8 +1,14 @@
+import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
 import { getComponentFromProp } from '../../../_util/props-util';
 import moment from 'moment';
 import { formatDate } from '../util';
+import KeyCode from '../../../_util/KeyCode';
+
+var cachedSelectionStart = void 0;
+var cachedSelectionEnd = void 0;
+var dateInputInstance = void 0;
 import { isIE, isIE9 } from '../../../_util/env';
 
 var DateInput = {
@@ -45,16 +51,21 @@ var DateInput = {
     var _this = this;
 
     this.$nextTick(function () {
-      if (_this.$data.hasFocus && !_this.invalid && !(_this.cachedSelectionStart === 0 && _this.cachedSelectionEnd === 0)) {
-        _this.$refs.dateInputInstance.setSelectionRange(_this.cachedSelectionStart, _this.cachedSelectionEnd);
+      if (dateInputInstance && _this.$data.hasFocus && !_this.invalid && !(cachedSelectionStart === 0 && cachedSelectionEnd === 0)) {
+        dateInputInstance.setSelectionRange(cachedSelectionStart, cachedSelectionEnd);
       }
     });
+  },
+  getInstance: function getInstance() {
+    return dateInputInstance;
   },
 
   methods: {
     updateState: function updateState() {
-      this.cachedSelectionStart = this.$refs.dateInputInstance.selectionStart;
-      this.cachedSelectionEnd = this.$refs.dateInputInstance.selectionEnd;
+      if (dateInputInstance) {
+        cachedSelectionStart = dateInputInstance.selectionStart;
+        cachedSelectionEnd = dateInputInstance.selectionEnd;
+      }
       // when popup show, click body will call this, bug!
       var selectedValue = this.selectedValue;
       if (!this.$data.hasFocus) {
@@ -63,6 +74,12 @@ var DateInput = {
           invalid: false
         });
       }
+    },
+    onClear: function onClear() {
+      this.setState({
+        str: ''
+      });
+      this.__emit('clear', null);
     },
     onInputChange: function onInputChange(event) {
       var str = event.target.value;
@@ -86,6 +103,7 @@ var DateInput = {
         return;
       }
 
+      // 不合法直接退出
       var parsed = moment(str, format, true);
       if (!parsed.isValid()) {
         this.setState({
@@ -107,23 +125,10 @@ var DateInput = {
 
       if (selectedValue !== value || selectedValue && value && !selectedValue.isSame(value)) {
         this.setState({
+          invalid: false,
           str: str
         });
         this.__emit('change', value);
-      }
-    },
-    onClear: function onClear() {
-      this.setState({
-        str: ''
-      });
-      this.__emit('clear', null);
-    },
-    getRootDOMNode: function getRootDOMNode() {
-      return this.$el;
-    },
-    focus: function focus() {
-      if (this.$refs.dateInputInstance) {
-        this.$refs.dateInputInstance.focus();
       }
     },
     onFocus: function onFocus() {
@@ -136,6 +141,30 @@ var DateInput = {
           str: formatDate(prevProps.value, prevProps.format)
         };
       });
+    },
+    onKeyDown: function onKeyDown(_ref) {
+      var keyCode = _ref.keyCode;
+      var _$props2 = this.$props,
+          value = _$props2.value,
+          disabledDate = _$props2.disabledDate;
+
+      if (keyCode === KeyCode.ENTER) {
+        var validateDate = !disabledDate || !disabledDate(value);
+        if (validateDate) {
+          this.__emit('select', value.clone());
+        }
+      }
+    },
+    getRootDOMNode: function getRootDOMNode() {
+      return this.$el;
+    },
+    focus: function focus() {
+      if (dateInputInstance) {
+        dateInputInstance.focus();
+      }
+    },
+    saveDateInput: function saveDateInput(dateInput) {
+      dateInputInstance = dateInput;
     }
   },
 
@@ -157,8 +186,12 @@ var DateInput = {
       [h(
         'div',
         { 'class': prefixCls + '-date-input-wrap' },
-        [h('input', {
-          ref: 'dateInputInstance',
+        [h('input', _mergeJSXProps([{
+          directives: [{
+            name: 'ant-ref',
+            value: this.saveDateInput
+          }]
+        }, {
           'class': prefixCls + '-input ' + invalidClass,
           domProps: {
             'value': str
@@ -169,10 +202,11 @@ var DateInput = {
           },
           on: {
             'input': this.onInputChange,
+            'keydown': this.onKeyDown,
             'focus': this.onFocus,
             'blur': this.onBlur
           }
-        })]
+        }]))]
       ), showClear ? h(
         'a',
         {

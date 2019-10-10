@@ -7,7 +7,7 @@ import { panelProps } from './commonProps';
 
 export default {
   name: 'Panel',
-  props: initDefaultProps(panelProps, {
+  props: initDefaultProps(panelProps(), {
     showArrow: true,
     isActive: false,
     destroyInactivePanel: false,
@@ -16,7 +16,7 @@ export default {
   }),
   methods: {
     handleItemClick: function handleItemClick() {
-      this.$emit('itemClick');
+      this.$emit('itemClick', this.panelKey);
     },
     handleKeyPress: function handleKeyPress(e) {
       if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
@@ -38,7 +38,8 @@ export default {
         openAnimation = _$props.openAnimation,
         accordion = _$props.accordion,
         forceRender = _$props.forceRender,
-        expandIcon = _$props.expandIcon;
+        expandIcon = _$props.expandIcon,
+        extra = _$props.extra;
     var $slots = this.$slots;
 
 
@@ -52,9 +53,9 @@ export default {
     var headerCls = (_headerCls = {}, _defineProperty(_headerCls, prefixCls + '-header', true), _defineProperty(_headerCls, headerClass, headerClass), _headerCls);
     var header = getComponentFromProp(this, 'header');
     var itemCls = (_itemCls = {}, _defineProperty(_itemCls, prefixCls + '-item', true), _defineProperty(_itemCls, prefixCls + '-item-active', isActive), _defineProperty(_itemCls, prefixCls + '-item-disabled', disabled), _itemCls);
-    var icon = null;
+    var icon = h('i', { 'class': 'arrow' });
     if (showArrow && typeof expandIcon === 'function') {
-      icon = cloneElement(expandIcon(this.$props));
+      icon = expandIcon(this.$props);
     }
     return h(
       'div',
@@ -74,7 +75,11 @@ export default {
             'aria-expanded': isActive
           }
         },
-        [showArrow && (icon || h('i', { 'class': 'arrow' })), header]
+        [showArrow && icon, header, extra && h(
+          'div',
+          { 'class': prefixCls + '-extra' },
+          [extra]
+        )]
       ), h(
         'transition',
         transitionProps,

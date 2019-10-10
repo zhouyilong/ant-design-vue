@@ -3,6 +3,8 @@ import _typeof from 'babel-runtime/helpers/typeof';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
+import { ConfigConsumerProps } from '../config-provider';
+
 // matchMedia polyfill for
 // https://github.com/WickyNilliams/enquire.js/issues/82
 var enquire = null;
@@ -57,6 +59,12 @@ export default {
     return {
       rowContext: this
     };
+  },
+
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   data: function data() {
     return {
@@ -124,9 +132,11 @@ export default {
     var type = this.type,
         justify = this.justify,
         align = this.align,
-        _prefixCls = this.prefixCls,
-        prefixCls = _prefixCls === undefined ? 'ant-row' : _prefixCls,
+        customizePrefixCls = this.prefixCls,
         $slots = this.$slots;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('row', customizePrefixCls);
 
     var gutter = this.getGutter();
     var classes = (_classes = {}, _defineProperty(_classes, prefixCls, !type), _defineProperty(_classes, prefixCls + '-' + type, type), _defineProperty(_classes, prefixCls + '-' + type + '-' + justify, type && justify), _defineProperty(_classes, prefixCls + '-' + type + '-' + align, type && align), _classes);

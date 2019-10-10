@@ -3,6 +3,8 @@ import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import debounce from 'lodash/debounce';
 import { initDefaultProps, getComponentFromProp, filterEmpty } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 // matchMedia polyfill for
 // https://github.com/WickyNilliams/enquire.js/issues/82
@@ -64,7 +66,8 @@ export var CarouselProps = {
   touchThreshold: PropTypes.number,
   variableWidth: PropTypes.bool,
   useCSS: PropTypes.bool,
-  slickGoTo: PropTypes.number
+  slickGoTo: PropTypes.number,
+  responsive: PropTypes.array
 };
 
 var Carousel = {
@@ -72,13 +75,13 @@ var Carousel = {
   props: initDefaultProps(CarouselProps, {
     dots: true,
     arrows: false,
-    prefixCls: 'ant-carousel',
     draggable: false
   }),
-
-  // innerSlider: any;
-
-  // private slick: any;
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
 
   beforeMount: function beforeMount() {
     this.onWindowResized = debounce(this.onWindowResized, 500, {
@@ -137,7 +140,9 @@ var Carousel = {
       props.fade = true;
     }
 
-    var className = props.prefixCls;
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var className = getPrefixCls('carousel', props.prefixCls);
+
     if (props.vertical) {
       className = className + ' ' + className + '-vertical';
     }
@@ -164,6 +169,7 @@ var Carousel = {
 
 /* istanbul ignore next */
 Carousel.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Carousel.name, Carousel);
 };
 

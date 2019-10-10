@@ -50,27 +50,27 @@ export default {
   },
 
   methods: {
-    setChecked: function setChecked(checked) {
+    setChecked: function setChecked(checked, e) {
       if (this.disabled) {
         return;
       }
       if (!hasProp(this, 'checked')) {
         this.stateChecked = checked;
       }
-      this.$emit('change', checked);
+      this.$emit('change', checked, e);
     },
-    toggle: function toggle() {
+    handleClick: function handleClick(e) {
       var checked = !this.stateChecked;
-      this.setChecked(checked);
-      this.$emit('click', checked);
+      this.setChecked(checked, e);
+      this.$emit('click', checked, e);
     },
     handleKeyDown: function handleKeyDown(e) {
       if (e.keyCode === 37) {
         // Left
-        this.setChecked(false);
+        this.setChecked(false, e);
       } else if (e.keyCode === 39) {
         // Right
-        this.setChecked(true);
+        this.setChecked(true, e);
       }
     },
     handleMouseUp: function handleMouseUp(e) {
@@ -95,7 +95,8 @@ export default {
         prefixCls = _getOptionProps.prefixCls,
         disabled = _getOptionProps.disabled,
         loadingIcon = _getOptionProps.loadingIcon,
-        restProps = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'disabled', 'loadingIcon']);
+        tabIndex = _getOptionProps.tabIndex,
+        restProps = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'disabled', 'loadingIcon', 'tabIndex']);
 
     var checked = this.stateChecked;
     var switchClassName = (_switchClassName = {}, _defineProperty(_switchClassName, prefixCls, true), _defineProperty(_switchClassName, prefixCls + '-checked', checked), _defineProperty(_switchClassName, prefixCls + '-disabled', disabled), _switchClassName);
@@ -103,14 +104,15 @@ export default {
       props: _extends({}, restProps),
       on: _extends({}, this.$listeners, {
         keydown: this.handleKeyDown,
-        click: this.toggle,
+        click: this.handleClick,
         mouseup: this.handleMouseUp
       }),
       attrs: {
         type: 'button',
         role: 'switch',
         'aria-checked': checked,
-        disabled: disabled
+        disabled: disabled,
+        tabIndex: tabIndex
       },
       'class': switchClassName,
       ref: 'refSwitchNode'

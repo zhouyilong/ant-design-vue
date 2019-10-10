@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
 import Radio from './Radio';
 import { getOptionProps, filterEmpty, hasProp } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 function noop() {}
 
 export default {
@@ -12,10 +13,7 @@ export default {
     prop: 'value'
   },
   props: {
-    prefixCls: {
-      'default': 'ant-radio',
-      type: String
-    },
+    prefixCls: PropTypes.string,
     defaultValue: PropTypes.any,
     value: PropTypes.any,
     size: {
@@ -48,6 +46,11 @@ export default {
     };
   },
 
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   computed: {
     radioOptions: function radioOptions() {
       var disabled = this.disabled;
@@ -95,9 +98,12 @@ export default {
         mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav;
 
     var props = getOptionProps(this);
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         options = props.options,
         buttonStyle = props.buttonStyle;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('radio', customizePrefixCls);
 
     var groupPrefixCls = prefixCls + '-group';
     var classString = classNames(groupPrefixCls, groupPrefixCls + '-' + buttonStyle, _defineProperty({}, groupPrefixCls + '-' + props.size, props.size));
@@ -115,11 +121,7 @@ export default {
               attrs: { prefixCls: prefixCls,
                 disabled: props.disabled,
                 value: option,
-
                 checked: _this.stateValue === option
-              },
-              on: {
-                'change': _this.onRadioChange
               }
             },
             [option]
@@ -132,11 +134,7 @@ export default {
               attrs: { prefixCls: prefixCls,
                 disabled: option.disabled || props.disabled,
                 value: option.value,
-
                 checked: _this.stateValue === option.value
-              },
-              on: {
-                'change': _this.onRadioChange
               }
             },
             [option.label]

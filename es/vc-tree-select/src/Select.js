@@ -76,7 +76,7 @@ var Select = {
     children: PropTypes.any,
     labelInValue: PropTypes.bool,
     maxTagCount: PropTypes.number,
-    maxTagPlaceholder: PropTypes.any,
+    maxTagPlaceholder: PropTypes.oneOfType([PropTypes.any, PropTypes.func]),
     maxTagTextLength: PropTypes.number,
     showCheckedStrategy: PropTypes.oneOf([SHOW_ALL, SHOW_PARENT, SHOW_CHILD]),
     dropdownClassName: PropTypes.string,
@@ -87,7 +87,8 @@ var Select = {
     treeDataSimpleMode: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
     treeNodeFilterProp: PropTypes.string,
     treeNodeLabelProp: PropTypes.string,
-    treeCheckable: PropTypes.any,
+    treeCheckable: PropTypes.oneOfType([PropTypes.any, PropTypes.object, PropTypes.bool]),
+    // treeCheckable: PropTypes.any,
     treeCheckStrictly: PropTypes.bool,
     treeIcon: PropTypes.bool,
     treeLine: PropTypes.bool,
@@ -587,6 +588,7 @@ var Select = {
           disabled = _$props4.disabled,
           inputValue = _$props4.inputValue,
           treeNodeLabelProp = _$props4.treeNodeLabelProp,
+          multiple = _$props4.multiple,
           treeCheckable = _$props4.treeCheckable,
           treeCheckStrictly = _$props4.treeCheckStrictly,
           autoClearSearchValue = _$props4.autoClearSearchValue;
@@ -649,7 +651,7 @@ var Select = {
       // Clean up `searchValue` when this prop is set
       if (autoClearSearchValue || inputValue === null) {
         // Clean state `searchValue` if uncontrolled
-        if (!this.isSearchValueControlled()) {
+        if (!this.isSearchValueControlled() && (multiple || treeCheckable)) {
           this.setUncontrolledState({
             _searchValue: '',
             _filteredTreeNodes: null
@@ -785,6 +787,20 @@ var Select = {
     // ==================== Trigger =====================
 
     onDropdownVisibleChange: function onDropdownVisibleChange(open) {
+      var _$props6 = this.$props,
+          multiple = _$props6.multiple,
+          treeCheckable = _$props6.treeCheckable;
+      var _searchValue = this._searchValue;
+
+      // When set open success and single mode,
+      // we will reset the input content.
+
+      if (open && !multiple && !treeCheckable && _searchValue) {
+        this.setUncontrolledState({
+          _searchValue: '',
+          _filteredTreeNodes: null
+        });
+      }
       this.setOpenState(open, true);
     },
     onSearchInputChange: function onSearchInputChange(_ref15) {
@@ -792,9 +808,9 @@ var Select = {
       var _$data5 = this.$data,
           treeNodes = _$data5._treeNodes,
           valueEntities = _$data5._valueEntities;
-      var _$props6 = this.$props,
-          filterTreeNode = _$props6.filterTreeNode,
-          treeNodeFilterProp = _$props6.treeNodeFilterProp;
+      var _$props7 = this.$props,
+          filterTreeNode = _$props7.filterTreeNode,
+          treeNodeFilterProp = _$props7.treeNodeFilterProp;
 
       this.__emit('update:searchValue', value);
       this.__emit('search', value);
@@ -813,7 +829,11 @@ var Select = {
         var upperSearchValue = String(value).toUpperCase();
 
         var filterTreeNodeFn = filterTreeNode;
-        if (!filterTreeNodeFn) {
+        if (filterTreeNode === false) {
+          filterTreeNodeFn = function filterTreeNodeFn() {
+            return true;
+          };
+        } else if (!filterTreeNodeFn) {
           filterTreeNodeFn = function filterTreeNodeFn(_, node) {
             var nodeValue = String(getPropsData(node)[treeNodeFilterProp]).toUpperCase();
             return nodeValue.indexOf(upperSearchValue) !== -1;
@@ -882,9 +902,9 @@ var Select = {
 
     // Tree checkable is also a multiple case
     isMultiple: function isMultiple() {
-      var _$props7 = this.$props,
-          multiple = _$props7.multiple,
-          treeCheckable = _$props7.treeCheckable;
+      var _$props8 = this.$props,
+          multiple = _$props8.multiple,
+          treeCheckable = _$props8.treeCheckable;
 
       return !!(multiple || treeCheckable);
     },
@@ -929,7 +949,8 @@ var Select = {
       var extraInfo = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       var _$data7 = this.$data,
           valueEntities = _$data7._valueEntities,
-          searchValue = _$data7._searchValue;
+          searchValue = _$data7._searchValue,
+          prevSelectorValueList = _$data7._selectorValueList;
 
       var props = getOptionProps(this);
       var disabled = props.disabled,
@@ -941,7 +962,7 @@ var Select = {
       // Trigger
       var extra = _extends({
         // [Legacy] Always return as array contains label & value
-        preValue: this.$data._selectorValueList.map(function (_ref16) {
+        preValue: prevSelectorValueList.map(function (_ref16) {
           var label = _ref16.label,
               value = _ref16.value;
           return { label: label, value: value };

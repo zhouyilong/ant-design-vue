@@ -10,6 +10,10 @@ export default {
   render: function render() {
     var h = arguments[0];
 
-    return h('div', [this.$slots['default']]);
+    return h(
+      'div',
+      { on: this.$listeners },
+      [this.$slots['default']]
+    );
   }
 };

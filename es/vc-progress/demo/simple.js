@@ -19,6 +19,8 @@ export default {
   },
   render: function render() {
     var h = arguments[0];
+    var percent = this.percent,
+        color = this.color;
 
     var containerStyle = {
       width: '250px'
@@ -28,22 +30,23 @@ export default {
       height: '250px',
       display: 'inline-block'
     };
-    return h('div', [h('h3', ['Line Progress ', this.percent, '%']), h(
+    return h('div', [h('h3', ['Line Progress ', percent, '%']), h(
       'div',
       { style: containerStyle },
       [h(Line, {
-        attrs: { percent: this.percent, strokeWidth: '4', strokeColor: this.color }
+        attrs: { percent: percent, strokeWidth: '4', strokeColor: color }
+      }), h(Line, {
+        attrs: {
+          percent: [percent / 2, percent / 2],
+          strokeWidth: '4',
+          strokeColor: [color, '#CCC']
+        }
       })]
-    ), h('h3', ['Circle Progress ', this.percent, '%']), h(
+    ), h('h3', ['Circle Progress ', percent, '%']), h(
       'div',
       { style: circleContainerStyle },
       [h(Circle, {
-        attrs: {
-          percent: this.percent,
-          strokeWidth: '6',
-          strokeLinecap: 'round',
-          strokeColor: this.color
-        }
+        attrs: { percent: percent, strokeWidth: '6', strokeLinecap: 'round', strokeColor: color }
       })]
     ), h('p', [h(
       'button',

@@ -67,8 +67,7 @@ export default {
 
         disabled: disabled
       },
-      'class': prefixCls, ref: 'input',
-      on: {
+      'class': prefixCls, on: {
         'change': this.handleChange
       }
     }), icon]);

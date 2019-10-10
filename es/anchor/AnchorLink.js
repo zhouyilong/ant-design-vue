@@ -2,6 +2,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
 import { initDefaultProps, getComponentFromProp } from '../_util/props-util';
 import classNames from 'classnames';
+import { ConfigConsumerProps } from '../config-provider';
 
 export var AnchorLinkProps = {
   prefixCls: PropTypes.string,
@@ -12,7 +13,6 @@ export var AnchorLinkProps = {
 export default {
   name: 'AAnchorLink',
   props: initDefaultProps(AnchorLinkProps, {
-    prefixCls: 'ant-anchor',
     href: '#'
   }),
   inject: {
@@ -21,12 +21,19 @@ export default {
       } },
     antAnchorContext: { 'default': function _default() {
         return {};
+      } },
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
       } }
   },
   watch: {
     href: function href(val, oldVal) {
-      this.antAnchor.unregisterLink(oldVal);
-      this.antAnchor.registerLink(val);
+      var _this = this;
+
+      this.$nextTick(function () {
+        _this.antAnchor.unregisterLink(oldVal);
+        _this.antAnchor.registerLink(val);
+      });
     }
   },
 
@@ -53,9 +60,13 @@ export default {
   },
   render: function render() {
     var h = arguments[0];
-    var prefixCls = this.prefixCls,
+    var customizePrefixCls = this.prefixCls,
         href = this.href,
         $slots = this.$slots;
+
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('anchor', customizePrefixCls);
 
     var title = getComponentFromProp(this, 'title');
     var active = this.antAnchor.$data.activeLink === href;

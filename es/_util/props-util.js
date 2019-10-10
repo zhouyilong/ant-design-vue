@@ -1,6 +1,6 @@
 import _typeof from 'babel-runtime/helpers/typeof';
-import _extends from 'babel-runtime/helpers/extends';
 import _slicedToArray from 'babel-runtime/helpers/slicedToArray';
+import _extends from 'babel-runtime/helpers/extends';
 import isPlainObject from 'lodash/isPlainObject';
 import classNames from 'classnames';
 function getType(fn) {
@@ -54,6 +54,11 @@ var filterProps = function filterProps(props) {
   });
   return res;
 };
+
+var getScopedSlots = function getScopedSlots(ele) {
+  return ele.data && ele.data.scopedSlots || {};
+};
+
 var getSlots = function getSlots(ele) {
   var componentOptions = ele.componentOptions || {};
   if (ele.$vnode) {
@@ -68,8 +73,15 @@ var getSlots = function getSlots(ele) {
       slots[name].push(child);
     }
   });
-  return slots;
+  return _extends({}, slots, getScopedSlots(ele));
 };
+var getSlot = function getSlot(self) {
+  var name = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'default';
+  var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+  return self.$scopedSlots && self.$scopedSlots[name] && self.$scopedSlots[name](options) || self.$slots[name] || [];
+};
+
 var getAllChildren = function getAllChildren(ele) {
   var componentOptions = ele.componentOptions || {};
   if (ele.$vnode) {
@@ -151,17 +163,22 @@ var getComponentFromProp = function getComponentFromProp(instance, prop) {
     if (temp !== undefined) {
       return typeof temp === 'function' && execute ? temp(h, options) : temp;
     }
-    return instance.$slots[prop] || instance.$scopedSlots[prop] && execute && instance.$scopedSlots[prop](options) || instance.$scopedSlots[prop] || undefined;
+    return instance.$scopedSlots[prop] && execute && instance.$scopedSlots[prop](options) || instance.$scopedSlots[prop] || instance.$slots[prop] || undefined;
   } else {
     var _h = instance.context.$createElement;
     var _temp = getPropsData(instance)[prop];
     if (_temp !== undefined) {
       return typeof _temp === 'function' && execute ? _temp(_h, options) : _temp;
     }
+    var slotScope = getScopedSlots(instance)[prop];
+    if (slotScope !== undefined) {
+      return typeof slotScope === 'function' && execute ? slotScope(_h, options) : slotScope;
+    }
     var slotsProp = [];
     var componentOptions = instance.componentOptions || {};
     (componentOptions.children || []).forEach(function (child) {
       if (child.data && child.data.slot === prop) {
+        delete child.data.attrs.slot;
         if (child.tag === 'template') {
           slotsProp.push(child.children);
         } else {
@@ -339,5 +356,5 @@ function isValidElement(element) {
   return element && (typeof element === 'undefined' ? 'undefined' : _typeof(element)) === 'object' && 'componentOptions' in element && 'context' in element && element.tag !== undefined; // remove text node
 }
 
-export { hasProp, filterProps, getOptionProps, getComponentFromProp, getSlotOptions, slotHasProp, getPropsData, getKey, getAttrs, getValueByProp, parseStyleText, initDefaultProps, isValidElement, camelize, getSlots, getAllProps, getAllChildren };
+export { hasProp, filterProps, getOptionProps, getComponentFromProp, getSlotOptions, slotHasProp, getPropsData, getKey, getAttrs, getValueByProp, parseStyleText, initDefaultProps, isValidElement, camelize, getSlots, getSlot, getAllProps, getAllChildren };
 export default hasProp;

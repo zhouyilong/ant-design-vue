@@ -3,15 +3,16 @@ import RcDropdown from '../vc-dropdown/src/index';
 import DropdownButton from './dropdown-button';
 import PropTypes from '../_util/vue-types';
 import { cloneElement } from '../_util/vnode';
-import { getOptionProps, getPropsData } from '../_util/props-util';
+import { getOptionProps, getPropsData, getComponentFromProp } from '../_util/props-util';
 import getDropdownProps from './getDropdownProps';
+import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
 
 var DropdownProps = getDropdownProps();
 var Dropdown = {
   name: 'ADropdown',
   props: _extends({}, DropdownProps, {
-    prefixCls: PropTypes.string.def('ant-dropdown'),
+    prefixCls: PropTypes.string,
     mouseEnterDelay: PropTypes.number.def(0.15),
     mouseLeaveDelay: PropTypes.number.def(0.1),
     placement: DropdownProps.placement.def('bottomLeft')
@@ -28,7 +29,7 @@ var Dropdown = {
 
   inject: {
     configProvider: { 'default': function _default() {
-        return {};
+        return ConfigConsumerProps;
       } }
   },
   methods: {
@@ -48,6 +49,39 @@ var Dropdown = {
         return 'slide-down';
       }
       return 'slide-up';
+    },
+    renderOverlay: function renderOverlay(prefixCls) {
+      var h = this.$createElement;
+
+      var overlay = getComponentFromProp(this, 'overlay');
+      var overlayNode = Array.isArray(overlay) ? overlay[0] : overlay;
+      // menu cannot be selectable in dropdown defaultly
+      // menu should be focusable in dropdown defaultly
+      var overlayProps = overlayNode && getPropsData(overlayNode);
+
+      var _ref = overlayProps || {},
+          _ref$selectable = _ref.selectable,
+          selectable = _ref$selectable === undefined ? false : _ref$selectable,
+          _ref$focusable = _ref.focusable,
+          focusable = _ref$focusable === undefined ? true : _ref$focusable;
+
+      var expandIcon = h(
+        'span',
+        { 'class': prefixCls + '-menu-submenu-arrow' },
+        [h(Icon, {
+          attrs: { type: 'right' },
+          'class': prefixCls + '-menu-submenu-arrow-icon' })]
+      );
+
+      var fixedModeOverlay = overlayNode && overlayNode.componentOptions ? cloneElement(overlayNode, {
+        props: {
+          mode: 'vertical',
+          selectable: selectable,
+          focusable: focusable,
+          expandIcon: expandIcon
+        }
+      }) : overlay;
+      return fixedModeOverlay;
     }
   },
 
@@ -57,43 +91,19 @@ var Dropdown = {
         $listeners = this.$listeners;
 
     var props = getOptionProps(this);
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         trigger = props.trigger,
         disabled = props.disabled,
         getPopupContainer = props.getPopupContainer;
     var getContextPopupContainer = this.configProvider.getPopupContainer;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('dropdown', customizePrefixCls);
+
     var dropdownTrigger = cloneElement($slots['default'], {
       'class': prefixCls + '-trigger',
       disabled: disabled
     });
-    var overlay = this.overlay || $slots.overlay && $slots.overlay[0];
-    // menu cannot be selectable in dropdown defaultly
-    // menu should be focusable in dropdown defaultly
-    var overlayProps = overlay && getPropsData(overlay);
-
-    var _ref = overlayProps || {},
-        _ref$selectable = _ref.selectable,
-        selectable = _ref$selectable === undefined ? false : _ref$selectable,
-        _ref$focusable = _ref.focusable,
-        focusable = _ref$focusable === undefined ? true : _ref$focusable;
-
-    var expandIcon = h(
-      'span',
-      { 'class': prefixCls + '-menu-submenu-arrow' },
-      [h(Icon, {
-        attrs: { type: 'right' },
-        'class': prefixCls + '-menu-submenu-arrow-icon' })]
-    );
-
-    var fixedModeOverlay = overlay && overlay.componentOptions ? cloneElement(overlay, {
-      props: {
-        mode: 'vertical',
-        selectable: selectable,
-        focusable: focusable,
-        expandIcon: expandIcon
-      }
-    }) : overlay;
     var triggerActions = disabled ? [] : trigger;
     var alignPoint = void 0;
     if (triggerActions && triggerActions.indexOf('contextmenu') !== -1) {
@@ -103,6 +113,7 @@ var Dropdown = {
       props: _extends({
         alignPoint: alignPoint
       }, props, {
+        prefixCls: prefixCls,
         getPopupContainer: getPopupContainer || getContextPopupContainer,
         transitionName: this.getTransitionName(),
         trigger: triggerActions
@@ -115,7 +126,7 @@ var Dropdown = {
       [dropdownTrigger, h(
         'template',
         { slot: 'overlay' },
-        [fixedModeOverlay]
+        [this.renderOverlay(prefixCls)]
       )]
     );
   }

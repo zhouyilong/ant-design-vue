@@ -2,6 +2,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import _typeof from 'babel-runtime/helpers/typeof';
 import PropTypes from '../_util/vue-types';
+import { ConfigConsumerProps } from '../config-provider';
 
 var stringOrNumber = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
 
@@ -13,7 +14,7 @@ export var ColSize = PropTypes.shape({
   pull: stringOrNumber
 }).loose;
 
-var objectOrNumber = PropTypes.oneOfType([PropTypes.number, ColSize]);
+var objectOrNumber = PropTypes.oneOfType([PropTypes.string, PropTypes.number, ColSize]);
 
 export var ColProps = {
   span: stringOrNumber,
@@ -34,6 +35,9 @@ export default {
   name: 'ACol',
   props: ColProps,
   inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } },
     rowContext: {
       'default': function _default() {
         return null;
@@ -50,12 +54,14 @@ export default {
         offset = this.offset,
         push = this.push,
         pull = this.pull,
-        _prefixCls = this.prefixCls,
-        prefixCls = _prefixCls === undefined ? 'ant-col' : _prefixCls,
+        customizePrefixCls = this.prefixCls,
         $slots = this.$slots,
         $attrs = this.$attrs,
         $listeners = this.$listeners,
         rowContext = this.rowContext;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('col', customizePrefixCls);
 
     var sizeClassObj = {};
     ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'].forEach(function (size) {

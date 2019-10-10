@@ -1,10 +1,11 @@
 import _extends from 'babel-runtime/helpers/extends';
+import moment from 'moment';
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
 import { getOptionProps, hasProp } from '../../_util/props-util';
 import DateTable from './date/DateTable';
 import MonthTable from './month/MonthTable';
-import CalendarMixin from './mixin/CalendarMixin';
+import CalendarMixin, { getNowByCurrentStateValue } from './mixin/CalendarMixin';
 import CommonMixin from './mixin/CommonMixin';
 import CalendarHeader from './full-calendar/CalendarHeader';
 import enUs from './locale/en_US';
@@ -16,8 +17,6 @@ var FullCalendar = {
     prefixCls: PropTypes.string.def('rc-calendar'),
     defaultType: PropTypes.string.def('date'),
     type: PropTypes.string,
-    // locale: PropTypes.object,
-    // onTypeChange: PropTypes.func,
     fullscreen: PropTypes.bool.def(false),
     monthCellRender: PropTypes.func,
     dateCellRender: PropTypes.func,
@@ -28,6 +27,10 @@ var FullCalendar = {
     headerRender: PropTypes.func,
     showHeader: PropTypes.bool.def(true),
     disabledDate: PropTypes.func,
+    value: PropTypes.object,
+    defaultValue: PropTypes.object,
+    selectedValue: PropTypes.object,
+    defaultSelectedValue: PropTypes.object,
     renderFooter: PropTypes.func.def(function () {
       return null;
     }),
@@ -43,8 +46,11 @@ var FullCalendar = {
     } else {
       type = this.defaultType;
     }
+    var props = this.$props;
     return {
-      sType: type
+      sType: type,
+      sValue: props.value || props.defaultValue || moment(),
+      sSelectedValue: props.selectedValue || props.defaultSelectedValue
     };
   },
 
@@ -52,6 +58,17 @@ var FullCalendar = {
     type: function type(val) {
       this.setState({
         sType: val
+      });
+    },
+    value: function value(val) {
+      var sValue = val || this.defaultValue || getNowByCurrentStateValue(this.sValue);
+      this.setState({
+        sValue: sValue
+      });
+    },
+    selectedValue: function selectedValue(val) {
+      this.setState({
+        sSelectedValue: val
       });
     }
   },

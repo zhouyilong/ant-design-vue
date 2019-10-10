@@ -3,9 +3,10 @@ import _typeof from 'babel-runtime/helpers/typeof';
 import PropTypes from '../_util/vue-types';
 import { alignElement, alignPoint } from 'dom-align';
 import addEventListener from '../_util/Dom/addEventListener';
-import { isWindow, buffer, isSamePoint } from './util';
+import { isWindow, buffer, isSamePoint, isSimilarValue, restoreFocus } from './util';
 import { cloneElement } from '../_util/vnode.js';
 import clonedeep from 'lodash/cloneDeep';
+import { getSlot } from '../_util/props-util';
 
 function getElement(func) {
   if (typeof func !== 'function' || !func) return null;
@@ -75,7 +76,7 @@ export default {
 
           // If source element size changed
           var preRect = _this2.sourceRect || {};
-          if (!reAlign && source && (preRect.width !== sourceRect.width || preRect.height !== sourceRect.height)) {
+          if (!reAlign && source && (!isSimilarValue(preRect.width, sourceRect.width) || !isSimilarValue(preRect.height, sourceRect.height))) {
             reAlign = true;
           }
         }
@@ -125,11 +126,16 @@ export default {
         var element = getElement(target);
         var point = getPoint(target);
 
+        // IE lose focus after element realign
+        // We should record activeElement and restore later
+        var activeElement = document.activeElement;
+
         if (element) {
           result = alignElement(source, element, align);
         } else if (point) {
           result = alignPoint(source, point, align);
         }
+        restoreFocus(activeElement, source);
         this.aligned = true;
         this.$listeners.align && this.$listeners.align(source, result);
       }
@@ -139,8 +145,8 @@ export default {
   render: function render() {
     var childrenProps = this.$props.childrenProps;
 
-    var child = this.$slots['default'][0];
-    if (childrenProps) {
+    var child = getSlot(this)[0];
+    if (child && childrenProps) {
       return cloneElement(child, { props: childrenProps });
     }
     return child;

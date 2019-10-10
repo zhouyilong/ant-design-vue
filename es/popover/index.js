@@ -3,12 +3,14 @@ import Tooltip from '../tooltip';
 import abstractTooltipProps from '../tooltip/abstractTooltipProps';
 import PropTypes from '../_util/vue-types';
 import { getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 var props = abstractTooltipProps();
 var Popover = {
   name: 'APopover',
   props: _extends({}, props, {
-    prefixCls: PropTypes.string.def('ant-popover'),
+    prefixCls: PropTypes.string,
     transitionName: PropTypes.string.def('zoom-big'),
     content: PropTypes.any,
     title: PropTypes.any
@@ -16,6 +18,11 @@ var Popover = {
   model: {
     prop: 'visible',
     event: 'visibleChange'
+  },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   methods: {
     getPopupDomNode: function getPopupDomNode() {
@@ -26,14 +33,19 @@ var Popover = {
   render: function render() {
     var h = arguments[0];
     var title = this.title,
-        prefixCls = this.prefixCls,
+        customizePrefixCls = this.prefixCls,
         $slots = this.$slots;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('popover', customizePrefixCls);
 
     var props = getOptionProps(this);
     delete props.title;
     delete props.content;
     var tooltipProps = {
-      props: _extends({}, props),
+      props: _extends({}, props, {
+        prefixCls: prefixCls
+      }),
       ref: 'tooltip',
       on: this.$listeners
     };
@@ -59,6 +71,7 @@ var Popover = {
 
 /* istanbul ignore next */
 Popover.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Popover.name, Popover);
 };
 

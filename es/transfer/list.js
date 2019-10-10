@@ -273,7 +273,7 @@ export default {
       {
         'class': classNames(showSearch ? prefixCls + '-body ' + prefixCls + '-body-with-search' : prefixCls + '-body')
       },
-      [search, h(
+      [search, !searchNotFound && h(
         'transition-group',
         _mergeJSXProps([transitionProps, {
           attrs: {

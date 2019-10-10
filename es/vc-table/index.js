@@ -40,7 +40,7 @@ var Table = {
           column.key = key;
         }
         if (getSlotOptions(element).isTableColumnGroup) {
-          column.children = _this.normalize(children);
+          column.children = _this.normalize(typeof children === 'function' ? children() : children);
         } else {
           var customRender = element.data && element.data.scopedSlots && element.data.scopedSlots['default'];
           column.customRender = column.customRender || customRender;

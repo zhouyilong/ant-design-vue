@@ -3,6 +3,8 @@ import PropTypes from '../_util/vue-types';
 import { initDefaultProps, getOptionProps } from '../_util/props-util';
 import VcSteps from '../vc-steps';
 import Icon from '../icon';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 var getStepsProps = function getStepsProps() {
   var defaultProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -24,16 +26,24 @@ var getStepsProps = function getStepsProps() {
 var Steps = {
   name: 'ASteps',
   props: getStepsProps({
-    prefixCls: 'ant-steps',
-    iconPrefix: 'ant',
     current: 0
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   Step: _extends({}, VcSteps.Step, { name: 'AStep' }),
   render: function render() {
     var h = arguments[0];
 
     var props = getOptionProps(this);
-    var prefixCls = props.prefixCls;
+    var customizePrefixCls = props.prefixCls,
+        customizeIconPrefixCls = props.iconPrefix;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('steps', customizePrefixCls);
+    var iconPrefix = getPrefixCls('', customizeIconPrefixCls);
 
     var icons = {
       finish: h(Icon, {
@@ -45,7 +55,9 @@ var Steps = {
     };
     var stepsProps = {
       props: _extends({
-        icons: icons
+        icons: icons,
+        iconPrefix: iconPrefix,
+        prefixCls: prefixCls
       }, props),
       on: this.$listeners,
       scopedSlots: this.$scopedSlots
@@ -60,6 +72,7 @@ var Steps = {
 
 /* istanbul ignore next */
 Steps.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Steps.name, Steps);
   Vue.component(Steps.Step.name, Steps.Step);
 };

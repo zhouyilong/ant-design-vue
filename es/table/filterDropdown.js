@@ -269,7 +269,11 @@ export default {
       });
     }
 
-    var menus = filterDropdown ? h(FilterDropdownMenuWrapper, [filterDropdown]) : h(
+    var menus = filterDropdown ? h(
+      FilterDropdownMenuWrapper,
+      { 'class': prefixCls + '-dropdown' },
+      [filterDropdown]
+    ) : h(
       FilterDropdownMenuWrapper,
       { 'class': prefixCls + '-dropdown' },
       [h(

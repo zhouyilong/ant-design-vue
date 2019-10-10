@@ -1,10 +1,12 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
+import debounce from 'lodash/debounce';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import { filterEmpty, initDefaultProps, isValidElement, getComponentFromProp } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
+import { ConfigConsumerProps } from '../config-provider';
 
 export var SpinSize = PropTypes.oneOf(['small', 'default', 'large']);
 
@@ -37,66 +39,53 @@ export default {
   name: 'ASpin',
   mixins: [BaseMixin],
   props: initDefaultProps(SpinProps(), {
-    prefixCls: 'ant-spin',
     size: 'default',
     spinning: true,
     wrapperClassName: ''
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     var spinning = this.spinning,
         delay = this.delay;
 
-    this.debounceTimeout = null;
-    this.delayTimeout = null;
+    var shouldBeDelayed = shouldDelay(spinning, delay);
+    this.originalUpdateSpinning = this.updateSpinning;
+    this.debouncifyUpdateSpinning(this.$props);
     return {
-      sSpinning: spinning && !shouldDelay(spinning, delay)
+      sSpinning: spinning && !shouldBeDelayed
     };
+  },
+  mounted: function mounted() {
+    this.updateSpinning();
   },
   updated: function updated() {
     var _this = this;
 
     this.$nextTick(function () {
-      var delay = _this.delay,
-          spinning = _this.spinning,
-          sSpinning = _this.sSpinning;
-
-      if (sSpinning === spinning) {
-        return;
-      }
-
-      if (_this.debounceTimeout) {
-        clearTimeout(_this.debounceTimeout);
-      }
-      if (sSpinning && !spinning) {
-        _this.debounceTimeout = window.setTimeout(function () {
-          return _this.setState({ sSpinning: spinning });
-        }, 200);
-        if (_this.delayTimeout) {
-          clearTimeout(_this.delayTimeout);
-        }
-      } else {
-        if (shouldDelay(spinning, delay)) {
-          if (_this.delayTimeout) {
-            clearTimeout(_this.delayTimeout);
-          }
-          _this.delayTimeout = window.setTimeout(_this.delayUpdateSpinning, delay);
-        } else {
-          _this.setState({ sSpinning: spinning });
-        }
-      }
+      _this.debouncifyUpdateSpinning();
+      _this.updateSpinning();
     });
   },
   beforeDestroy: function beforeDestroy() {
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
-    }
-    if (this.delayTimeout) {
-      clearTimeout(this.delayTimeout);
+    if (this.updateSpinning && this.updateSpinning.cancel) {
+      this.updateSpinning.cancel();
     }
   },
 
   methods: {
-    delayUpdateSpinning: function delayUpdateSpinning() {
+    debouncifyUpdateSpinning: function debouncifyUpdateSpinning(props) {
+      var _ref = props || this.$props,
+          delay = _ref.delay;
+
+      if (delay) {
+        this.updateSpinning = debounce(this.originalUpdateSpinning, delay);
+      }
+    },
+    updateSpinning: function updateSpinning() {
       var spinning = this.spinning,
           sSpinning = this.sSpinning;
 
@@ -110,10 +99,8 @@ export default {
       }
       return null;
     },
-    renderIndicator: function renderIndicator(h, props) {
+    renderIndicator: function renderIndicator(h, prefixCls) {
       // const h = this.$createElement
-      var prefixCls = props.prefixCls;
-
       var dotClassName = prefixCls + '-dot';
       var indicator = getComponentFromProp(this, 'indicator');
       if (Array.isArray(indicator)) {
@@ -140,10 +127,13 @@ export default {
 
     var _$props = this.$props,
         size = _$props.size,
-        prefixCls = _$props.prefixCls,
+        customizePrefixCls = _$props.prefixCls,
         tip = _$props.tip,
         wrapperClassName = _$props.wrapperClassName,
         restProps = _objectWithoutProperties(_$props, ['size', 'prefixCls', 'tip', 'wrapperClassName']);
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('spin', customizePrefixCls);
 
     var sSpinning = this.sSpinning;
 
@@ -152,7 +142,7 @@ export default {
     var spinElement = h(
       'div',
       _mergeJSXProps([restProps, { 'class': spinClassName }]),
-      [this.renderIndicator(h, this.$props), tip ? h(
+      [this.renderIndicator(h, prefixCls), tip ? h(
         'div',
         { 'class': prefixCls + '-text' },
         [tip]

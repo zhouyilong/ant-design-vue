@@ -4,13 +4,14 @@ import _extends from 'babel-runtime/helpers/extends';
 import BaseMixin from '../_util/BaseMixin';
 import { getOptionProps, initDefaultProps } from '../_util/props-util';
 import getTransitionProps from '../_util/getTransitionProps';
+import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
 import Tooltip from '../tooltip';
 import Progress from '../progress';
 import classNames from 'classnames';
 import { UploadListProps } from './interface';
 
-var imageTypes = ['image', 'webp', 'png', 'svg', 'gif', 'jpg', 'jpeg', 'bmp', 'ico'];
+var imageTypes = ['image', 'webp', 'png', 'svg', 'gif', 'jpg', 'jpeg', 'bmp', 'dpg', 'ico'];
 // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
 var previewFile = function previewFile(file, callback) {
   if (file.type && !imageTypes.includes(file.type)) {
@@ -39,7 +40,7 @@ var isImageUrl = function isImageUrl(file) {
   }
   var url = file.thumbUrl || file.url;
   var extension = extname(url);
-  if (/^data:image\//.test(url) || /(webp|svg|png|gif|jpg|jpeg|bmp|ico)$/i.test(extension)) {
+  if (/^data:image\//.test(url) || /(webp|svg|png|gif|jpg|jpeg|bmp|dpg|ico)$/i.test(extension)) {
     return true;
   } else if (/^data:/.test(url)) {
     // other file types of base64
@@ -60,10 +61,14 @@ export default {
       strokeWidth: 2,
       showInfo: false
     },
-    prefixCls: 'ant-upload',
     showRemoveIcon: true,
     showPreviewIcon: true
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   updated: function updated() {
     var _this = this;
 
@@ -109,13 +114,16 @@ export default {
     var h = arguments[0];
 
     var _getOptionProps = getOptionProps(this),
-        prefixCls = _getOptionProps.prefixCls,
+        customizePrefixCls = _getOptionProps.prefixCls,
         _getOptionProps$items = _getOptionProps.items,
         items = _getOptionProps$items === undefined ? [] : _getOptionProps$items,
         listType = _getOptionProps.listType,
         showPreviewIcon = _getOptionProps.showPreviewIcon,
         showRemoveIcon = _getOptionProps.showRemoveIcon,
         locale = _getOptionProps.locale;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('upload', customizePrefixCls);
 
     var list = items.map(function (file) {
       var _classNames;

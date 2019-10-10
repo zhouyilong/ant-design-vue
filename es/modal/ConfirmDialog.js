@@ -4,6 +4,7 @@ import Icon from '../icon';
 import Dialog from './Modal';
 import ActionButton from './ActionButton';
 import { getConfirmLocale } from './locale';
+import warning from '../_util/warning';
 
 export default {
   functional: true,
@@ -21,10 +22,13 @@ export default {
         maskStyle = props.maskStyle,
         okButtonProps = props.okButtonProps,
         cancelButtonProps = props.cancelButtonProps,
+        _props$iconType = props.iconType,
+        iconType = _props$iconType === undefined ? 'question-circle' : _props$iconType,
         _props$closable = props.closable,
         closable = _props$closable === undefined ? false : _props$closable;
 
-    var iconType = props.iconType || 'question-circle';
+    warning(!('iconType' in props), 'The property \'iconType\' is deprecated. Use the property \'icon\' instead.');
+    var icon = props.icon ? props.icon : iconType;
     var okType = props.okType || 'primary';
     var prefixCls = props.prefixCls || 'ant-modal';
     var contentPrefixCls = prefixCls + '-confirm';
@@ -32,12 +36,15 @@ export default {
     var okCancel = 'okCancel' in props ? props.okCancel : true;
     var width = props.width || 416;
     var style = props.style || {};
+    var mask = props.mask === undefined ? true : props.mask;
     // 默认为 false，保持旧版默认行为
     var maskClosable = props.maskClosable === undefined ? false : props.maskClosable;
     var runtimeLocale = getConfirmLocale();
     var okText = props.okText || (okCancel ? runtimeLocale.okText : runtimeLocale.justOkText);
     var cancelText = props.cancelText || runtimeLocale.cancelText;
     var autoFocusButton = props.autoFocusButton === null ? false : props.autoFocusButton || 'ok';
+    var transitionName = props.transitionName || 'zoom';
+    var maskTransitionName = props.maskTransitionName || 'fade';
 
     var classString = classNames(contentPrefixCls, contentPrefixCls + '-' + props.type, prefixCls + '-' + props.type, props['class']);
 
@@ -53,6 +60,9 @@ export default {
       },
       [cancelText]
     );
+    var iconNode = typeof icon === 'string' ? h(Icon, {
+      attrs: { type: icon }
+    }) : icon(h);
 
     return h(
       Dialog,
@@ -65,9 +75,10 @@ export default {
           visible: visible,
           closable: closable,
           title: '',
-          transitionName: 'zoom',
+          transitionName: transitionName,
           footer: '',
-          maskTransitionName: 'fade',
+          maskTransitionName: maskTransitionName,
+          mask: mask,
           maskClosable: maskClosable,
           maskStyle: maskStyle,
 
@@ -90,16 +101,14 @@ export default {
         [h(
           'div',
           { 'class': contentPrefixCls + '-body' },
-          [h(Icon, {
-            attrs: { type: iconType }
-          }), h(
+          [iconNode, h(
             'span',
             { 'class': contentPrefixCls + '-title' },
-            [props.title]
+            [typeof props.title === 'function' ? props.title(h) : props.title]
           ), h(
             'div',
             { 'class': contentPrefixCls + '-content' },
-            [props.content]
+            [typeof props.content === 'function' ? props.content(h) : props.content]
           )]
         ), h(
           'div',

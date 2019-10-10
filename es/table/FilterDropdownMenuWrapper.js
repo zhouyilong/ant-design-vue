@@ -1,7 +1,8 @@
 export default {
   methods: {
     handelClick: function handelClick(e) {
-      this.$emit('click', e);
+      e.stopPropagation();
+      //this.$emit('click', e);
     }
   },
   render: function render() {
@@ -10,13 +11,13 @@ export default {
         handelClick = this.handelClick;
 
     return h(
-      'div',
+      "div",
       {
         on: {
-          'click': handelClick
+          "click": handelClick
         }
       },
-      [$slots['default']]
+      [$slots["default"]]
     );
   }
 };

@@ -34,7 +34,10 @@ export default {
   },
 
   methods: {
-    close: function close() {
+    close: function close(e) {
+      if (e) {
+        e.stopPropagation();
+      }
       this.clearCloseTimer();
       this.__emit('close');
     },

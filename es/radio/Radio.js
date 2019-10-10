@@ -6,6 +6,7 @@ import PropTypes from '../_util/vue-types';
 import VcCheckbox from '../vc-checkbox';
 import classNames from 'classnames';
 import { getOptionProps, getAttrs } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 
 function noop() {}
 
@@ -15,10 +16,7 @@ export default {
     prop: 'checked'
   },
   props: {
-    prefixCls: {
-      'default': 'ant-radio',
-      type: String
-    },
+    prefixCls: PropTypes.string,
     defaultChecked: Boolean,
     checked: { type: Boolean, 'default': undefined },
     disabled: Boolean,
@@ -30,7 +28,10 @@ export default {
     type: PropTypes.string.def('radio')
   },
   inject: {
-    radioGroupContext: { 'default': undefined }
+    radioGroupContext: { 'default': undefined },
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   methods: {
     handleChange: function handleChange(event) {
@@ -43,6 +44,12 @@ export default {
     },
     blur: function blur() {
       this.$refs.vcCheckbox.blur();
+    },
+    onChange: function onChange(e) {
+      this.$emit('change', e);
+      if (this.radioGroupContext && this.radioGroupContext.onRadioChange) {
+        this.radioGroupContext.onRadioChange(e);
+      }
     }
   },
 
@@ -63,8 +70,11 @@ export default {
         mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
         restListeners = _objectWithoutProperties($listeners, ['mouseenter', 'mouseleave']);
 
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         restProps = _objectWithoutProperties(props, ['prefixCls']);
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('radio', customizePrefixCls);
 
     var radioProps = {
       props: _extends({}, restProps, { prefixCls: prefixCls }),
@@ -74,7 +84,7 @@ export default {
 
     if (radioGroup) {
       radioProps.props.name = radioGroup.name;
-      radioProps.on.change = radioGroup.onRadioChange;
+      radioProps.on.change = this.onChange;
       radioProps.props.checked = props.value === radioGroup.stateValue;
       radioProps.props.disabled = props.disabled || radioGroup.disabled;
     } else {

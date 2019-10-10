@@ -26,7 +26,8 @@ export default {
     locale: PropTypes.object,
     value: PropTypes.object,
     defaultValue: PropTypes.object,
-    rootPrefixCls: PropTypes.string
+    rootPrefixCls: PropTypes.string,
+    renderFooter: PropTypes.func
   },
   data: function data() {
     this.nextCentury = goYear.bind(this, 100);
@@ -41,7 +42,10 @@ export default {
     var h = arguments[0];
 
     var value = this.sValue;
-    var locale = this.locale;
+    var _$props = this.$props,
+        locale = _$props.locale,
+        renderFooter = _$props.renderFooter;
+
     var currentYear = value.year();
     var startYear = parseInt(currentYear / 100, 10) * 100;
     var preYear = startYear - 10;
@@ -63,6 +67,7 @@ export default {
       }
     }
 
+    var footer = renderFooter && renderFooter('decade');
     var decadesEls = decades.map(function (row, decadeIndex) {
       var tds = row.map(function (decadeData) {
         var _classNameMap;
@@ -145,6 +150,10 @@ export default {
             [decadesEls]
           )]
         )]
+      ), footer && h(
+        'div',
+        { 'class': prefixCls + '-footer' },
+        [footer]
       )]
     );
   }

@@ -1,10 +1,13 @@
 import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
+import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import warning from 'warning';
 import { Tree as VcTree, TreeNode } from '../vc-tree';
 import animation from '../_util/openAnimation';
 import PropTypes from '../_util/vue-types';
-import { initDefaultProps, getOptionProps, filterEmpty } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, filterEmpty, getComponentFromProp, getClass } from '../_util/props-util';
+import { cloneElement } from '../_util/vnode';
+import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
 
 function TreeProps() {
@@ -72,6 +75,7 @@ function TreeProps() {
     // onDrop: (options: AntTreeNodeMouseEvent) => void,
     showIcon: PropTypes.bool,
     icon: PropTypes.func,
+    switcherIcon: PropTypes.any,
     prefixCls: PropTypes.string,
     filterTreeNode: PropTypes.func,
     openAnimation: PropTypes.any,
@@ -89,7 +93,6 @@ export default {
     event: 'check'
   },
   props: initDefaultProps(TreeProps(), {
-    prefixCls: 'ant-tree',
     checkable: false,
     showIcon: false,
     openAnimation: {
@@ -97,20 +100,23 @@ export default {
       props: { appear: null }
     }
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   created: function created() {
     warning(!('treeNodes' in getOptionProps(this)), '`treeNodes` is deprecated. please use treeData instead.');
   },
 
   TreeNode: TreeNode,
   methods: {
-    renderSwitcherIcon: function renderSwitcherIcon(_ref) {
+    renderSwitcherIcon: function renderSwitcherIcon(prefixCls, switcherIcon, _ref) {
       var isLeaf = _ref.isLeaf,
           expanded = _ref.expanded,
           loading = _ref.loading;
       var h = this.$createElement;
-      var _$props = this.$props,
-          prefixCls = _$props.prefixCls,
-          showLine = _$props.showLine;
+      var showLine = this.$props.showLine;
 
       if (loading) {
         return h(Icon, {
@@ -131,12 +137,19 @@ export default {
           },
           'class': prefixCls + '-switcher-line-icon' });
       } else {
+        var switcherCls = prefixCls + '-switcher-icon';
         if (isLeaf) {
           return null;
+        } else if (switcherIcon) {
+          var switcherOriginCls = getClass(switcherIcon[0]);
+          return cloneElement(switcherIcon, {
+            'class': _defineProperty({}, switcherCls, true)
+          });
+        } else {
+          return h(Icon, {
+            attrs: { type: 'caret-down', theme: 'filled' },
+            'class': prefixCls + '-switcher-icon' });
         }
-        return h(Icon, {
-          attrs: { type: 'caret-down', theme: 'filled' },
-          'class': prefixCls + '-switcher-icon' });
       }
     },
     updateTreeData: function updateTreeData(treeData) {
@@ -175,13 +188,18 @@ export default {
     }
   },
   render: function render() {
+    var _this2 = this;
+
     var h = arguments[0];
 
     var props = getOptionProps(this);
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         showIcon = props.showIcon,
         treeNodes = props.treeNodes;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('tree', customizePrefixCls);
+    var _switcherIcon = getComponentFromProp(this, 'switcherIcon');
     var checkable = props.checkable;
     var treeData = props.treeData || treeNodes;
     if (treeData) {
@@ -189,10 +207,13 @@ export default {
     }
     var vcTreeProps = {
       props: _extends({}, props, {
+        prefixCls: prefixCls,
         checkable: checkable ? h('span', { 'class': prefixCls + '-checkbox-inner' }) : checkable,
         children: filterEmpty(this.$slots['default'] || []),
         __propsSymbol__: Symbol(),
-        switcherIcon: this.renderSwitcherIcon
+        switcherIcon: function switcherIcon(nodeProps) {
+          return _this2.renderSwitcherIcon(prefixCls, _switcherIcon, nodeProps);
+        }
       }),
       on: this.$listeners,
       ref: 'tree',

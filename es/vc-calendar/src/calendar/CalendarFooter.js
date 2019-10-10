@@ -25,7 +25,8 @@ var CalendarFooter = {
     showToday: PropTypes.bool,
     disabledDate: PropTypes.func,
     showTimePicker: PropTypes.bool,
-    okDisabled: PropTypes.bool
+    okDisabled: PropTypes.bool,
+    mode: PropTypes.string
   },
   methods: {
     onSelect: function onSelect(value) {
@@ -46,10 +47,11 @@ var CalendarFooter = {
         showOk = props.showOk,
         timePicker = props.timePicker,
         renderFooter = props.renderFooter,
-        showToday = props.showToday;
+        showToday = props.showToday,
+        mode = props.mode;
 
     var footerEl = null;
-    var extraFooter = renderFooter();
+    var extraFooter = renderFooter && renderFooter(mode);
     if (showToday || timePicker || extraFooter) {
       var _cls;
 

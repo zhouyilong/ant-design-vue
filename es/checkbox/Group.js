@@ -1,7 +1,10 @@
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _extends from 'babel-runtime/helpers/extends';
+import PropTypes from '../_util/vue-types';
 import Checkbox from './Checkbox';
 import hasProp from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
+
 function noop() {}
 export default {
   name: 'ACheckboxGroup',
@@ -9,30 +12,22 @@ export default {
     prop: 'value'
   },
   props: {
-    prefixCls: {
-      'default': 'ant-checkbox',
-      type: String
-    },
-    defaultValue: {
-      'default': undefined,
-      type: Array
-    },
-    value: {
-      'default': undefined,
-      type: Array
-    },
-    options: {
-      'default': function _default() {
-        return [];
-      },
-      type: Array
-    },
-    disabled: Boolean
+    prefixCls: PropTypes.string,
+    defaultValue: PropTypes.array,
+    value: PropTypes.array,
+    options: PropTypes.array.def([]),
+    disabled: PropTypes.bool
   },
   provide: function provide() {
     return {
       checkboxGroupContext: this
     };
+  },
+
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   data: function data() {
     var value = this.value,
@@ -87,8 +82,11 @@ export default {
     var props = this.$props,
         state = this.$data,
         $slots = this.$slots;
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         options = props.options;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('checkbox', customizePrefixCls);
 
     var children = $slots['default'];
     var groupPrefixCls = prefixCls + '-group';

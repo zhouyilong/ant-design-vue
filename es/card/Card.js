@@ -9,6 +9,7 @@ import addEventListener from '../_util/Dom/addEventListener';
 import { getComponentFromProp, getSlotOptions, filterEmpty } from '../_util/props-util';
 import throttleByAnimationFrame from '../_util/throttleByAnimationFrame';
 import BaseMixin from '../_util/BaseMixin';
+import { ConfigConsumerProps } from '../config-provider';
 
 var TabPane = Tabs.TabPane;
 
@@ -16,7 +17,7 @@ export default {
   name: 'ACard',
   mixins: [BaseMixin],
   props: {
-    prefixCls: PropTypes.string.def('ant-card'),
+    prefixCls: PropTypes.string,
     title: PropTypes.any,
     extra: PropTypes.any,
     bordered: PropTypes.bool.def(true),
@@ -25,10 +26,16 @@ export default {
     loading: PropTypes.bool.def(false),
     hoverable: PropTypes.bool.def(false),
     type: PropTypes.string,
+    size: PropTypes.oneOf(['default', 'small']),
     actions: PropTypes.any,
     tabList: PropTypes.array,
     activeTabKey: PropTypes.string,
     defaultActiveTabKey: PropTypes.string
+  },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   data: function data() {
     this.updateWiderPaddingCalled = false;
@@ -106,8 +113,7 @@ export default {
 
     var h = arguments[0];
     var _$props = this.$props,
-        _$props$prefixCls = _$props.prefixCls,
-        prefixCls = _$props$prefixCls === undefined ? 'ant-card' : _$props$prefixCls,
+        customizePrefixCls = _$props.prefixCls,
         _$props$headStyle = _$props.headStyle,
         headStyle = _$props$headStyle === undefined ? {} : _$props$headStyle,
         _$props$bodyStyle = _$props.bodyStyle,
@@ -115,17 +121,24 @@ export default {
         loading = _$props.loading,
         _$props$bordered = _$props.bordered,
         bordered = _$props$bordered === undefined ? true : _$props$bordered,
+        _$props$size = _$props.size,
+        size = _$props$size === undefined ? 'default' : _$props$size,
         type = _$props.type,
         tabList = _$props.tabList,
         hoverable = _$props.hoverable,
         activeTabKey = _$props.activeTabKey,
         defaultActiveTabKey = _$props.defaultActiveTabKey;
+
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('card', customizePrefixCls);
+
     var $slots = this.$slots,
         $scopedSlots = this.$scopedSlots,
         $listeners = this.$listeners;
 
 
-    var classString = (_classString = {}, _defineProperty(_classString, '' + prefixCls, true), _defineProperty(_classString, prefixCls + '-loading', loading), _defineProperty(_classString, prefixCls + '-bordered', bordered), _defineProperty(_classString, prefixCls + '-hoverable', !!hoverable), _defineProperty(_classString, prefixCls + '-wider-padding', this.widerPadding), _defineProperty(_classString, prefixCls + '-padding-transition', this.updateWiderPaddingCalled), _defineProperty(_classString, prefixCls + '-contain-grid', this.isContainGrid($slots['default'])), _defineProperty(_classString, prefixCls + '-contain-tabs', tabList && tabList.length), _defineProperty(_classString, prefixCls + '-type-' + type, !!type), _classString);
+    var classString = (_classString = {}, _defineProperty(_classString, '' + prefixCls, true), _defineProperty(_classString, prefixCls + '-loading', loading), _defineProperty(_classString, prefixCls + '-bordered', bordered), _defineProperty(_classString, prefixCls + '-hoverable', !!hoverable), _defineProperty(_classString, prefixCls + '-wider-padding', this.widerPadding), _defineProperty(_classString, prefixCls + '-padding-transition', this.updateWiderPaddingCalled), _defineProperty(_classString, prefixCls + '-contain-grid', this.isContainGrid($slots['default'])), _defineProperty(_classString, prefixCls + '-contain-tabs', tabList && tabList.length), _defineProperty(_classString, prefixCls + '-' + size, size !== 'default'), _defineProperty(_classString, prefixCls + '-type-' + type, !!type), _classString);
 
     var loadingBlockStyle = bodyStyle.padding === 0 || bodyStyle.padding === '0px' ? { padding: 24 } : undefined;
 
@@ -219,30 +232,6 @@ export default {
           Col,
           {
             attrs: { span: 16 }
-          },
-          [h('div', { 'class': prefixCls + '-loading-block' })]
-        )]
-      ), h(
-        Row,
-        {
-          attrs: { gutter: 8 }
-        },
-        [h(
-          Col,
-          {
-            attrs: { span: 8 }
-          },
-          [h('div', { 'class': prefixCls + '-loading-block' })]
-        ), h(
-          Col,
-          {
-            attrs: { span: 6 }
-          },
-          [h('div', { 'class': prefixCls + '-loading-block' })]
-        ), h(
-          Col,
-          {
-            attrs: { span: 8 }
           },
           [h('div', { 'class': prefixCls + '-loading-block' })]
         )]

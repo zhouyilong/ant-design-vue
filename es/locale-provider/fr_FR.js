@@ -12,8 +12,7 @@ export default {
   Table: {
     filterTitle: 'Filtrer',
     filterConfirm: 'OK',
-    filterReset: 'Réinitialiser',
-    emptyText: 'Aucune donnée'
+    filterReset: 'Réinitialiser'
   },
   Modal: {
     okText: 'OK',
@@ -25,12 +24,11 @@ export default {
     cancelText: 'Annuler'
   },
   Transfer: {
-    notFoundContent: 'Pas de résultat',
     searchPlaceholder: 'Recherche',
     itemUnit: 'élément',
     itemsUnit: 'éléments'
   },
-  Select: {
-    notFoundContent: 'Pas de résultat'
+  Empty: {
+    description: 'Aucune donnée'
   }
 };

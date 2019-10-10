@@ -25,7 +25,8 @@ export default {
     rootPrefixCls: PropTypes.string,
     value: PropTypes.object,
     defaultValue: PropTypes.object,
-    locale: PropTypes.object
+    locale: PropTypes.object,
+    renderFooter: PropTypes.func
   },
   data: function data() {
     this.nextDecade = goYear.bind(this, 10);
@@ -66,6 +67,7 @@ export default {
     var h = arguments[0];
     var value = this.sValue,
         locale = this.locale,
+        renderFooter = this.renderFooter,
         _$listeners = this.$listeners,
         $listeners = _$listeners === undefined ? {} : _$listeners;
 
@@ -117,7 +119,7 @@ export default {
         [tds]
       );
     });
-
+    var footer = renderFooter && renderFooter('year');
     return h(
       'div',
       { 'class': prefixCls },
@@ -177,6 +179,10 @@ export default {
             [yeasEls]
           )]
         )]
+      ), footer && h(
+        'div',
+        { 'class': prefixCls + '-footer' },
+        [footer]
       )])]
     );
   }

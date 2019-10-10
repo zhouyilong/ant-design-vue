@@ -5,8 +5,7 @@ import BaseMixin from '../_util/BaseMixin';
 export default {
   mixins: [BaseMixin],
   props: {
-    rootPrefixCls: PropTypes.String,
-    selectPrefixCls: PropTypes.String,
+    disabled: PropTypes.bool,
     changeSize: PropTypes.func,
     quickGo: PropTypes.func,
     selectComponentClass: PropTypes.any,
@@ -15,6 +14,8 @@ export default {
     pageSize: PropTypes.number,
     buildOptionText: PropTypes.func,
     locale: PropTypes.object,
+    rootPrefixCls: PropTypes.string,
+    selectPrefixCls: PropTypes.string,
     goButton: PropTypes.any
   },
   data: function data() {
@@ -24,6 +25,12 @@ export default {
   },
 
   methods: {
+    getValidValue: function getValidValue() {
+      var goInputText = this.goInputText,
+          current = this.current;
+
+      return isNaN(goInputText) ? current : Number(goInputText);
+    },
     defaultBuildOptionText: function defaultBuildOptionText(opt) {
       return opt.value + ' ' + this.locale.items_per_page;
     },
@@ -32,17 +39,26 @@ export default {
         goInputText: e.target.value
       });
     },
-    go: function go(e) {
-      var val = this.goInputText;
-      if (val === '') {
+    handleBlur: function handleBlur() {
+      var goButton = this.goButton,
+          quickGo = this.quickGo;
+
+      if (goButton) {
         return;
       }
-      val = isNaN(val) ? this.current : Number(val);
+      quickGo(this.getValidValue());
+    },
+    go: function go(e) {
+      var goInputText = this.goInputText;
+
+      if (goInputText === '') {
+        return;
+      }
       if (e.keyCode === KEYCODE.ENTER || e.type === 'click') {
         this.setState({
           goInputText: ''
         });
-        this.quickGo(val);
+        this.quickGo(this.getValidValue());
       }
     }
   },
@@ -56,24 +72,27 @@ export default {
         quickGo = this.quickGo,
         goButton = this.goButton,
         Select = this.selectComponentClass,
-        defaultBuildOptionText = this.defaultBuildOptionText;
+        defaultBuildOptionText = this.defaultBuildOptionText,
+        selectPrefixCls = this.selectPrefixCls,
+        pageSize = this.pageSize,
+        pageSizeOptions = this.pageSizeOptions,
+        goInputText = this.goInputText,
+        disabled = this.disabled;
 
     var prefixCls = rootPrefixCls + '-options';
     var changeSelect = null;
     var goInput = null;
     var gotoButton = null;
 
-    if (!(changeSize || quickGo)) {
+    if (!changeSize && !quickGo) {
       return null;
     }
 
     if (changeSize && Select) {
-      var Option = Select.Option;
-      var pageSize = this.pageSize || this.pageSizeOptions[0];
       var buildOptionText = this.buildOptionText || defaultBuildOptionText;
-      var options = this.pageSizeOptions.map(function (opt, i) {
+      var options = pageSizeOptions.map(function (opt, i) {
         return h(
-          Option,
+          Select.Option,
           { key: i, attrs: { value: opt }
           },
           [buildOptionText({ value: opt })]
@@ -84,12 +103,13 @@ export default {
         Select,
         {
           attrs: {
-            prefixCls: this.selectPrefixCls,
+            disabled: disabled,
+            prefixCls: selectPrefixCls,
             showSearch: false,
 
             optionLabelProp: 'children',
             dropdownMatchSelectWidth: false,
-            value: pageSize.toString(),
+            value: (pageSize || pageSizeOptions[0]).toString(),
 
             getPopupContainer: function getPopupContainer(triggerNode) {
               return triggerNode.parentNode;
@@ -107,44 +127,42 @@ export default {
 
     if (quickGo) {
       if (goButton) {
-        if (typeof goButton === 'boolean') {
-          gotoButton = h(
-            'button',
-            {
-              attrs: { type: 'button' },
-              on: {
-                'click': this.go,
-                'keyup': this.go
-              }
-            },
-            [locale.jump_to_confirm]
-          );
-        } else {
-          gotoButton = h(
-            'span',
-            {
-              on: {
-                'click': this.go,
-                'keyup': this.go
-              }
-            },
-            [goButton]
-          );
-        }
+        gotoButton = typeof goButton === 'boolean' ? h(
+          'button',
+          {
+            attrs: { type: 'button', disabled: disabled },
+            on: {
+              'click': this.go,
+              'keyup': this.go
+            }
+          },
+          [locale.jump_to_confirm]
+        ) : h(
+          'span',
+          {
+            on: {
+              'click': this.go,
+              'keyup': this.go
+            }
+          },
+          [goButton]
+        );
       }
       goInput = h(
         'div',
         { 'class': prefixCls + '-quick-jumper' },
         [locale.jump_to, h('input', {
           attrs: {
+            disabled: disabled,
             type: 'text'
           },
           domProps: {
-            'value': this.goInputText
+            'value': goInputText
           },
           on: {
-            'input': this.handleChange,
-            'keyup': this.go
+            'change': this.handleChange,
+            'keyup': this.go,
+            'blur': this.handleBlur
           }
         }), locale.page, gotoButton]
       );

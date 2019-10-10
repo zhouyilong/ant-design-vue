@@ -56,7 +56,8 @@ export var DatePickerProps = function DatePickerProps() {
     disabledTime: PropTypes.func,
     // onOpenChange?: (status: bool) => void;
     // onOk?: (selectedTime: moment.Moment) => void;
-    placeholder: PropTypes.string
+    placeholder: PropTypes.string,
+    mode: PropTypes.oneOf(['time', 'date', 'month', 'year'])
   });
 };
 

@@ -6,6 +6,8 @@ import { initDefaultProps, getOptionProps } from '../_util/props-util';
 import classNames from 'classnames';
 import Icon from '../icon';
 import VcInputNumber from '../vc-input-number/src';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 export var InputNumberProps = {
   prefixCls: PropTypes.string,
@@ -34,9 +36,13 @@ var InputNumber = {
     event: 'change'
   },
   props: initDefaultProps(InputNumberProps, {
-    prefixCls: 'ant-input-number',
     step: 1
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   methods: {
     focus: function focus() {
       this.$refs.inputNumberRef.focus();
@@ -52,19 +58,24 @@ var InputNumber = {
     var h = arguments[0];
 
     var _getOptionProps = getOptionProps(this),
+        customizePrefixCls = _getOptionProps.prefixCls,
         size = _getOptionProps.size,
-        others = _objectWithoutProperties(_getOptionProps, ['size']);
+        others = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'size']);
 
-    var inputNumberClass = classNames((_classNames = {}, _defineProperty(_classNames, this.prefixCls + '-lg', size === 'large'), _defineProperty(_classNames, this.prefixCls + '-sm', size === 'small'), _classNames));
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('input-number', customizePrefixCls);
+
+    var inputNumberClass = classNames((_classNames = {}, _defineProperty(_classNames, prefixCls + '-lg', size === 'large'), _defineProperty(_classNames, prefixCls + '-sm', size === 'small'), _classNames));
     var upIcon = h(Icon, {
       attrs: { type: 'up' },
-      'class': this.prefixCls + '-handler-up-inner' });
+      'class': prefixCls + '-handler-up-inner' });
     var downIcon = h(Icon, {
       attrs: { type: 'down' },
-      'class': this.prefixCls + '-handler-down-inner' });
+      'class': prefixCls + '-handler-down-inner' });
 
     var vcInputNumberprops = {
       props: _extends({
+        prefixCls: prefixCls,
         upHandler: upIcon,
         downHandler: downIcon
       }, others),
@@ -78,6 +89,7 @@ var InputNumber = {
 
 /* istanbul ignore next */
 InputNumber.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(InputNumber.name, InputNumber);
 };
 

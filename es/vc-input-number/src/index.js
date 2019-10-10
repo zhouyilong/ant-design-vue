@@ -1,6 +1,6 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-// based on rc-input-number 4.3.8
+// based on rc-input-number 4.4.0
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
 import { initDefaultProps, hasProp, getOptionProps } from '../../_util/props-util';
@@ -34,6 +34,11 @@ var DELAY = 600;
  * The reason this is used, instead of Infinity is because numbers above the MSI are unstable
  */
 var MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || Math.pow(2, 53) - 1;
+
+var isValidProps = function isValidProps(value) {
+  return value !== undefined && value !== null;
+};
+
 var inputNumberProps = {
   value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   defaultValue: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -317,7 +322,7 @@ export default {
       // https://github.com/ant-design/ant-design/issues/8196
       var value = e.target.value.trim().replace(/。/g, '.');
 
-      if (this.decimalSeparator !== undefined) {
+      if (isValidProps(this.decimalSeparator)) {
         value = value.replace(this.decimalSeparator, '.');
       }
 
@@ -342,7 +347,7 @@ export default {
     },
     setValue: function setValue(v, callback) {
       // trigger onChange
-      var newValue = this.isNotCompleteNumber(parseFloat(v, 10)) ? undefined : parseFloat(v, 10);
+      var newValue = this.isNotCompleteNumber(parseFloat(v, 10)) ? null : parseFloat(v, 10);
       var changed = newValue !== this.sValue || '' + newValue !== '' + this.inputValue; // https://github.com/ant-design/ant-design/issues/7363
       if (!hasProp(this, 'value')) {
         this.setState({
@@ -360,7 +365,7 @@ export default {
       }
     },
     getPrecision: function getPrecision(value) {
-      if (hasProp(this, 'precision')) {
+      if (isValidProps(this.precision)) {
         return this.precision;
       }
       var valueString = value.toString();
@@ -382,7 +387,7 @@ export default {
     getMaxPrecision: function getMaxPrecision(currentValue) {
       var ratio = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
 
-      if (hasProp(this, 'precision')) {
+      if (isValidProps(this.precision)) {
         return this.precision;
       }
       var step = this.step;
@@ -523,7 +528,7 @@ export default {
       if (this.isNotCompleteNumber(num)) {
         return num;
       }
-      if (hasProp(this, 'precision')) {
+      if (isValidProps(this.precision)) {
         return Number(Number(num).toFixed(this.precision));
       }
       return Number(num);
@@ -693,7 +698,7 @@ export default {
       };
     }
     var inputDisplayValueFormat = this.formatWrapper(inputDisplayValue);
-    if (this.decimalSeparator !== undefined) {
+    if (isValidProps(this.decimalSeparator)) {
       inputDisplayValueFormat = inputDisplayValueFormat.toString().replace('.', this.decimalSeparator);
     }
     var isUpDisabled = !!upDisabledClass || disabled || readOnly;

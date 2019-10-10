@@ -4,10 +4,11 @@ import _typeof from 'babel-runtime/helpers/typeof';
 import Icon from '../icon';
 import VcTabs, { TabPane } from '../vc-tabs/src';
 import TabContent from '../vc-tabs/src/TabContent';
-import isFlexSupported from '../_util/isFlexSupported';
+import { isFlexSupported } from '../_util/styleChecker';
 import PropTypes from '../_util/vue-types';
 import { getComponentFromProp, getOptionProps, filterEmpty } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
+import { ConfigConsumerProps } from '../config-provider';
 import TabBar from './TabBar';
 
 export default {
@@ -18,7 +19,7 @@ export default {
     event: 'change'
   },
   props: {
-    prefixCls: PropTypes.string.def('ant-tabs'),
+    prefixCls: PropTypes.string,
     activeKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     defaultActiveKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     hideAdd: PropTypes.bool.def(false),
@@ -32,10 +33,15 @@ export default {
     tabBarGutter: PropTypes.number,
     renderTabBar: PropTypes.func
   },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   mounted: function mounted() {
     var NO_FLEX = ' no-flex';
     var tabNode = this.$el;
-    if (tabNode && !isFlexSupported() && tabNode.className.indexOf(NO_FLEX) === -1) {
+    if (tabNode && !isFlexSupported && tabNode.className.indexOf(NO_FLEX) === -1) {
       tabNode.className += NO_FLEX;
     }
   },
@@ -73,7 +79,7 @@ export default {
     var h = arguments[0];
 
     var props = getOptionProps(this);
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         size = props.size,
         _props$type = props.type,
         type = _props$type === undefined ? 'line' : _props$type,
@@ -83,6 +89,8 @@ export default {
         hideAdd = props.hideAdd,
         renderTabBar = props.renderTabBar;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('tabs', customizePrefixCls);
     var children = filterEmpty(this.$slots['default']);
 
     var tabBarExtraContent = getComponentFromProp(this, 'tabBarExtraContent');
@@ -143,6 +151,7 @@ export default {
     var renderTabBarSlot = renderTabBar || this.$scopedSlots.renderTabBar;
     var tabBarProps = {
       props: _extends({}, this.$props, {
+        prefixCls: prefixCls,
         tabBarExtraContent: tabBarExtraContent,
         renderTabBar: renderTabBarSlot
       }),
@@ -151,6 +160,7 @@ export default {
     var contentCls = (_contentCls = {}, _defineProperty(_contentCls, prefixCls + '-' + tabPosition + '-content', true), _defineProperty(_contentCls, prefixCls + '-card-content', type.indexOf('card') >= 0), _contentCls);
     var tabsProps = {
       props: _extends({}, getOptionProps(this), {
+        prefixCls: prefixCls,
         tabBarPosition: tabPosition,
         renderTabBar: function renderTabBar() {
           return h(TabBar, tabBarProps);

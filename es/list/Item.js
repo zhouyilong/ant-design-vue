@@ -4,6 +4,7 @@ import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
 import { getSlotOptions, getComponentFromProp, isEmptyElement } from '../_util/props-util';
 import { Col } from '../grid';
+import { ConfigConsumerProps } from '../config-provider';
 import { ListGridType } from './index';
 
 export var ListItemProps = {
@@ -24,14 +25,22 @@ export var Meta = {
   functional: true,
   name: 'AListItemMeta',
   __ANT_LIST_ITEM_META: true,
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   render: function render(h, context) {
     var props = context.props,
         slots = context.slots,
-        listeners = context.listeners;
+        listeners = context.listeners,
+        injections = context.injections;
 
     var slotsMap = slots();
-    var _props$prefixCls = props.prefixCls,
-        prefixCls = _props$prefixCls === undefined ? 'ant-list' : _props$prefixCls;
+    var getPrefixCls = injections.configProvider.getPrefixCls;
+    var customizePrefixCls = props.prefixCls;
+
+    var prefixCls = getPrefixCls('list', customizePrefixCls);
 
     var avatar = props.avatar || slotsMap.avatar;
     var title = props.title || slotsMap.title;
@@ -72,16 +81,20 @@ export default {
   inject: {
     listContext: { 'default': function _default() {
         return {};
+      } },
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
       } }
   },
-
   render: function render() {
     var h = arguments[0];
     var grid = this.listContext.grid;
-    var _prefixCls = this.prefixCls,
-        prefixCls = _prefixCls === undefined ? 'ant-list' : _prefixCls,
+    var customizePrefixCls = this.prefixCls,
         $slots = this.$slots,
         $listeners = this.$listeners;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('list', customizePrefixCls);
 
     var classString = prefixCls + '-item';
     var extra = getComponentFromProp(this, 'extra');

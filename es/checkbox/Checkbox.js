@@ -6,6 +6,7 @@ import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
 import VcCheckbox from '../vc-checkbox';
 import { getOptionProps, getAttrs } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 function noop() {}
 
 export default {
@@ -15,22 +16,22 @@ export default {
     prop: 'checked'
   },
   props: {
-    prefixCls: {
-      'default': 'ant-checkbox',
-      type: String
-    },
+    prefixCls: PropTypes.string,
     defaultChecked: PropTypes.bool,
     checked: PropTypes.bool,
     disabled: PropTypes.bool,
-    isGroup: Boolean,
+    isGroup: PropTypes.bool,
     value: PropTypes.any,
-    name: String,
-    id: String,
-    indeterminate: Boolean,
+    name: PropTypes.string,
+    id: PropTypes.string,
+    indeterminate: PropTypes.bool,
     type: PropTypes.string.def('checkbox'),
-    autoFocus: Boolean
+    autoFocus: PropTypes.bool
   },
   inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } },
     checkboxGroupContext: { 'default': function _default() {
         return null;
       } }
@@ -67,9 +68,12 @@ export default {
         mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
         restListeners = _objectWithoutProperties($listeners, ['mouseenter', 'mouseleave']);
 
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
         indeterminate = props.indeterminate,
         restProps = _objectWithoutProperties(props, ['prefixCls', 'indeterminate']);
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('checkbox', customizePrefixCls);
 
     var checkboxProps = {
       props: _extends({}, restProps, { prefixCls: prefixCls }),

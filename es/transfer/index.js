@@ -9,7 +9,9 @@ import List from './list';
 import Operation from './operation';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import defaultLocale from '../locale-provider/default';
+import { ConfigConsumerProps } from '../config-provider';
 import warning from '../_util/warning';
+import Base from '../base';
 
 export var TransferDirection = 'left' | 'right';
 
@@ -55,6 +57,11 @@ var Transfer = {
     locale: {},
     showSearch: false
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     // vue 中 通过slot，不方便传递，保留notFoundContent及searchPlaceholder
     // warning(
@@ -326,9 +333,12 @@ var Transfer = {
     getSelectedKeysName: function getSelectedKeysName(direction) {
       return direction === 'left' ? 'sourceSelectedKeys' : 'targetSelectedKeys';
     },
-    getLocale: function getLocale(transferLocale) {
+    getLocale: function getLocale(transferLocale, renderEmpty) {
+      var h = this.$createElement;
       // Keep old locale props still working.
-      var oldLocale = {};
+      var oldLocale = {
+        notFoundContent: renderEmpty(h, 'Transfer')
+      };
       var notFoundContent = getComponentFromProp(this, 'notFoundContent');
       if (notFoundContent) {
         oldLocale.notFoundContent = notFoundContent;
@@ -343,8 +353,7 @@ var Transfer = {
       var h = this.$createElement;
 
       var props = getOptionProps(this);
-      var _props$prefixCls = props.prefixCls,
-          prefixCls = _props$prefixCls === undefined ? 'ant-transfer' : _props$prefixCls,
+      var customizePrefixCls = props.prefixCls,
           disabled = props.disabled,
           _props$operations = props.operations,
           operations = _props$operations === undefined ? [] : _props$operations,
@@ -354,7 +363,11 @@ var Transfer = {
           filterOption = props.filterOption,
           lazy = props.lazy;
 
-      var locale = this.getLocale(transferLocale);
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('transfer', customizePrefixCls);
+
+      var renderEmpty = this.configProvider.renderEmpty;
+      var locale = this.getLocale(transferLocale, renderEmpty);
       var leftFilter = this.leftFilter,
           rightFilter = this.rightFilter,
           sourceSelectedKeys = this.sourceSelectedKeys,
@@ -464,6 +477,7 @@ var Transfer = {
 
 /* istanbul ignore next */
 Transfer.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Transfer.name, Transfer);
 };
 

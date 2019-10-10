@@ -98,13 +98,13 @@ var Picker = {
         });
       }
       var calendarProps = getOptionProps(props.calendar);
-      if (cause.source === 'keyboard' || !calendarProps.timePicker && cause.source !== 'dateInput' || cause.source === 'todayButton') {
+      if (cause.source === 'keyboard' || cause.source === 'dateInputSelect' || !calendarProps.timePicker && cause.source !== 'dateInput' || cause.source === 'todayButton') {
         this.closeCalendar(this.focus);
       }
       this.__emit('change', value);
     },
     onKeyDown: function onKeyDown(event) {
-      if (event.keyCode === KeyCode.DOWN && !this.sOpen) {
+      if (!this.sOpen && (event.keyCode === KeyCode.DOWN || event.keyCode === KeyCode.ENTER)) {
         this.openCalendar();
         event.preventDefault();
       }

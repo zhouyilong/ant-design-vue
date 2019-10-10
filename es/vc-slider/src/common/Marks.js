@@ -19,9 +19,6 @@ var Marks = {
     var clickLabel = context.listeners.clickLabel;
 
     var marksKeys = Object.keys(marks);
-    var marksCount = marksKeys.length;
-    var unit = marksCount > 1 ? 100 / (marksCount - 1) : 100;
-    var markWidth = unit * 0.9;
 
     var range = max - min;
     var elements = marksKeys.map(parseFloat).sort(function (a, b) {
@@ -45,9 +42,9 @@ var Marks = {
       };
 
       var leftStyle = {
-        width: markWidth + '%',
-        marginLeft: -markWidth / 2 + '%',
-        left: (point - min) / range * 100 + '%'
+        left: (point - min) / range * 100 + '%',
+        transform: 'translateX(-50%)',
+        msTransform: 'translateX(-50%)'
       };
 
       var style = vertical ? bottomStyle : leftStyle;

@@ -2,7 +2,6 @@ import _typeof from 'babel-runtime/helpers/typeof';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import intersperse from 'intersperse';
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
 import find from 'lodash/find';
@@ -15,8 +14,15 @@ import getTransitionProps from '../_util/getTransitionProps';
 import BaseMixin from '../_util/BaseMixin';
 import { cloneElement, cloneVNodes } from '../_util/vnode';
 import Icon from '../icon';
+import { ConfigConsumerProps } from '../config-provider';
 
 function noop() {}
+
+function intersperseSpace(list) {
+  return list.reduce(function (current, item) {
+    return [].concat(_toConsumableArray(current), [' ', item]);
+  }, []).slice(1);
+}
 export var FormItemProps = {
   id: PropTypes.string,
   prefixCls: PropTypes.string,
@@ -30,7 +36,8 @@ export var FormItemProps = {
   required: PropTypes.bool,
   colon: PropTypes.bool,
   fieldDecoratorId: PropTypes.string,
-  fieldDecoratorOptions: PropTypes.object
+  fieldDecoratorOptions: PropTypes.object,
+  selfUpdate: PropTypes.bool
 };
 function comeFromSlot() {
   var vnodes = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -58,7 +65,6 @@ export default {
   mixins: [BaseMixin],
   props: initDefaultProps(FormItemProps, {
     hasFeedback: false,
-    prefixCls: 'ant-form',
     colon: true
   }),
   inject: {
@@ -70,10 +76,19 @@ export default {
       } },
     collectFormItemContext: { 'default': function _default() {
         return noop;
+      } },
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
       } }
   },
   data: function data() {
     return { helpShow: false };
+  },
+
+  computed: {
+    itemSelfUpdate: function itemSelfUpdate() {
+      return !!(this.selfUpdate === undefined ? this.FormProps.selfUpdate : this.selfUpdate);
+    }
   },
   created: function created() {
     this.collectContext();
@@ -87,7 +102,11 @@ export default {
     this.collectFormItemContext(this.$vnode.context, 'delete');
   },
   mounted: function mounted() {
-    warning(this.getControls(this.slotDefault, true).length <= 1, '`Form.Item` cannot generate `validateStatus` and `help` automatically, ' + 'while there are more than one `getFieldDecorator` in it.');
+    var _$props = this.$props,
+        help = _$props.help,
+        validateStatus = _$props.validateStatus;
+
+    warning(this.getControls(this.slotDefault, true).length <= 1 || help !== undefined || validateStatus !== undefined, '`Form.Item` cannot generate `validateStatus` and `help` automatically, ' + 'while there are more than one `getFieldDecorator` in it.');
     warning(!this.fieldDecoratorId, '`fieldDecoratorId` is deprecated. please use `v-decorator={id, options}` instead.');
   },
 
@@ -117,9 +136,15 @@ export default {
       if (help === undefined && onlyControl) {
         var errors = this.getField().errors;
         if (errors) {
-          return intersperse(errors.map(function (e, index) {
-            return isValidElement(e.message) ? cloneElement(e.message, { key: index }) : e.message;
-          }), ' ');
+          return intersperseSpace(errors.map(function (e, index) {
+            var node = null;
+            if (isValidElement(e)) {
+              node = e;
+            } else if (isValidElement(e.message)) {
+              node = e.message;
+            }
+            return node ? cloneElement(node, { key: index }) : e.message;
+          }));
         } else {
           return '';
         }
@@ -188,31 +213,29 @@ export default {
         this.$forceUpdate();
       }
     },
-    renderHelp: function renderHelp() {
+    renderHelp: function renderHelp(prefixCls) {
       /** 取消校验提示 by fanjunliang 20190802**/
-      /*const prefixCls = this.prefixCls;
-      const help = this.getHelpMessage();
-      const children = help ? (
-        <div class={`${prefixCls}-explain`} key="help">
-          {help}
-        </div>
-      ) : null;
-      if (children) {
-        this.helpShow = !!children;
-      }
-      const transitionProps = getTransitionProps('show-help', {
-        afterEnter: () => this.onHelpAnimEnd('help', true),
-        afterLeave: () => this.onHelpAnimEnd('help', false),
-      });
-      return (
-        <transition {...transitionProps} key="help">
-          {children}
-        </transition>
-      );*/
+      /*      const help = this.getHelpMessage();
+            const children = help ? (
+              <div class={`${prefixCls}-explain`} key="help">
+                {help}
+              </div>
+            ) : null;
+            if (children) {
+              this.helpShow = !!children;
+            }
+            const transitionProps = getTransitionProps('show-help', {
+              afterEnter: () => this.onHelpAnimEnd('help', true),
+              afterLeave: () => this.onHelpAnimEnd('help', false),
+            });
+            return (
+              <transition {...transitionProps} key="help">
+                {children}
+              </transition>
+            );*/
     },
-    renderExtra: function renderExtra() {
+    renderExtra: function renderExtra(prefixCls) {
       var h = this.$createElement;
-      var prefixCls = this.prefixCls;
 
       var extra = getComponentFromProp(this, 'extra');
       return extra ? h(
@@ -239,16 +262,16 @@ export default {
       }
       return '';
     },
-    renderValidateWrapper: function renderValidateWrapper(c1, c2, c3) {
+    renderValidateWrapper: function renderValidateWrapper(prefixCls, c1, c2, c3) {
       var h = this.$createElement;
 
       var props = this.$props;
       var onlyControl = this.getOnlyControl;
       var validateStatus = props.validateStatus === undefined && onlyControl ? this.getValidateStatus() : props.validateStatus;
 
-      var classes = props.prefixCls + '-item-control';
+      var classes = prefixCls + '-item-control';
       if (validateStatus) {
-        classes = classNames(props.prefixCls + '-item-control', {
+        classes = classNames(prefixCls + '-item-control', {
           'has-feedback': props.hasFeedback || validateStatus === 'validating',
           'has-success': validateStatus === 'success',
           'has-warning': validateStatus === 'warning',
@@ -276,7 +299,7 @@ export default {
       }
       var icon = props.hasFeedback && iconType ? h(
         'span',
-        { 'class': props.prefixCls + '-item-children-icon' },
+        { 'class': prefixCls + '-item-children-icon' },
         [h(Icon, {
           attrs: { type: iconType, theme: iconType === 'loading' ? 'outlined' : 'filled' }
         })]
@@ -286,15 +309,14 @@ export default {
         { 'class': classes },
         [h(
           'span',
-          { 'class': props.prefixCls + '-item-children' },
+          { 'class': prefixCls + '-item-children' },
           [c1, icon]
         ), c2, c3]
       );
     },
-    renderWrapper: function renderWrapper(children) {
+    renderWrapper: function renderWrapper(prefixCls, children) {
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          _wrapperCol = this.wrapperCol,
+      var _wrapperCol = this.wrapperCol,
           wrapperCol = _wrapperCol === undefined ? {} : _wrapperCol;
 
       var cls = wrapperCol['class'],
@@ -348,23 +370,22 @@ export default {
       if (!id) {
         return;
       }
-      var controls = document.querySelectorAll('[id="' + id + '"]');
-      if (controls.length !== 1) {
+      var formItemNode = this.$el;
+      var control = formItemNode.querySelector('[id="' + id + '"]');
+      if (control) {
         // Only prevent in default situation
         // Avoid preventing event in `label={<a href="xx">link</a>}``
         if (typeof label === 'string') {
           e.preventDefault();
         }
-        var control = this.$el.querySelector('[id="' + id + '"]');
-        if (control && control.focus) {
+        if (control.focus) {
           control.focus();
         }
       }
     },
-    renderLabel: function renderLabel() {
+    renderLabel: function renderLabel(prefixCls) {
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          _labelCol = this.labelCol,
+      var _labelCol = this.labelCol,
           labelCol = _labelCol === undefined ? {} : _labelCol,
           colon = this.colon,
           id = this.id;
@@ -416,17 +437,21 @@ export default {
         )]
       ) : null;
     },
-    renderChildren: function renderChildren() {
-      return [this.renderLabel(), this.renderWrapper(this.renderValidateWrapper(this.slotDefault, this.renderHelp(), this.renderExtra()))];
+    renderChildren: function renderChildren(prefixCls) {
+      return [this.renderLabel(prefixCls), this.renderWrapper(prefixCls, this.renderValidateWrapper(prefixCls, this.slotDefault, this.renderHelp(prefixCls), this.renderExtra(prefixCls)))];
     },
-    renderFormItem: function renderFormItem(children) {
+    renderFormItem: function renderFormItem() {
       var _itemClassName;
 
       var h = this.$createElement;
+      var _$props2 = this.$props,
+          customizePrefixCls = _$props2.prefixCls,
+          colon = _$props2.colon;
 
-      var props = this.$props;
-      var prefixCls = props.prefixCls;
-      var itemClassName = (_itemClassName = {}, _defineProperty(_itemClassName, prefixCls + '-item', true), _defineProperty(_itemClassName, prefixCls + '-item-with-help', this.helpShow), _defineProperty(_itemClassName, prefixCls + '-item-no-colon', !props.colon), _itemClassName);
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('form', customizePrefixCls);
+      var children = this.renderChildren(prefixCls);
+      var itemClassName = (_itemClassName = {}, _defineProperty(_itemClassName, prefixCls + '-item', true), _defineProperty(_itemClassName, prefixCls + '-item-with-help', this.helpShow), _defineProperty(_itemClassName, prefixCls + '-item-no-colon', !colon), _itemClassName);
 
       return h(
         Row,
@@ -459,7 +484,7 @@ export default {
         }
         var option = this.decoratorOption(vnode);
         if (option && option[0]) {
-          vnodes[i] = getFieldDecorator(option[0], option[1])(vnode);
+          vnodes[i] = getFieldDecorator(option[0], option[1], this)(vnode);
         }
       }
       return vnodes;
@@ -477,7 +502,7 @@ export default {
     var child = filterEmpty($slots['default'] || []);
     if (decoratorFormProps.form && fieldDecoratorId && child.length) {
       var getFieldDecorator = decoratorFormProps.form.getFieldDecorator;
-      child[0] = getFieldDecorator(fieldDecoratorId, fieldDecoratorOptions)(child[0]);
+      child[0] = getFieldDecorator(fieldDecoratorId, fieldDecoratorOptions, this)(child[0]);
       warning(!(child.length > 1), '`autoFormCreate` just `decorator` then first children. but you can use JSX to support multiple children');
       this.slotDefault = child;
     } else if (FormProps.form) {
@@ -486,8 +511,6 @@ export default {
     } else {
       this.slotDefault = child;
     }
-
-    var children = this.renderChildren();
-    return this.renderFormItem(children);
+    return this.renderFormItem();
   }
 };

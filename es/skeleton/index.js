@@ -4,9 +4,11 @@ import _typeof from 'babel-runtime/helpers/typeof';
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
 import { initDefaultProps, hasProp } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 import Avatar, { SkeletonAvatarProps } from './Avatar';
 import Title, { SkeletonTitleProps } from './Title';
 import Paragraph, { SkeletonParagraphProps } from './Paragraph';
+import Base from '../base';
 
 export var SkeletonProps = {
   active: PropTypes.bool,
@@ -66,20 +68,27 @@ function getParagraphBasicProps(hasAvatar, hasTitle) {
 var Skeleton = {
   name: 'ASkeleton',
   props: initDefaultProps(SkeletonProps, {
-    prefixCls: 'ant-skeleton',
     avatar: false,
     title: true,
     paragraph: true
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   render: function render() {
     var h = arguments[0];
     var _$props = this.$props,
+        customizePrefixCls = _$props.prefixCls,
         loading = _$props.loading,
-        prefixCls = _$props.prefixCls,
         avatar = _$props.avatar,
         title = _$props.title,
         paragraph = _$props.paragraph,
         active = _$props.active;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('skeleton', customizePrefixCls);
 
     if (loading || !hasProp(this, 'loading')) {
       var _classNames;
@@ -92,7 +101,9 @@ var Skeleton = {
       var avatarNode = void 0;
       if (hasAvatar) {
         var avatarProps = {
-          props: _extends({}, getAvatarBasicProps(hasTitle, hasParagraph), getComponentProps(avatar))
+          props: _extends({
+            prefixCls: prefixCls + '-avatar'
+          }, getAvatarBasicProps(hasTitle, hasParagraph), getComponentProps(avatar))
         };
 
         avatarNode = h(
@@ -108,7 +119,9 @@ var Skeleton = {
         var $title = void 0;
         if (hasTitle) {
           var titleProps = {
-            props: _extends({}, getTitleBasicProps(hasAvatar, hasParagraph), getComponentProps(title))
+            props: _extends({
+              prefixCls: prefixCls + '-title'
+            }, getTitleBasicProps(hasAvatar, hasParagraph), getComponentProps(title))
           };
 
           $title = h(Title, titleProps);
@@ -118,7 +131,9 @@ var Skeleton = {
         var paragraphNode = void 0;
         if (hasParagraph) {
           var paragraphProps = {
-            props: _extends({}, getParagraphBasicProps(hasAvatar, hasTitle), getComponentProps(paragraph))
+            props: _extends({
+              prefixCls: prefixCls + '-paragraph'
+            }, getParagraphBasicProps(hasAvatar, hasTitle), getComponentProps(paragraph))
           };
 
           paragraphNode = h(Paragraph, paragraphProps);
@@ -144,6 +159,7 @@ var Skeleton = {
 };
 /* istanbul ignore next */
 Skeleton.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Skeleton.name, Skeleton);
 };
 export default Skeleton;

@@ -13,6 +13,7 @@ export default {
     allowHalf: PropTypes.bool,
     disabled: PropTypes.bool,
     character: PropTypes.any,
+    characterRender: PropTypes.func,
     focused: PropTypes.bool,
     count: PropTypes.number
   },
@@ -66,38 +67,46 @@ export default {
         onKeyDown = this.onKeyDown,
         disabled = this.disabled,
         prefixCls = this.prefixCls,
+        characterRender = this.characterRender,
         index = this.index,
         count = this.count,
         value = this.value;
 
 
     var character = getComponentFromProp(this, 'character');
-    return h(
+    var star = h(
       'li',
-      {
-        'class': this.getClassName(),
-        on: {
-          'click': disabled ? noop : onClick,
-          'keydown': disabled ? noop : onKeyDown,
-          'mousemove': disabled ? noop : onHover
-        },
-        attrs: {
-          role: 'radio',
-          'aria-checked': value > index ? 'true' : 'false',
-          'aria-posinset': index + 1,
-          'aria-setsize': count,
-          tabIndex: 0
-        }
-      },
+      { 'class': this.getClassName() },
       [h(
         'div',
-        { 'class': prefixCls + '-first' },
-        [character]
-      ), h(
-        'div',
-        { 'class': prefixCls + '-second' },
-        [character]
+        {
+          on: {
+            'click': disabled ? noop : onClick,
+            'keydown': disabled ? noop : onKeyDown,
+            'mousemove': disabled ? noop : onHover
+          },
+          attrs: {
+            role: 'radio',
+            'aria-checked': value > index ? 'true' : 'false',
+            'aria-posinset': index + 1,
+            'aria-setsize': count,
+            tabIndex: 0
+          }
+        },
+        [h(
+          'div',
+          { 'class': prefixCls + '-first' },
+          [character]
+        ), h(
+          'div',
+          { 'class': prefixCls + '-second' },
+          [character]
+        )]
       )]
     );
+    if (characterRender) {
+      star = characterRender(star, this.$props);
+    }
+    return star;
   }
 };

@@ -3,6 +3,7 @@ import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutPropert
 import T from './Table';
 
 import { getOptionProps, getKey, getClass, getStyle, getEvents, getSlotOptions, camelize, getSlots } from '../_util/props-util';
+import Base from '../base';
 
 var Table = {
   name: 'ATable',
@@ -40,7 +41,7 @@ var Table = {
           column.key = key;
         }
         if (getSlotOptions(element).__ANT_TABLE_COLUMN_GROUP) {
-          column.children = _this.normalize(children);
+          column.children = _this.normalize(typeof children === 'function' ? children() : children);
         } else {
           var customRender = element.data && element.data.scopedSlots && element.data.scopedSlots['default'];
           column.customRender = column.customRender || customRender;
@@ -121,6 +122,7 @@ var Table = {
 };
 /* istanbul ignore next */
 Table.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Table.name, Table);
   Vue.component(Table.Column.name, Table.Column);
   Vue.component(Table.ColumnGroup.name, Table.ColumnGroup);

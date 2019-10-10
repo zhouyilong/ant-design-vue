@@ -23,7 +23,7 @@ function getDerivedStateFromProps(nextProps, prevState) {
       keyEntities = nextProps.keyEntities,
       treeExpandedKeys = nextProps.treeExpandedKeys,
       filteredTreeNodes = nextProps.filteredTreeNodes,
-      searchValue = nextProps.searchValue;
+      upperSearchValue = nextProps.upperSearchValue;
 
 
   var newState = {
@@ -49,9 +49,9 @@ function getDerivedStateFromProps(nextProps, prevState) {
   }
 
   // Cache `expandedKeyList` when filter set
-  if (searchValue && !prevProps.searchValue) {
+  if (upperSearchValue && !prevProps.upperSearchValue) {
     newState._cachedExpandedKeyList = expandedKeyList;
-  } else if (!searchValue && prevProps.searchValue && !treeExpandedKeys) {
+  } else if (!upperSearchValue && prevProps.upperSearchValue && !treeExpandedKeys) {
     newState._expandedKeyList = cachedExpandedKeyList || [];
     newState._cachedExpandedKeyList = [];
   }
@@ -94,7 +94,7 @@ var BasePopup = {
     searchValue: PropTypes.string,
     treeNodes: PropTypes.any,
     filteredTreeNodes: PropTypes.any,
-    notFoundContent: PropTypes.string,
+    notFoundContent: PropTypes.any,
 
     ariaId: PropTypes.string,
     switcherIcon: PropTypes.any,
@@ -167,9 +167,9 @@ var BasePopup = {
     getLoadData: function getLoadData() {
       var _$props2 = this.$props,
           loadData = _$props2.loadData,
-          searchValue = _$props2.searchValue;
+          upperSearchValue = _$props2.upperSearchValue;
 
-      if (searchValue) return null;
+      if (upperSearchValue) return null;
       return loadData;
     },
 

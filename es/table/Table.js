@@ -1,17 +1,11 @@
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-import _typeof from 'babel-runtime/helpers/typeof';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
+import _typeof from 'babel-runtime/helpers/typeof';
 import _extends from 'babel-runtime/helpers/extends';
 import VcTable from '../vc-table';
 import classNames from 'classnames';
 import shallowEqual from 'shallowequal';
-import Pagination from '../pagination';
-import Icon from '../icon';
-import Spin from '../spin';
-import LocaleReceiver from '../locale-provider/LocaleReceiver';
-import defaultLocale from '../locale-provider/default';
-import warning from '../_util/warning';
 import FilterDropdown from './filterDropdown';
 import createStore from './createStore';
 import SelectionBox from './SelectionBox';
@@ -20,9 +14,16 @@ import Column from './Column';
 import ColumnGroup from './ColumnGroup';
 import createBodyRow from './createBodyRow';
 import { flatArray, treeMap, flatFilter } from './util';
-import { initDefaultProps, mergeProps, getOptionProps, isValidElement, filterEmpty, getAllProps } from '../_util/props-util';
+import { initDefaultProps, mergeProps, getOptionProps, isValidElement, filterEmpty, getAllProps, getComponentFromProp } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
+import { ConfigConsumerProps } from '../config-provider';
 import { TableProps } from './interface';
+import Pagination from '../pagination';
+import Icon from '../icon';
+import Spin, { SpinProps } from '../spin';
+import LocaleReceiver from '../locale-provider/LocaleReceiver';
+import defaultLocale from '../locale-provider/default';
+import warning from '../_util/warning';
 
 function noop() {}
 
@@ -42,6 +43,8 @@ var defaultPagination = {
   onShowSizeChange: noop
 };
 
+var ROW_SELECTION_COLUMN_WIDTH = '62px';
+
 /**
  * Avoid creating new object, so that parent component's shouldComponentUpdate
  * can works appropriately。
@@ -55,7 +58,6 @@ export default {
   mixins: [BaseMixin],
   props: initDefaultProps(TableProps, {
     dataSource: [],
-    prefixCls: 'ant-table',
     useFixedHeader: false,
     // rowSelection: null,
     size: 'default',
@@ -64,9 +66,15 @@ export default {
     indentSize: 20,
     locale: {},
     rowKey: 'key',
-    showHeader: true
+    showHeader: true,
+    sortDirections: ['ascend', 'descend']
   }),
 
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   // CheckboxPropsCache: {
   //   [key: string]: any;
   // };
@@ -76,7 +84,8 @@ export default {
 
   data: function data() {
     // this.columns = props.columns || normalizeColumns(props.children)
-
+    var props = getOptionProps(this);
+    warning(!('expandedRowRender' in props) || !('scroll' in props), '`expandedRowRender` and `scroll` are not compatible. Please use one of them at one time.');
     this.createComponents(this.components);
     this.CheckboxPropsCache = {};
 
@@ -106,7 +115,7 @@ export default {
       deep: true
     },
     rowSelection: {
-      handler: function handler(val) {
+      handler: function handler(val, oldVal) {
         if (val && 'selectedRowKeys' in val) {
           this.store.setState({
             selectedRowKeys: val.selectedRowKeys || []
@@ -116,6 +125,10 @@ export default {
           if (rowSelection && val.getCheckboxProps !== rowSelection.getCheckboxProps) {
             this.CheckboxPropsCache = {};
           }
+        } else if (oldVal && !val) {
+          this.store.setState({
+            selectedRowKeys: []
+          });
         }
       },
 
@@ -179,15 +192,26 @@ export default {
       });
     },
     getDefaultPagination: function getDefaultPagination(props) {
-      var pagination = props.pagination || {};
+      var pagination = _typeof(props.pagination) === 'object' ? props.pagination : {};
+      var current = void 0;
+      if ('current' in pagination) {
+        current = pagination.current;
+      } else if ('defaultCurrent' in pagination) {
+        current = pagination.defaultCurrent;
+      }
+      var pageSize = void 0;
+      if ('pageSize' in pagination) {
+        pageSize = pagination.pageSize;
+      } else if ('defaultPageSize' in pagination) {
+        pageSize = pagination.defaultPageSize;
+      }
       return this.hasPagination(props) ? _extends({}, defaultPagination, pagination, {
-        current: pagination.defaultCurrent || pagination.current || 1,
-        pageSize: pagination.defaultPageSize || pagination.pageSize || 10
+        current: current || 1,
+        pageSize: pageSize || 10
       }) : {};
     },
-    onRow: function onRow(record, index) {
-      var prefixCls = this.prefixCls,
-          customRow = this.customRow;
+    onRow: function onRow(prefixCls, record, index) {
+      var customRow = this.customRow;
 
       var custom = customRow ? customRow(record, index) : {};
       return mergeProps(custom, {
@@ -340,20 +364,19 @@ export default {
       if (!column.sorter) {
         return;
       }
+      var sortDirections = column.sortDirections || this.sortDirections;
       var sortOrder = this.sSortOrder,
           sortColumn = this.sSortColumn;
       // 只同时允许一列进行排序，否则会导致排序顺序的逻辑问题
 
       var newSortOrder = void 0;
       // 切换另一列时，丢弃 sortOrder 的状态
-      var oldSortOrder = this.isSameColumn(sortColumn, column) ? sortOrder : undefined;
-      // 切换排序状态，按照降序/升序/不排序的顺序
-      if (!oldSortOrder) {
-        newSortOrder = 'ascend';
-      } else if (oldSortOrder === 'ascend') {
-        newSortOrder = 'descend';
+      if (this.isSameColumn(sortColumn, column) && sortOrder !== undefined) {
+        // 按照sortDirections的内容依次切换排序状态
+        var methodIndex = sortDirections.indexOf(sortOrder) + 1;
+        newSortOrder = methodIndex === sortDirections.length ? undefined : sortDirections[methodIndex];
       } else {
-        newSortOrder = undefined;
+        newSortOrder = sortDirections[0];
       }
       var newState = {
         sSortOrder: newSortOrder,
@@ -670,12 +693,18 @@ export default {
     getPopupContainer: function getPopupContainer() {
       return this.$el;
     },
-    renderRowSelection: function renderRowSelection(locale) {
+    generatePopupContainerFunc: function generatePopupContainerFunc() {
+      var scroll = this.$props.scroll;
+
+      // Use undefined to let rc component use default logic.
+
+      return scroll ? this.getPopupContainer : undefined;
+    },
+    renderRowSelection: function renderRowSelection(prefixCls, locale) {
       var _this9 = this;
 
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          rowSelection = this.rowSelection,
+      var rowSelection = this.rowSelection,
           childrenColumnName = this.childrenColumnName;
 
       var columns = this.columns.concat();
@@ -692,7 +721,7 @@ export default {
           customRender: this.renderSelectionBox(rowSelection.type),
           className: selectionColumnClass,
           fixed: rowSelection.fixed,
-          width: rowSelection.columnWidth,
+          width: rowSelection.columnWidth || ROW_SELECTION_COLUMN_WIDTH,
           title: rowSelection.columnTitle
         };
         if (rowSelection.type !== 'radio') {
@@ -711,7 +740,7 @@ export default {
 
               selections: rowSelection.selections,
               hideDefaultSelections: rowSelection.hideDefaultSelections,
-              getPopupContainer: this.getPopupContainer
+              getPopupContainer: this.generatePopupContainerFunc()
             },
             on: {
               'select': this.handleSelectRow
@@ -754,12 +783,10 @@ export default {
       }
       return this.getColumnKey(sortColumn) === this.getColumnKey(column);
     },
-    renderColumnsDropdown: function renderColumnsDropdown(columns, locale) {
+    renderColumnsDropdown: function renderColumnsDropdown(prefixCls, dropdownPrefixCls, columns, locale) {
       var _this10 = this;
 
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          dropdownPrefixCls = this.dropdownPrefixCls;
       var sortOrder = this.sSortOrder,
           filters = this.sFilters;
 
@@ -770,7 +797,7 @@ export default {
         var filterDropdown = void 0;
         var sortButton = void 0;
         var customHeaderCell = column.customHeaderCell;
-        var sortTitle = _this10.getColumnTitle(column.title, {}) || locale.sortTitle;
+        var title = _this10.renderColumnTitle(column.title);
         var isSortColumn = _this10.isSortColumn(column);
         if (column.filters && column.filters.length > 0 || column.filterDropdown) {
           var colFilters = key in filters ? filters[key] : [];
@@ -783,28 +810,37 @@ export default {
               confirmFilter: _this10.handleFilter,
               prefixCls: prefixCls + '-filter',
               dropdownPrefixCls: dropdownPrefixCls || 'ant-dropdown',
-              getPopupContainer: _this10.getPopupContainer
+              getPopupContainer: _this10.generatePopupContainerFunc()
             },
             key: 'filter-dropdown'
           });
         }
         if (column.sorter) {
+          var sortDirections = column.sortDirections || _this10.sortDirections;
           var isAscend = isSortColumn && sortOrder === 'ascend';
           var isDescend = isSortColumn && sortOrder === 'descend';
+          var ascend = sortDirections.indexOf('ascend') !== -1 && h(Icon, {
+            'class': prefixCls + '-column-sorter-up ' + (isAscend ? 'on' : 'off'),
+            attrs: { type: 'caret-up',
+              theme: 'filled'
+            },
+            key: 'caret-up'
+          });
+
+          var descend = sortDirections.indexOf('descend') !== -1 && h(Icon, {
+            'class': prefixCls + '-column-sorter-down ' + (isDescend ? 'on' : 'off'),
+            attrs: { type: 'caret-down',
+              theme: 'filled'
+            },
+            key: 'caret-down'
+          });
+
           sortButton = h(
             'div',
-            { 'class': prefixCls + '-column-sorter', key: 'sorter' },
-            [h(Icon, {
-              'class': prefixCls + '-column-sorter-up ' + (isAscend ? 'on' : 'off'),
-              attrs: { type: 'caret-up',
-                theme: 'filled'
-              }
-            }), h(Icon, {
-              'class': prefixCls + '-column-sorter-down ' + (isDescend ? 'on' : 'off'),
-              attrs: { type: 'caret-down',
-                theme: 'filled'
-              }
-            })]
+            {
+              attrs: { title: locale.sortTitle },
+              'class': prefixCls + '-column-sorter', key: 'sorter' },
+            [ascend, descend]
           );
           customHeaderCell = function customHeaderCell(col) {
             var colProps = {};
@@ -824,18 +860,12 @@ export default {
             return colProps;
           };
         }
-        var sortTitleString = sortButton && typeof sortTitle === 'string' ? sortTitle : undefined;
         return _extends({}, column, {
           className: classNames(column.className, (_classNames2 = {}, _defineProperty(_classNames2, prefixCls + '-column-has-actions', sortButton || filterDropdown), _defineProperty(_classNames2, prefixCls + '-column-has-filters', filterDropdown), _defineProperty(_classNames2, prefixCls + '-column-has-sorters', sortButton), _defineProperty(_classNames2, prefixCls + '-column-sort', isSortColumn && sortOrder), _classNames2)),
           title: [h(
             'div',
-            {
-              key: 'title',
-              attrs: { title: sortTitleString
-              },
-              'class': sortButton ? prefixCls + '-column-sorters' : undefined
-            },
-            [_this10.renderColumnTitle(column.title), sortButton]
+            { key: 'title', 'class': sortButton ? prefixCls + '-column-sorters' : undefined },
+            [title, sortButton]
           ), filterDropdown],
           customHeaderCell: customHeaderCell
         });
@@ -855,33 +885,6 @@ export default {
       }
       return title;
     },
-    getColumnTitle: function getColumnTitle(title, parentNode) {
-      if (!title) {
-        return;
-      }
-      if (isValidElement(title)) {
-        var props = title.componentOptions;
-        var children = null;
-        if (props && props.children) {
-          // for component
-          children = filterEmpty(props.children);
-        } else if (title.children) {
-          // for dom
-          children = filterEmpty(title.children);
-        }
-        if (children && children.length === 1) {
-          children = children[0];
-          var attrs = getAllProps(title);
-          if (!children.tag && children.text) {
-            // for textNode
-            children = children.text;
-          }
-          return this.getColumnTitle(children, attrs);
-        }
-      } else {
-        return parentNode.title || title;
-      }
-    },
     handleShowSizeChange: function handleShowSizeChange(current, pageSize) {
       var pagination = this.sPagination;
       pagination.onShowSizeChange(current, pageSize);
@@ -894,7 +897,7 @@ export default {
         sPagination: nextPagination
       })))));
     },
-    renderPagination: function renderPagination(paginationPosition) {
+    renderPagination: function renderPagination(prefixCls, paginationPosition) {
       var h = this.$createElement;
 
       // 强制不需要分页
@@ -921,7 +924,7 @@ export default {
 
       var paginationProps = mergeProps({
         key: 'pagination-' + paginationPosition,
-        'class': classNames(cls, this.prefixCls + '-pagination'),
+        'class': classNames(cls, prefixCls + '-pagination'),
         props: _extends({}, restProps, {
           total: total,
           size: size,
@@ -1061,7 +1064,7 @@ export default {
         })
       });
     },
-    renderTable: function renderTable(contextLocale, loading) {
+    renderTable: function renderTable(prefixCls, renderEmpty, dropdownPrefixCls, contextLocale, loading) {
       var _classNames3,
           _this14 = this;
 
@@ -1070,17 +1073,21 @@ export default {
       var locale = _extends({}, contextLocale, this.locale);
 
       var _getOptionProps = getOptionProps(this),
-          prefixCls = _getOptionProps.prefixCls,
           showHeader = _getOptionProps.showHeader,
-          restProps = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'showHeader']);
+          restProps = _objectWithoutProperties(_getOptionProps, ['showHeader']);
 
       var data = this.getCurrentPageData();
       var expandIconAsCell = this.expandedRowRender && this.expandIconAsCell !== false;
 
+      var mergedLocale = _extends({}, contextLocale, locale);
+      if (!locale || !locale.emptyText) {
+        mergedLocale.emptyText = renderEmpty(h, 'Table');
+      }
+
       var classString = classNames((_classNames3 = {}, _defineProperty(_classNames3, prefixCls + '-' + this.size, true), _defineProperty(_classNames3, prefixCls + '-bordered', this.bordered), _defineProperty(_classNames3, prefixCls + '-empty', !data.length), _defineProperty(_classNames3, prefixCls + '-without-column-header', !showHeader), _classNames3));
 
-      var columns = this.renderRowSelection(locale);
-      columns = this.renderColumnsDropdown(columns, locale);
+      var columns = this.renderRowSelection(prefixCls, mergedLocale);
+      columns = this.renderColumnsDropdown(prefixCls, dropdownPrefixCls, columns, mergedLocale);
       columns = columns.map(function (column, i) {
         var newColumn = _extends({}, column);
         newColumn.key = _this14.getColumnKey(newColumn, i);
@@ -1093,7 +1100,9 @@ export default {
       var vcTableProps = {
         key: 'table',
         props: _extends({}, restProps, {
-          customRow: this.onRow,
+          customRow: function customRow(record, index) {
+            return _this14.onRow(prefixCls, record, index);
+          },
           components: this.customComponents,
           prefixCls: prefixCls,
           data: data,
@@ -1101,7 +1110,7 @@ export default {
           showHeader: showHeader,
           expandIconColumnIndex: expandIconColumnIndex,
           expandIconAsCell: expandIconAsCell,
-          emptyText: !(loading.props && loading.props.spinning) && locale.emptyText
+          emptyText: !(loading.props && loading.props.spinning) && mergedLocale.emptyText
         }),
         on: this.$listeners,
         'class': classString
@@ -1114,7 +1123,8 @@ export default {
     var _this15 = this;
 
     var h = arguments[0];
-    var prefixCls = this.prefixCls;
+    var customizePrefixCls = this.prefixCls,
+        customizeDropdownPrefixCls = this.dropdownPrefixCls;
 
     var data = this.getCurrentPageData();
 
@@ -1130,13 +1140,18 @@ export default {
         props: _extends({}, loading)
       };
     }
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var renderEmpty = this.configProvider.renderEmpty;
+
+    var prefixCls = getPrefixCls('table', customizePrefixCls);
+    var dropdownPrefixCls = getPrefixCls('dropdown', customizeDropdownPrefixCls);
 
     var table = h(LocaleReceiver, {
       attrs: {
         componentName: 'Table',
         defaultLocale: defaultLocale.Table,
         children: function children(locale) {
-          return _this15.renderTable(locale, loading);
+          return _this15.renderTable(prefixCls, renderEmpty, dropdownPrefixCls, locale, loading);
         }
       }
     });
@@ -1153,7 +1168,7 @@ export default {
       [h(
         Spin,
         spinProps,
-        [this.renderPagination('top'), table, this.renderPagination('bottom')]
+        [this.renderPagination(prefixCls, 'top'), table, this.renderPagination(prefixCls, 'bottom')]
       )]
     );
   }

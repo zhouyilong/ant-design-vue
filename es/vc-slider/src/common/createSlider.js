@@ -172,7 +172,7 @@ export default function createSlider(Component) {
         }
       },
       onBlur: function onBlur(e) {
-        this.onEnd(e);
+        this.onEnd();
         this.$emit('blur', e);
       },
       onMouseUp: function onMouseUp() {
@@ -205,7 +205,7 @@ export default function createSlider(Component) {
       onClickMarkLabel: function onClickMarkLabel(e, value) {
         e.stopPropagation();
         this.onChange({ sValue: value });
-        this.onEnd();
+        this.onEnd(true);
       },
       getSliderStart: function getSliderStart() {
         var slider = this.$refs.sliderRef;

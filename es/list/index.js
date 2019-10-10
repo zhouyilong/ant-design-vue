@@ -1,13 +1,12 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
+import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
 import omit from 'omit.js';
-import LocaleReceiver from '../locale-provider/LocaleReceiver';
-import defaultLocale from '../locale-provider/default';
+import { ConfigConsumerProps } from '../config-provider';
 
 import Spin from '../spin';
 import Pagination, { PaginationConfig } from '../pagination';
@@ -16,6 +15,7 @@ import { Row } from '../grid';
 import Item from './Item';
 import { initDefaultProps, getComponentFromProp, filterEmpty } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
+import Base from '../base';
 
 export { ListItemProps, ListItemMetaProps } from './Item';
 
@@ -62,7 +62,6 @@ var List = {
   name: 'AList',
   props: initDefaultProps(ListProps(), {
     dataSource: [],
-    prefixCls: 'ant-list',
     bordered: false,
     split: true,
     loading: false,
@@ -72,6 +71,12 @@ var List = {
     return {
       listContext: this
     };
+  },
+
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   data: function data() {
     var _this = this;
@@ -97,18 +102,17 @@ var List = {
 
   methods: {
     renderItem2: function renderItem2(item, index) {
-      var dataSource = this.dataSource,
-          $scopedSlots = this.$scopedSlots,
+      var $scopedSlots = this.$scopedSlots,
           rowKey = this.rowKey;
 
       var key = void 0;
       var renderItem = this.renderItem || $scopedSlots.renderItem;
       if (typeof rowKey === 'function') {
-        key = rowKey(dataSource[index]);
+        key = rowKey(item);
       } else if (typeof rowKey === 'string') {
-        key = dataSource[rowKey];
+        key = item[rowKey];
       } else {
-        key = dataSource.key;
+        key = item.key;
       }
 
       if (!key) {
@@ -126,14 +130,14 @@ var List = {
       var footer = getComponentFromProp(this, 'footer');
       return !!(loadMore || pagination || footer);
     },
-    renderEmpty: function renderEmpty(contextLocale) {
+    renderEmpty: function renderEmpty(prefixCls, _renderEmpty) {
       var h = this.$createElement;
 
-      var locale = _extends({}, contextLocale, this.locale);
+      var locale = this;
       return h(
         'div',
-        { 'class': this.prefixCls + '-empty-text' },
-        [locale.emptyText]
+        { 'class': prefixCls + '-empty-text' },
+        [locale && locale.emptyText || _renderEmpty(h, 'List')]
       );
     }
   },
@@ -143,11 +147,11 @@ var List = {
         _this2 = this;
 
     var h = arguments[0];
-    var bordered = this.bordered,
+    var customizePrefixCls = this.prefixCls,
+        bordered = this.bordered,
         split = this.split,
         itemLayout = this.itemLayout,
         pagination = this.pagination,
-        prefixCls = this.prefixCls,
         grid = this.grid,
         dataSource = this.dataSource,
         size = this.size,
@@ -155,6 +159,9 @@ var List = {
         $listeners = this.$listeners,
         $slots = this.$slots,
         paginationCurrent = this.paginationCurrent;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('list', customizePrefixCls);
 
     var loadMore = getComponentFromProp(this, 'loadMore');
     var footer = getComponentFromProp(this, 'footer');
@@ -235,13 +242,8 @@ var List = {
         [childrenList]
       ) : childrenList;
     } else if (!children.length && !isLoading) {
-      childrenContent = h(LocaleReceiver, {
-        attrs: {
-          componentName: 'Table',
-          defaultLocale: defaultLocale.Table
-        },
-        scopedSlots: { 'default': this.renderEmpty }
-      });
+      var renderEmpty = this.configProvider.renderEmpty;
+      childrenContent = this.renderEmpty(prefixCls, renderEmpty);
     }
     var paginationPosition = paginationProps.position || 'bottom';
 
@@ -267,6 +269,7 @@ var List = {
 
 /* istanbul ignore next */
 List.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(List.name, List);
   Vue.component(List.Item.name, List.Item);
   Vue.component(List.Item.Meta.name, List.Item.Meta);

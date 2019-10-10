@@ -10,17 +10,12 @@ import { calcRangeKeys, getFullKeyList } from './util';
 import Icon from '../icon';
 import BaseMixin from '../_util/BaseMixin';
 import { initDefaultProps, getOptionProps } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 
-// export type ExpandAction = false | 'click' | 'doubleClick';
-
-// export interface DirectoryTreeProps extends TreeProps {
-//   expandAction?: ExpandAction;
-// }
-
-// export interface DirectoryTreeState {
-//   expandedKeys?: string[];
-//   selectedKeys?: string[];
-// }
+// export type ExpandAction = false | 'click' | 'doubleClick'; export interface
+// DirectoryTreeProps extends TreeProps {   expandAction?: ExpandAction; }
+// export interface DirectoryTreeState {   expandedKeys?: string[];
+// selectedKeys?: string[]; }
 
 function getIcon(props, h) {
   var isLeaf = props.isLeaf,
@@ -43,19 +38,23 @@ export default {
     prop: 'checkedKeys',
     event: 'check'
   },
-  props: initDefaultProps(_extends({}, TreeProps(), { expandAction: PropTypes.oneOf([false, 'click', 'doubleclick']) }), {
-    prefixCls: 'ant-tree',
+  props: initDefaultProps(_extends({}, TreeProps(), {
+    expandAction: PropTypes.oneOf([false, 'click', 'doubleclick'])
+  }), {
     showIcon: true,
     expandAction: 'click'
   }),
 
-  // state: DirectoryTreeState;
-  // onDebounceExpand: (event, node: AntTreeNode) => void;
-
-  // // Shift click usage
-  // lastSelectedKey?: string;
-  // cachedSelectedKeys?: string[];
-
+  // state: DirectoryTreeState; onDebounceExpand: (event, node: AntTreeNode) =>
+  // void; // Shift click usage lastSelectedKey?: string; cachedSelectedKeys?:
+  // string[];
+  inject: {
+    configProvider: {
+      'default': function _default() {
+        return ConfigConsumerProps;
+      }
+    }
+  },
   data: function data() {
     var props = getOptionProps(this);
     var defaultExpandAll = props.defaultExpandAll,
@@ -79,9 +78,7 @@ export default {
       state._expandedKeys = expandedKeys || defaultExpandedKeys;
     }
 
-    this.onDebounceExpand = debounce(this.expandFolderNode, 200, {
-      leading: true
-    });
+    this.onDebounceExpand = debounce(this.expandFolderNode, 200, { leading: true });
     return _extends({
       _selectedKeys: [],
       _expandedKeys: []
@@ -196,9 +193,11 @@ export default {
     var h = arguments[0];
 
     var _getOptionProps = getOptionProps(this),
-        prefixCls = _getOptionProps.prefixCls,
+        customizePrefixCls = _getOptionProps.prefixCls,
         props = _objectWithoutProperties(_getOptionProps, ['prefixCls']);
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('tree', customizePrefixCls);
     var _$data = this.$data,
         expandedKeys = _$data._expandedKeys,
         selectedKeys = _$data._selectedKeys;

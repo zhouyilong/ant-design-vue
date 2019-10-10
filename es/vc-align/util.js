@@ -1,4 +1,5 @@
 import _typeof from 'babel-runtime/helpers/typeof';
+import contains from '../_util/Dom/contains';
 export function buffer(fn, ms) {
   var timer = void 0;
 
@@ -36,4 +37,17 @@ export function isSamePoint(prev, next) {
 
 export function isWindow(obj) {
   return obj && (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object' && obj.window === obj;
+}
+
+export function isSimilarValue(val1, val2) {
+  var int1 = Math.floor(val1);
+  var int2 = Math.floor(val2);
+  return Math.abs(int1 - int2) <= 1;
+}
+
+export function restoreFocus(activeElement, container) {
+  // Focus back if is in the container
+  if (activeElement !== document.activeElement && contains(container, activeElement)) {
+    activeElement.focus();
+  }
 }

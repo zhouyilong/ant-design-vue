@@ -1,15 +1,19 @@
 import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import * as moment from 'moment';
+import omit from 'omit.js';
 import VcTimePicker from '../vc-time-picker';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import defaultLocale from './locale/en_US';
 import BaseMixin from '../_util/BaseMixin';
 import PropTypes from '../_util/vue-types';
+import warning from '../_util/warning';
 import Icon from '../icon';
 import interopDefault from '../_util/interopDefault';
 import { initDefaultProps, hasProp, getOptionProps, getComponentFromProp, isValidElement } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 export function generateShowHourMinuteSecond(format) {
   // Ref: http://momentjs.com/docs/#/parsing/string-format/
@@ -50,10 +54,12 @@ export var TimePickerProps = function TimePickerProps() {
     minuteStep: PropTypes.number,
     secondStep: PropTypes.number,
     allowEmpty: PropTypes.bool,
+    allowClear: PropTypes.bool,
     inputReadOnly: PropTypes.bool,
     clearText: PropTypes.string,
     defaultOpenValue: PropTypes.object,
     popupClassName: PropTypes.string,
+    popupStyle: PropTypes.object,
     suffixIcon: PropTypes.any,
     align: PropTypes.object,
     placement: PropTypes.any,
@@ -67,7 +73,6 @@ var TimePicker = {
   name: 'ATimePicker',
   mixins: [BaseMixin],
   props: initDefaultProps(TimePickerProps(), {
-    prefixCls: 'ant-time-picker',
     align: {
       offset: [0, -2]
     },
@@ -92,7 +97,7 @@ var TimePicker = {
 
   inject: {
     configProvider: { 'default': function _default() {
-        return {};
+        return ConfigConsumerProps;
       } }
   },
   data: function data() {
@@ -100,6 +105,7 @@ var TimePicker = {
     if (value && !interopDefault(moment).isMoment(value)) {
       throw new Error('The value/defaultValue of TimePicker must be a moment object, ');
     }
+    warning(!hasProp(this, 'allowEmpty'), '`allowEmpty` in TimePicker is deprecated. Please use `allowClear` instead.');
     return {
       sValue: value
     };
@@ -146,24 +152,18 @@ var TimePicker = {
       }
       return 'HH:mm:ss';
     },
-    renderTimePicker: function renderTimePicker(locale) {
+    getAllowClear: function getAllowClear() {
+      var _$props = this.$props,
+          allowClear = _$props.allowClear,
+          allowEmpty = _$props.allowEmpty;
+
+      if (hasProp(this, 'allowClear')) {
+        return allowClear;
+      }
+      return allowEmpty;
+    },
+    renderInputIcon: function renderInputIcon(prefixCls) {
       var h = this.$createElement;
-
-      var props = getOptionProps(this);
-      delete props.defaultValue;
-
-      var format = this.getDefaultFormat();
-      var className = _defineProperty({}, props.prefixCls + '-' + props.size, !!props.size);
-      var tempAddon = getComponentFromProp(this, 'addon', {}, false);
-      var addon = function addon(panel) {
-        return tempAddon ? h(
-          'div',
-          { 'class': props.prefixCls + '-panel-addon' },
-          [typeof tempAddon === 'function' ? tempAddon(panel) : tempAddon]
-        ) : null;
-      };
-      var prefixCls = props.prefixCls,
-          getPopupContainer = props.getPopupContainer;
 
       var suffixIcon = getComponentFromProp(this, 'suffixIcon');
       suffixIcon = Array.isArray(suffixIcon) ? suffixIcon[0] : suffixIcon;
@@ -177,28 +177,62 @@ var TimePicker = {
         attrs: { type: 'clock-circle', theme: 'outlined' },
         'class': prefixCls + '-clock-icon' });
 
-      var inputIcon = h(
+      return h(
         'span',
         { 'class': prefixCls + '-icon' },
         [clockIcon]
       );
+    },
+    renderClearIcon: function renderClearIcon(prefixCls) {
+      var h = this.$createElement;
 
       var clearIcon = h(Icon, {
         attrs: { type: 'close-circle', theme: 'filled' },
-        'class': prefixCls + '-panel-clear-btn-icon' });
+        'class': prefixCls + '-clear' });
+      return clearIcon;
+    },
+    renderTimePicker: function renderTimePicker(locale) {
+      var h = this.$createElement;
+
+      var props = getOptionProps(this);
+      props = omit(props, ['defaultValue', 'suffixIcon', 'allowEmpty', 'allowClear']);
+
+      var _props = props,
+          customizePrefixCls = _props.prefixCls,
+          getPopupContainer = _props.getPopupContainer,
+          placeholder = _props.placeholder,
+          size = _props.size;
+
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('time-picker', customizePrefixCls);
+
+      var format = this.getDefaultFormat();
+      var pickerClassName = _defineProperty({}, prefixCls + '-' + size, !!size);
+      var tempAddon = getComponentFromProp(this, 'addon', {}, false);
+      var pickerAddon = function pickerAddon(panel) {
+        return tempAddon ? h(
+          'div',
+          { 'class': prefixCls + '-panel-addon' },
+          [typeof tempAddon === 'function' ? tempAddon(panel) : tempAddon]
+        ) : null;
+      };
+      var inputIcon = this.renderInputIcon(prefixCls);
+      var clearIcon = this.renderClearIcon(prefixCls);
       var getContextPopupContainer = this.configProvider.getPopupContainer;
 
       var timeProps = {
         props: _extends({}, generateShowHourMinuteSecond(format), props, {
+          allowEmpty: this.getAllowClear(),
+          prefixCls: prefixCls,
           getPopupContainer: getPopupContainer || getContextPopupContainer,
           format: format,
           value: this.sValue,
-          placeholder: props.placeholder === undefined ? locale.placeholder : props.placeholder,
-          addon: addon,
+          placeholder: placeholder === undefined ? locale.placeholder : placeholder,
+          addon: pickerAddon,
           inputIcon: inputIcon,
           clearIcon: clearIcon
         }),
-        'class': className,
+        'class': pickerClassName,
         ref: 'timePicker',
         on: _extends({}, this.$listeners, {
           change: this.handleChange,
@@ -225,6 +259,7 @@ var TimePicker = {
 
 /* istanbul ignore next */
 TimePicker.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(TimePicker.name, TimePicker);
 };
 

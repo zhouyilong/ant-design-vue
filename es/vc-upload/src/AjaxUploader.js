@@ -2,6 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
+import partition from 'lodash/partition';
 import classNames from 'classnames';
 import defaultRequest from './request';
 import getUid from './uid';
@@ -79,10 +80,13 @@ var AjaxUploader = {
           return attrAccept(_file, _this.accept);
         });
       } else {
-        var files = Array.prototype.slice.call(e.dataTransfer.files).filter(function (file) {
+        var files = partition(Array.prototype.slice.call(e.dataTransfer.files), function (file) {
           return attrAccept(file, _this.accept);
         });
-        this.uploadFiles(files);
+        this.uploadFiles(files[0]);
+        if (files[1].length) {
+          this.$emit('reject', files[1]);
+        }
       }
     },
     uploadFiles: function uploadFiles(files) {

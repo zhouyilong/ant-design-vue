@@ -1,41 +1,44 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
+
 var Divider = {
   name: 'ADivider',
   props: {
-    prefixCls: PropTypes.string.def('ant'),
+    prefixCls: PropTypes.string,
     type: PropTypes.oneOf(['horizontal', 'vertical', '']).def('horizontal'),
     dashed: PropTypes.bool,
     orientation: PropTypes.oneOf(['left', 'right'])
   },
-  computed: {
-    classString: function classString() {
-      var _ref;
-
-      var prefixCls = this.prefixCls,
-          type = this.type,
-          $slots = this.$slots,
-          dashed = this.dashed,
-          _orientation = this.orientation,
-          orientation = _orientation === undefined ? '' : _orientation;
-
-      var orientationPrefix = orientation.length > 0 ? '-' + orientation : orientation;
-
-      return _ref = {}, _defineProperty(_ref, prefixCls + '-divider', true), _defineProperty(_ref, prefixCls + '-divider-' + type, true), _defineProperty(_ref, prefixCls + '-divider-with-text' + orientationPrefix, $slots['default']), _defineProperty(_ref, prefixCls + '-divider-dashed', !!dashed), _ref;
-    }
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   render: function render() {
+    var _classString;
+
     var h = arguments[0];
-    var classString = this.classString,
-        prefixCls = this.prefixCls,
-        $slots = this.$slots;
+    var customizePrefixCls = this.prefixCls,
+        type = this.type,
+        $slots = this.$slots,
+        dashed = this.dashed,
+        _orientation = this.orientation,
+        orientation = _orientation === undefined ? '' : _orientation;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('divider', customizePrefixCls);
+    var orientationPrefix = orientation.length > 0 ? '-' + orientation : orientation;
+
+    var classString = (_classString = {}, _defineProperty(_classString, prefixCls, true), _defineProperty(_classString, prefixCls + '-' + type, true), _defineProperty(_classString, prefixCls + '-with-text' + orientationPrefix, $slots['default']), _defineProperty(_classString, prefixCls + '-dashed', !!dashed), _classString);
 
     return h(
       'div',
       { 'class': classString },
       [$slots['default'] && h(
         'span',
-        { 'class': prefixCls + '-divider-inner-text' },
+        { 'class': prefixCls + '-inner-text' },
         [$slots['default']]
       )]
     );
@@ -44,6 +47,7 @@ var Divider = {
 
 /* istanbul ignore next */
 Divider.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Divider.name, Divider);
 };
 

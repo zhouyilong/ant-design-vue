@@ -5,6 +5,7 @@ import VcTooltip from '../vc-tooltip';
 import _getPlacements from './placements';
 import PropTypes from '../_util/vue-types';
 import { hasProp, getComponentFromProp, getClass, getStyle, isValidElement } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 import abstractTooltipProps from './abstractTooltipProps';
 
 var splitObject = function splitObject(obj, keys) {
@@ -30,12 +31,12 @@ export default {
   }),
   inject: {
     configProvider: { 'default': function _default() {
-        return {};
+        return ConfigConsumerProps;
       } }
   },
   data: function data() {
     return {
-      sVisible: !!this.$props.visible
+      sVisible: !!this.$props.visible || !!this.$props.defaultVisible
     };
   },
 
@@ -149,11 +150,13 @@ export default {
         $data = this.$data,
         $slots = this.$slots,
         $listeners = this.$listeners;
-    var prefixCls = $props.prefixCls,
+    var customizePrefixCls = $props.prefixCls,
         openClassName = $props.openClassName,
         getPopupContainer = $props.getPopupContainer;
     var getContextPopupContainer = this.configProvider.getPopupContainer;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('tooltip', customizePrefixCls);
     var children = ($slots['default'] || []).filter(function (c) {
       return c.tag || c.text.trim() !== '';
     });
@@ -170,6 +173,7 @@ export default {
     var childCls = _defineProperty({}, openClassName || prefixCls + '-open', true);
     var tooltipProps = {
       props: _extends({}, $props, {
+        prefixCls: prefixCls,
         getTooltipContainer: getPopupContainer || getContextPopupContainer,
         builtinPlacements: this.getPlacements(),
         visible: sVisible

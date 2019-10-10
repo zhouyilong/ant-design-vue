@@ -18,7 +18,7 @@ export var selectorPropTypes = function selectorPropTypes() {
     prefixCls: PropTypes.string,
     className: PropTypes.string,
     open: PropTypes.bool,
-    valueList: PropTypes.array, // Name as valueList to diff the single value
+    selectorValueList: PropTypes.array,
     allowClear: PropTypes.bool,
     showArrow: PropTypes.bool,
     // onClick: PropTypes.func,
@@ -31,7 +31,6 @@ export var selectorPropTypes = function selectorPropTypes() {
     inputIcon: PropTypes.any,
     clearIcon: PropTypes.any,
     removeIcon: PropTypes.any,
-    selectorValueList: PropTypes.array,
     placeholder: PropTypes.any,
     disabled: PropTypes.bool,
     focused: PropTypes.bool
@@ -91,11 +90,11 @@ export default function (modeName) {
         var _$props = this.$props,
             prefixCls = _$props.prefixCls,
             allowClear = _$props.allowClear,
-            valueList = _$props.valueList;
+            selectorValueList = _$props.selectorValueList;
         var onSelectorClear = this.vcTreeSelect.onSelectorClear;
 
 
-        if (!allowClear || !valueList.length || !valueList[0].value) {
+        if (!allowClear || !selectorValueList.length || !selectorValueList[0].value) {
           return null;
         }
         var clearIcon = getComponentFromProp(this, 'clearIcon');

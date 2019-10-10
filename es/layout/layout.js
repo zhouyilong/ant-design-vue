@@ -4,6 +4,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
 import { getOptionProps } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 
 export var BasicProps = {
   prefixCls: PropTypes.string,
@@ -15,9 +16,18 @@ function generator(props, name) {
     return {
       name: name,
       props: BasicComponent.props,
+      inject: {
+        configProvider: { 'default': function _default() {
+            return ConfigConsumerProps;
+          } }
+      },
       render: function render() {
         var h = arguments[0];
-        var prefixCls = props.prefixCls;
+        var suffixCls = props.suffixCls;
+        var customizePrefixCls = this.$props.prefixCls;
+
+        var getPrefixCls = this.configProvider.getPrefixCls;
+        var prefixCls = getPrefixCls(suffixCls, customizePrefixCls);
 
         var basicComponentProps = {
           props: _extends({
@@ -99,19 +109,19 @@ var BasicLayout = {
 };
 
 var Layout = generator({
-  prefixCls: 'ant-layout'
+  suffixCls: 'layout'
 }, 'ALayout')(BasicLayout);
 
 var Header = generator({
-  prefixCls: 'ant-layout-header'
+  suffixCls: 'layout-header'
 }, 'ALayoutHeader')(Basic);
 
 var Footer = generator({
-  prefixCls: 'ant-layout-footer'
+  suffixCls: 'layout-footer'
 }, 'ALayoutFooter')(Basic);
 
 var Content = generator({
-  prefixCls: 'ant-layout-content'
+  suffixCls: 'layout-content'
 }, 'ALayoutContent')(Basic);
 
 Layout.Header = Header;

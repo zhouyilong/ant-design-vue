@@ -2,11 +2,13 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import classNames from 'classnames';
 import uniqBy from 'lodash/uniqBy';
+import findIndex from 'lodash/findIndex';
 import VcUpload from '../vc-upload';
 import BaseMixin from '../_util/BaseMixin';
 import { getOptionProps, initDefaultProps, hasProp } from '../_util/props-util';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import defaultLocale from '../locale-provider/default';
+import { ConfigConsumerProps } from '../config-provider';
 import Dragger from './Dragger';
 import UploadList from './UploadList';
 import { UploadProps } from './interface';
@@ -20,7 +22,6 @@ export default {
   inheritAttrs: false,
   Dragger: Dragger,
   props: initDefaultProps(UploadProps, {
-    prefixCls: 'ant-upload',
     type: 'select',
     multiple: false,
     action: '',
@@ -32,6 +33,11 @@ export default {
     disabled: false,
     supportServerRender: true
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   // recentUploadStatus: boolean | PromiseLike<any>;
   data: function data() {
     this.progressTimer = null;
@@ -55,7 +61,7 @@ export default {
       var targetItem = fileToObject(file);
       targetItem.status = 'uploading';
       var nextFileList = this.sFileList.concat();
-      var fileIndex = nextFileList.findIndex(function (_ref) {
+      var fileIndex = findIndex(nextFileList, function (_ref) {
         var uid = _ref.uid;
         return uid === targetItem.uid;
       });
@@ -138,15 +144,21 @@ export default {
         fileList: fileList
       });
     },
+    onReject: function onReject(fileList) {
+      this.$emit('reject', fileList);
+    },
     handleRemove: function handleRemove(file) {
       var _this2 = this;
 
-      var _getOptionProps = getOptionProps(this),
-          remove = _getOptionProps.remove;
+      var remove = this.remove;
+      var status = file.status;
+
+      file.status = 'removed'; // eslint-disable-line
 
       Promise.resolve(typeof remove === 'function' ? remove(file) : remove).then(function (ret) {
         // Prevent removing file
         if (ret === false) {
+          file.status = status;
           return;
         }
 
@@ -160,8 +172,9 @@ export default {
       });
     },
     handleManualRemove: function handleManualRemove(file) {
-      this.$refs.uploadRef.abort(file);
-      file.status = 'removed'; // eslint-disable-line
+      if (this.$refs.uploadRef) {
+        this.$refs.uploadRef.abort(file);
+      }
       this.handleRemove(file);
     },
     onChange: function onChange(info) {
@@ -188,7 +201,8 @@ export default {
           })
         });
         return false;
-      } else if (result && result.then) {
+      }
+      if (result && result.then) {
         return result;
       }
       return true;
@@ -199,10 +213,10 @@ export default {
     renderUploadList: function renderUploadList(locale) {
       var h = this.$createElement;
 
-      var _getOptionProps2 = getOptionProps(this),
-          _getOptionProps2$show = _getOptionProps2.showUploadList,
-          showUploadList = _getOptionProps2$show === undefined ? {} : _getOptionProps2$show,
-          listType = _getOptionProps2.listType;
+      var _getOptionProps = getOptionProps(this),
+          _getOptionProps$showU = _getOptionProps.showUploadList,
+          showUploadList = _getOptionProps$showU === undefined ? {} : _getOptionProps$showU,
+          listType = _getOptionProps.listType;
 
       var showRemoveIcon = showUploadList.showRemoveIcon,
           showPreviewIcon = showUploadList.showPreviewIcon;
@@ -230,13 +244,15 @@ export default {
 
     var h = arguments[0];
 
-    var _getOptionProps3 = getOptionProps(this),
-        _getOptionProps3$pref = _getOptionProps3.prefixCls,
-        prefixCls = _getOptionProps3$pref === undefined ? '' : _getOptionProps3$pref,
-        showUploadList = _getOptionProps3.showUploadList,
-        listType = _getOptionProps3.listType,
-        type = _getOptionProps3.type,
-        disabled = _getOptionProps3.disabled;
+    var _getOptionProps2 = getOptionProps(this),
+        customizePrefixCls = _getOptionProps2.prefixCls,
+        showUploadList = _getOptionProps2.showUploadList,
+        listType = _getOptionProps2.listType,
+        type = _getOptionProps2.type,
+        disabled = _getOptionProps2.disabled;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('upload', customizePrefixCls);
 
     var vcUploadProps = {
       props: _extends({}, this.$props, {
@@ -247,7 +263,8 @@ export default {
         start: this.onStart,
         error: this.onError,
         progress: this.onProgress,
-        success: this.onSuccess
+        success: this.onSuccess,
+        reject: this.onReject
       },
       ref: 'uploadRef',
       'class': prefixCls + '-btn',
@@ -293,9 +310,16 @@ export default {
     }
 
     var uploadButtonCls = classNames(prefixCls, (_classNames2 = {}, _defineProperty(_classNames2, prefixCls + '-select', true), _defineProperty(_classNames2, prefixCls + '-select-' + listType, true), _defineProperty(_classNames2, prefixCls + '-disabled', disabled), _classNames2));
+
+    // Remove id to avoid open by label when trigger is hidden
+    // https://github.com/ant-design/ant-design/issues/14298
+    if (!children) {
+      delete vcUploadProps.props.id;
+    }
+
     var uploadButton = h(
       'div',
-      { 'class': uploadButtonCls, style: { display: children ? '' : 'none' } },
+      { 'class': uploadButtonCls, style: children ? undefined : { display: 'none' } },
       [h(
         VcUpload,
         vcUploadProps,

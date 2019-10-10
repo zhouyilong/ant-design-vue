@@ -13,6 +13,8 @@ import { default as BackTop } from './back-top';
 
 import { default as Badge } from './badge';
 
+import { default as Base } from './base';
+
 import { default as Breadcrumb } from './breadcrumb';
 
 import { default as Button } from './button';
@@ -79,6 +81,8 @@ import { default as Slider } from './slider';
 
 import { default as Spin } from './spin';
 
+import { default as Statistic } from './statistic';
+
 import { default as Steps } from './steps';
 
 import { default as Switch } from './switch';
@@ -115,7 +119,9 @@ import { default as Comment } from './comment';
 
 import { default as ConfigProvider } from './config-provider';
 
-var components = [Affix, Anchor, AutoComplete, Alert, Avatar, BackTop, Badge, Breadcrumb, Button, Calendar, Card, Collapse, Carousel, Cascader, Checkbox, Col, DatePicker, Divider, Dropdown, Form, Icon, Input, InputNumber, Layout, List, LocaleProvider, Menu, Modal, Pagination, Popconfirm, Popover, Progress, Radio, Rate, Row, Select, Slider, Spin, Steps, Switch, Table, Transfer, Tree, TreeSelect, Tabs, Tag, TimePicker, Timeline, Tooltip, Upload, Drawer, Skeleton, Comment, ConfigProvider];
+import { default as Empty } from './empty';
+
+var components = [Base, Affix, Anchor, AutoComplete, Alert, Avatar, BackTop, Badge, Breadcrumb, Button, Calendar, Card, Collapse, Carousel, Cascader, Checkbox, Col, DatePicker, Divider, Dropdown, Form, Icon, Input, InputNumber, Layout, List, LocaleProvider, Menu, Modal, Pagination, Popconfirm, Popover, Progress, Radio, Rate, Row, Select, Slider, Spin, Statistic, Steps, Switch, Table, Transfer, Tree, TreeSelect, Tabs, Tag, TimePicker, Timeline, Tooltip, Upload, Drawer, Skeleton, Comment, ConfigProvider, Empty];
 
 var install = function install(Vue) {
   components.map(function (component) {
@@ -129,6 +135,7 @@ var install = function install(Vue) {
   Vue.prototype.$error = Modal.error;
   Vue.prototype.$warning = Modal.warning;
   Vue.prototype.$confirm = Modal.confirm;
+  Vue.prototype.$destroyAll = Modal.destroyAll;
 };
 
 /* istanbul ignore if */
@@ -136,7 +143,7 @@ if (typeof window !== 'undefined' && window.Vue) {
   install(window.Vue);
 }
 
-export { version, install, message, notification, Affix, Anchor, AutoComplete, Alert, Avatar, BackTop, Badge, Breadcrumb, Button, Calendar, Card, Collapse, Carousel, Cascader, Checkbox, Col, DatePicker, Divider, Dropdown, Form, Icon, Input, InputNumber, Layout, List, LocaleProvider, Menu, Modal, Pagination, Popconfirm, Popover, Progress, Radio, Rate, Row, Select, Slider, Spin, Steps, Switch, Table, Transfer, Tree, TreeSelect, Tabs, Tag, TimePicker, Timeline, Tooltip, Upload, Drawer, Skeleton, Comment, ConfigProvider };
+export { Base, version, install, message, notification, Affix, Anchor, AutoComplete, Alert, Avatar, BackTop, Badge, Breadcrumb, Button, Calendar, Card, Collapse, Carousel, Cascader, Checkbox, Col, DatePicker, Divider, Dropdown, Form, Icon, Input, InputNumber, Layout, List, LocaleProvider, Menu, Modal, Pagination, Popconfirm, Popover, Progress, Radio, Rate, Row, Select, Slider, Spin, Statistic, Steps, Switch, Table, Transfer, Tree, TreeSelect, Tabs, Tag, TimePicker, Timeline, Tooltip, Upload, Drawer, Skeleton, Comment, ConfigProvider, Empty };
 
 export default {
   version: version,

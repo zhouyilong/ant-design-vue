@@ -1,12 +1,14 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
-import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import _extends from 'babel-runtime/helpers/extends';
+import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import classnames from 'classnames';
 import VcDrawer from '../vc-drawer/src';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import Icon from '../icon';
 import { getComponentFromProp, getOptionProps } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 var Drawer = {
   name: 'ADrawer',
@@ -18,12 +20,13 @@ var Drawer = {
     mask: PropTypes.bool.def(true),
     maskStyle: PropTypes.object,
     wrapStyle: PropTypes.object,
+    bodyStyle: PropTypes.object,
     title: PropTypes.any,
     visible: PropTypes.bool,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(256),
     height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(256),
     zIndex: PropTypes.number,
-    prefixCls: PropTypes.string.def('ant-drawer'),
+    prefixCls: PropTypes.string,
     placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']).def('right'),
     level: PropTypes.any.def(null),
     wrapClassName: PropTypes.string, // not use class like react, vue will add class to root dom
@@ -31,7 +34,7 @@ var Drawer = {
   },
   mixins: [BaseMixin],
   data: function data() {
-    this.destoryClose = false;
+    this.destroyClose = false;
     this.preVisible = this.$props.visible;
     return {
       _push: false
@@ -43,7 +46,10 @@ var Drawer = {
       'default': function _default() {
         return null;
       }
-    }
+    },
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   provide: function provide() {
     return {
@@ -88,17 +94,17 @@ var Drawer = {
         _push: false
       });
     },
-    onDestoryTransitionEnd: function onDestoryTransitionEnd() {
-      var isDestroyOnClose = this.getDestoryOnClose();
+    onDestroyTransitionEnd: function onDestroyTransitionEnd() {
+      var isDestroyOnClose = this.getDestroyOnClose();
       if (!isDestroyOnClose) {
         return;
       }
       if (!this.visible) {
-        this.destoryClose = true;
+        this.destroyClose = true;
         this.$forceUpdate();
       }
     },
-    getDestoryOnClose: function getDestoryOnClose() {
+    getDestroyOnClose: function getDestroyOnClose() {
       return this.destroyOnClose && !this.visible;
     },
 
@@ -111,16 +117,64 @@ var Drawer = {
         return 'translateY(' + (placement === 'top' ? 180 : -180) + 'px)';
       }
     },
+    getRcDrawerStyle: function getRcDrawerStyle() {
+      var _$props = this.$props,
+          zIndex = _$props.zIndex,
+          placement = _$props.placement;
+      var push = this.$data._push;
 
-    // render drawer body dom
-    renderBody: function renderBody() {
+      return {
+        zIndex: zIndex,
+        transform: push ? this.getPushTransform(placement) : undefined
+      };
+    },
+    renderHeader: function renderHeader(prefixCls) {
       var h = this.$createElement;
+      var closable = this.$props.closable;
 
-      if (this.destoryClose && !this.visible) {
+      var title = getComponentFromProp(this, 'title');
+      if (!title && !closable) {
         return null;
       }
-      this.destoryClose = false;
-      var placement = this.$props.placement;
+
+      var headerClassName = title ? prefixCls + '-header' : prefixCls + '-header-no-title';
+      return h(
+        'div',
+        { 'class': headerClassName },
+        [title && h(
+          'div',
+          { 'class': prefixCls + '-title' },
+          [title]
+        ), closable ? this.renderCloseIcon(prefixCls) : null]
+      );
+    },
+    renderCloseIcon: function renderCloseIcon(prefixCls) {
+      var h = this.$createElement;
+
+      return h(
+        'button',
+        { key: 'closer', on: {
+            'click': this.close
+          },
+          attrs: { 'aria-label': 'Close' },
+          'class': prefixCls + '-close' },
+        [h(Icon, {
+          attrs: { type: 'close' }
+        })]
+      );
+    },
+
+    // render drawer body dom
+    renderBody: function renderBody(prefixCls) {
+      var h = this.$createElement;
+
+      if (this.destroyClose && !this.visible) {
+        return null;
+      }
+      this.destroyClose = false;
+      var _$props2 = this.$props,
+          placement = _$props2.placement,
+          bodyStyle = _$props2.bodyStyle;
 
 
       var containerStyle = placement === 'left' || placement === 'right' ? {
@@ -128,48 +182,11 @@ var Drawer = {
         height: '100%'
       } : {};
 
-      var isDestroyOnClose = this.getDestoryOnClose();
+      var isDestroyOnClose = this.getDestroyOnClose();
       if (isDestroyOnClose) {
         // Increase the opacity transition, delete children after closing.
         containerStyle.opacity = 0;
         containerStyle.transition = 'opacity .3s';
-      }
-      var _$props = this.$props,
-          prefixCls = _$props.prefixCls,
-          closable = _$props.closable;
-
-      var title = getComponentFromProp(this, 'title');
-      // is have header dom
-      var header = void 0;
-      if (title) {
-        header = h(
-          'div',
-          { key: 'header', 'class': prefixCls + '-header' },
-          [h(
-            'div',
-            { 'class': prefixCls + '-title' },
-            [title]
-          )]
-        );
-      }
-      // is have closer button
-      var closer = void 0;
-      if (closable) {
-        closer = h(
-          'button',
-          { key: 'closer', on: {
-              'click': this.close
-            },
-            attrs: { 'aria-label': 'Close' },
-            'class': prefixCls + '-close' },
-          [h(
-            'span',
-            { 'class': prefixCls + '-close-x' },
-            [h(Icon, {
-              attrs: { type: 'close' }
-            })]
-          )]
-        );
       }
 
       return h(
@@ -178,28 +195,15 @@ var Drawer = {
           'class': prefixCls + '-wrapper-body',
           style: containerStyle,
           on: {
-            'transitionend': this.onDestoryTransitionEnd
+            'transitionend': this.onDestroyTransitionEnd
           }
         },
-        [header, closer, h(
+        [this.renderHeader(prefixCls), h(
           'div',
-          { key: 'body', 'class': prefixCls + '-body' },
+          { key: 'body', 'class': prefixCls + '-body', style: bodyStyle },
           [this.$slots['default']]
         )]
       );
-    },
-    getRcDrawerStyle: function getRcDrawerStyle() {
-      var _$props2 = this.$props,
-          zIndex = _$props2.zIndex,
-          placement = _$props2.placement,
-          maskStyle = _$props2.maskStyle,
-          wrapStyle = _$props2.wrapStyle;
-      var push = this.$data._push;
-
-      return _extends({}, maskStyle, {
-        zIndex: zIndex,
-        transform: push ? this.getPushTransform(placement) : undefined
-      }, wrapStyle);
     }
   },
   render: function render() {
@@ -209,12 +213,13 @@ var Drawer = {
 
     var props = getOptionProps(this);
 
-    var width = props.width,
+    var customizePrefixCls = props.prefixCls,
+        width = props.width,
         height = props.height,
         visible = props.visible,
         placement = props.placement,
         wrapClassName = props.wrapClassName,
-        rest = _objectWithoutProperties(props, ['width', 'height', 'visible', 'placement', 'wrapClassName']);
+        rest = _objectWithoutProperties(props, ['prefixCls', 'width', 'height', 'visible', 'placement', 'wrapClassName']);
 
     var haveMask = rest.mask ? '' : 'no-mask';
     var offsetStyle = {};
@@ -224,10 +229,14 @@ var Drawer = {
       offsetStyle.height = typeof height === 'number' ? height + 'px' : height;
     }
     var handler = getComponentFromProp(this, 'handle') || false;
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('drawer', customizePrefixCls);
+
     var vcDrawerProps = {
       props: _extends({}, rest, {
         handler: handler
       }, offsetStyle, {
+        prefixCls: prefixCls,
         open: visible,
         showMask: props.mask,
         placement: placement,
@@ -241,13 +250,14 @@ var Drawer = {
     return h(
       VcDrawer,
       vcDrawerProps,
-      [this.renderBody()]
+      [this.renderBody(prefixCls)]
     );
   }
 };
 
 /* istanbul ignore next */
 Drawer.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Drawer.name, Drawer);
 };
 

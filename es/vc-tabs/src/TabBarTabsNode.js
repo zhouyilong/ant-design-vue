@@ -17,6 +17,7 @@ export default {
     onTabClick: PropTypes.func,
     saveRef: PropTypes.func.def(noop),
     getRef: PropTypes.func.def(noop),
+    renderTabBarNode: PropTypes.func,
     tabBarPosition: PropTypes.string
   },
   render: function render() {
@@ -32,7 +33,7 @@ export default {
         tabBarPosition = _$props.tabBarPosition;
 
     var rst = [];
-
+    var renderTabBarNode = this.renderTabBarNode || this.$scopedSlots.renderTabBarNode;
     children.forEach(function (child, index) {
       if (!child) {
         return;
@@ -62,7 +63,7 @@ export default {
       gutter = typeof gutter === 'number' ? gutter + 'px' : gutter;
       var style = _defineProperty({}, isVertical(tabBarPosition) ? 'marginBottom' : 'marginRight', gutter);
       warning(tab !== undefined, 'There must be `tab` property or slot on children of Tabs.');
-      rst.push(h(
+      var node = h(
         'div',
         _mergeJSXProps([{
           attrs: {
@@ -76,7 +77,12 @@ export default {
           style: style
         }, { directives: directives }]),
         [tab]
-      ));
+      );
+      if (renderTabBarNode) {
+        node = renderTabBarNode(node);
+      }
+
+      rst.push(node);
     });
 
     return h(

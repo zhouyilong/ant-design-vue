@@ -89,14 +89,19 @@ export default {
             Upload,
             _mergeJSXProps([uploaderProps1, {
               attrs: {
+                id: 'test',
                 component: 'div'
               },
-              style: {
-                display: 'inline-block'
-              }
+              style: { display: 'inline-block' }
             }]),
             [h('a', ['\u5F00\u59CB\u4E0A\u4F202'])]
           )]
+        ), h(
+          'label',
+          {
+            attrs: { 'for': 'test' }
+          },
+          ['Label for Upload']
         )]
       ), h(
         'button',

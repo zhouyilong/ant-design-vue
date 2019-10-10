@@ -1,5 +1,6 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
+import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
 
 export default {
@@ -7,7 +8,7 @@ export default {
   props: {
     prefixCls: {
       type: String,
-      'default': 'ant-avatar'
+      'default': undefined
     },
     shape: {
       validator: function validator(val) {
@@ -28,6 +29,11 @@ export default {
     alt: String,
     loadError: Function
   },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     return {
       isImgExist: true,
@@ -37,25 +43,31 @@ export default {
 
   watch: {
     src: function src() {
-      this.isImgExist = true;
-      this.scale = 1;
+      var _this = this;
+
+      this.$nextTick(function () {
+        _this.isImgExist = true;
+        _this.scale = 1;
+        // force uodate for position
+        _this.$forceUpdate();
+      });
     }
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     this.prevChildren = this.$slots['default'];
     this.prevState = _extends({}, this.$data);
     this.$nextTick(function () {
-      _this.setScale();
+      _this2.setScale();
     });
   },
   updated: function updated() {
-    var _this2 = this;
+    var _this3 = this;
 
     if (this.preChildren !== this.$slots['default'] || this.prevState.scale !== this.$data.scale && this.$data.scale === 1 || this.prevState.isImgExist !== this.$data.isImgExist) {
       this.$nextTick(function () {
-        _this2.setScale();
+        _this3.setScale();
       });
     }
     this.preChildren = this.$slots['default'];
@@ -90,13 +102,18 @@ export default {
 
     var h = arguments[0];
     var _$props = this.$props,
-        prefixCls = _$props.prefixCls,
+        customizePrefixCls = _$props.prefixCls,
         shape = _$props.shape,
         size = _$props.size,
         src = _$props.src,
         icon = _$props.icon,
         alt = _$props.alt,
         srcSet = _$props.srcSet;
+
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('avatar', customizePrefixCls);
+
     var _$data = this.$data,
         isImgExist = _$data.isImgExist,
         scale = _$data.scale;

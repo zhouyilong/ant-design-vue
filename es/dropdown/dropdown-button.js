@@ -7,6 +7,7 @@ import Dropdown from './dropdown';
 import PropTypes from '../_util/vue-types';
 import { hasProp, getComponentFromProp } from '../_util/props-util';
 import getDropdownProps from './getDropdownProps';
+import { ConfigConsumerProps } from '../config-provider';
 var ButtonTypesProps = buttonTypes();
 var DropdownProps = getDropdownProps();
 var ButtonGroup = Button.Group;
@@ -14,8 +15,9 @@ var DropdownButtonProps = _extends({}, ButtonGroupProps, DropdownProps, {
   type: PropTypes.oneOf(['primary', 'ghost', 'dashed', 'danger', 'default']).def('default'),
   size: PropTypes.oneOf(['small', 'large', 'default']).def('default'),
   htmlType: ButtonTypesProps.htmlType,
+  href: PropTypes.string,
   disabled: PropTypes.bool,
-  prefixCls: PropTypes.string.def('ant-dropdown-button'),
+  prefixCls: PropTypes.string,
   placement: DropdownProps.placement.def('bottomRight')
 });
 export { DropdownButtonProps };
@@ -34,7 +36,7 @@ export default {
 
   inject: {
     configProvider: { 'default': function _default() {
-        return {};
+        return ConfigConsumerProps;
       } }
   },
   methods: {
@@ -55,16 +57,19 @@ export default {
         type = _$props.type,
         disabled = _$props.disabled,
         htmlType = _$props.htmlType,
-        prefixCls = _$props.prefixCls,
+        customizePrefixCls = _$props.prefixCls,
         trigger = _$props.trigger,
         align = _$props.align,
         visible = _$props.visible,
         placement = _$props.placement,
         getPopupContainer = _$props.getPopupContainer,
-        restProps = _objectWithoutProperties(_$props, ['type', 'disabled', 'htmlType', 'prefixCls', 'trigger', 'align', 'visible', 'placement', 'getPopupContainer']);
+        href = _$props.href,
+        restProps = _objectWithoutProperties(_$props, ['type', 'disabled', 'htmlType', 'prefixCls', 'trigger', 'align', 'visible', 'placement', 'getPopupContainer', 'href']);
 
     var getContextPopupContainer = this.configProvider.getPopupContainer;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('dropdown-button', customizePrefixCls);
     var dropdownProps = {
       props: {
         align: align,
@@ -92,7 +97,13 @@ export default {
       [h(
         Button,
         {
-          attrs: { type: type, disabled: disabled, htmlType: htmlType },
+          attrs: {
+            type: type,
+            disabled: disabled,
+
+            htmlType: htmlType,
+            href: href
+          },
           on: {
             'click': this.onClick
           }

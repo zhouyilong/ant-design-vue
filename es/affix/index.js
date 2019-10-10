@@ -9,6 +9,8 @@ import omit from 'omit.js';
 import getScroll from '../_util/getScroll';
 import BaseMixin from '../_util/BaseMixin';
 import throttleByAnimationFrame from '../_util/throttleByAnimationFrame';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 function getTargetRect(target) {
   return target !== window ? target.getBoundingClientRect() : { top: 0, left: 0, bottom: 0 };
@@ -57,6 +59,11 @@ var Affix = {
   name: 'AAffix',
   props: AffixProps,
   mixins: [BaseMixin],
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     this.events = ['resize', 'scroll', 'touchstart', 'touchmove', 'touchend', 'pageshow', 'load'];
     this.eventHandlers = {};
@@ -179,7 +186,8 @@ var Affix = {
 
       var targetRect = getTargetRect(targetNode);
       var targetInnerHeight = targetNode.innerHeight || targetNode.clientHeight;
-      if (scrollTop > elemOffset.top - offsetTop && offsetMode.top) {
+      // ref: https://github.com/ant-design/ant-design/issues/13662
+      if (scrollTop >= elemOffset.top - offsetTop && offsetMode.top) {
         // Fixed Top
         var width = elemOffset.width + 'px';
         var top = targetRect.top + offsetTop + 'px';
@@ -193,7 +201,7 @@ var Affix = {
           width: width,
           height: elemSize.height + 'px'
         });
-      } else if (scrollTop < elemOffset.top + elemSize.height + offsetBottom - targetInnerHeight && offsetMode.bottom) {
+      } else if (scrollTop <= elemOffset.top + elemSize.height + offsetBottom - targetInnerHeight && offsetMode.bottom) {
         // Fixed Bottom
         var targetBottomOffet = targetNode === window ? 0 : window.innerHeight - targetRect.bottom;
         var _width = elemOffset.width + 'px';
@@ -254,7 +262,8 @@ var Affix = {
         $slots = this.$slots,
         $props = this.$props;
 
-    var className = classNames(_defineProperty({}, prefixCls || 'ant-affix', affixStyle));
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var className = classNames(_defineProperty({}, getPrefixCls('affix', prefixCls), affixStyle));
 
     var props = {
       attrs: omit($props, ['prefixCls', 'offsetTop', 'offsetBottom', 'target'])
@@ -273,6 +282,7 @@ var Affix = {
 
 /* istanbul ignore next */
 Affix.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Affix.name, Affix);
 };
 

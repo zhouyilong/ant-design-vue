@@ -13,7 +13,6 @@ export var SkeletonAvatarProps = PropTypes.shape(skeletonAvatarProps).loose;
 
 var Avatar = {
   props: initDefaultProps(skeletonAvatarProps, {
-    prefixCls: 'ant-skeleton-avatar',
     size: 'large'
   }),
   render: function render() {

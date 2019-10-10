@@ -133,6 +133,10 @@ export function cloneElement(n) {
     node.data.on = _extends({}, node.data.on || {}, on);
   }
 
+  if (node.fnOptions && node.fnOptions.functional) {
+    node.data.on = _extends({}, node.data.on || {}, on);
+  }
+
   if (key !== undefined) {
     node.key = key;
     node.data.key = key;

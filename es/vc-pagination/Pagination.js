@@ -1,3 +1,4 @@
+import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import PropTypes from '../_util/vue-types';
@@ -35,6 +36,7 @@ export default {
     event: 'change.current'
   },
   props: {
+    disabled: PropTypes.bool,
     prefixCls: PropTypes.string.def('rc-pagination'),
     selectPrefixCls: PropTypes.string.def('rc-select'),
     current: PropTypes.number,
@@ -132,8 +134,33 @@ export default {
       var iconNode = getComponentFromProp(this, icon, this.$props) || h('a', { 'class': prefixCls + '-item-link' });
       return iconNode;
     },
+    getValidValue: function getValidValue(e) {
+      var inputValue = e.target.value;
+      var stateCurrentInputValue = this.$data.stateCurrentInputValue;
+
+      var value = void 0;
+      if (inputValue === '') {
+        value = inputValue;
+      } else if (isNaN(Number(inputValue))) {
+        value = stateCurrentInputValue;
+      } else {
+        value = Number(inputValue);
+      }
+      return value;
+    },
     isValid: function isValid(page) {
       return isInteger(page) && page >= 1 && page !== this.stateCurrent;
+    },
+    shouldDisplayQuickJumper: function shouldDisplayQuickJumper() {
+      var _$props = this.$props,
+          showQuickJumper = _$props.showQuickJumper,
+          pageSize = _$props.pageSize,
+          total = _$props.total;
+
+      if (total <= pageSize) {
+        return false;
+      }
+      return showQuickJumper;
     },
 
     // calculatePage (p) {
@@ -152,14 +179,6 @@ export default {
       var inputValue = event.target.value;
       var stateCurrentInputValue = this.stateCurrentInputValue;
       var value = void 0;
-
-      if (inputValue === '') {
-        value = inputValue;
-      } else if (isNaN(Number(inputValue))) {
-        value = stateCurrentInputValue;
-      } else {
-        value = Number(inputValue);
-      }
 
       if (value !== stateCurrentInputValue) {
         this.setState({
@@ -205,8 +224,10 @@ export default {
       }
     },
     handleChange: function handleChange(p) {
+      var disabled = this.$props.disabled;
+
       var page = p;
-      if (this.isValid(page)) {
+      if (this.isValid(page) && !disabled) {
         var currentPage = calculatePage(undefined, this.$data, this.$props);
         if (page > currentPage) {
           page = currentPage;
@@ -274,16 +295,21 @@ export default {
     }
   },
   render: function render() {
+    var _ref;
+
     var h = arguments[0];
+    var _$props2 = this.$props,
+        prefixCls = _$props2.prefixCls,
+        disabled = _$props2.disabled;
 
     // When hideOnSinglePage is true and there is only 1 page, hide the pager
+
     if (this.hideOnSinglePage === true && this.total <= this.statePageSize) {
       return null;
     }
     var props = this.$props;
     var locale = this.locale;
 
-    var prefixCls = this.prefixCls;
     var allPages = calculatePage(undefined, this.$data, this.$props);
     var pagerList = [];
     var jumpPrev = null;
@@ -596,7 +622,7 @@ export default {
       totalText = h(
         'li',
         { 'class': prefixCls + '-total-text' },
-        [this.showTotal(this.total, [(stateCurrent - 1) * statePageSize + 1, stateCurrent * statePageSize > this.total ? this.total : stateCurrent * statePageSize])]
+        [this.showTotal(this.total, [this.total === 0 ? 0 : (stateCurrent - 1) * statePageSize + 1, stateCurrent * statePageSize > this.total ? this.total : stateCurrent * statePageSize])]
       );
     }
     var prevDisabled = !this.hasPrev() || !allPages;
@@ -604,8 +630,12 @@ export default {
     var buildOptionText = this.buildOptionText || this.$scopedSlots.buildOptionText;
     return h(
       'ul',
-      { 'class': '' + prefixCls, attrs: { unselectable: 'unselectable' },
-        ref: 'paginationNode' },
+      {
+        'class': (_ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-disabled', disabled), _ref),
+        attrs: { unselectable: 'unselectable'
+        },
+        ref: 'paginationNode'
+      },
       [totalText, h(
         'li',
         {
@@ -642,6 +672,7 @@ export default {
         [this.itemRender(nextPage, 'next', this.getItemIcon('nextIcon'))]
       ), h(Options, {
         attrs: {
+          disabled: disabled,
           locale: locale,
           rootPrefixCls: prefixCls,
           selectComponentClass: this.selectComponentClass,
@@ -651,7 +682,7 @@ export default {
           pageSize: statePageSize,
           pageSizeOptions: this.pageSizeOptions,
           buildOptionText: buildOptionText || null,
-          quickGo: this.showQuickJumper ? this.handleChange : null,
+          quickGo: this.shouldDisplayQuickJumper() ? this.handleChange : null,
           goButton: goButton
         }
       })]

@@ -9,7 +9,7 @@ export default {
   props: {
     value: PropTypes.array.def([]),
     activeValue: PropTypes.array.def([]),
-    options: PropTypes.array.isRequired,
+    options: PropTypes.array,
     prefixCls: PropTypes.string.def('rc-cascader-menus'),
     expandTrigger: PropTypes.string.def('click'),
     // onSelect: PropTypes.func,
@@ -65,11 +65,20 @@ export default {
       var onSelect = function onSelect(e) {
         _this3.__emit('select', option, menuIndex, e);
       };
+      var onItemDoubleClick = function onItemDoubleClick(e) {
+        _this3.__emit('itemDoubleClick', option, menuIndex, e);
+      };
       var key = option[this.getFieldName('value')];
       var expandProps = {
-        attrs: {},
+        attrs: {
+          role: 'menuitem'
+        },
         on: {
-          click: onSelect
+          click: onSelect,
+          doubleclick: onItemDoubleClick,
+          mousedown: function mousedown(e) {
+            return e.preventDefault();
+          }
         },
         key: Array.isArray(key) ? key.join('__ant__') : key
       };
@@ -86,7 +95,7 @@ export default {
           );
         }
       }
-      if (expandTrigger === 'hover' && hasChildren) {
+      if (expandTrigger === 'hover' && (hasChildren || option.isLeaf === false)) {
         expandProps.on = {
           mouseenter: this.delayOnSelect.bind(this, onSelect),
           mouseleave: this.delayOnSelect.bind(this),

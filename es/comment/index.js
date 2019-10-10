@@ -1,7 +1,8 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropsTypes from '../_util/vue-types';
 import { initDefaultProps, getComponentFromProp } from '../_util/props-util';
-
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 export var CommentProps = {
   actions: PropsTypes.array,
   /** The element to display as the comment author. */
@@ -18,9 +19,12 @@ export var CommentProps = {
 
 var Comment = {
   name: 'AComment',
-  props: initDefaultProps(CommentProps, {
-    prefixCls: 'ant-comment'
-  }),
+  props: CommentProps,
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   methods: {
     getAction: function getAction(actions) {
       var h = this.$createElement;
@@ -52,8 +56,11 @@ var Comment = {
 
   render: function render() {
     var h = arguments[0];
-    var prefixCls = this.$props.prefixCls;
+    var customizePrefixCls = this.$props.prefixCls;
 
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('comment', customizePrefixCls);
 
     var actions = getComponentFromProp(this, 'actions');
     var author = getComponentFromProp(this, 'author');
@@ -115,6 +122,7 @@ var Comment = {
 
 /* istanbul ignore next */
 Comment.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Comment.name, Comment);
 };
 export default Comment;

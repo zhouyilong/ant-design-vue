@@ -7,6 +7,7 @@ import BaseMixin from '../_util/BaseMixin';
 import createChainedFunction from '../_util/createChainedFunction';
 import getTransitionProps from '../_util/getTransitionProps';
 import Notice from './Notice';
+import Base from '../base';
 
 function noop() {}
 
@@ -156,7 +157,8 @@ Notification.newInstance = function newNotificationInstance(properties, callback
   } else {
     document.body.appendChild(div);
   }
-  new Vue({
+  var V = Base.Vue || Vue;
+  new V({
     el: div,
     mounted: function mounted() {
       var self = this;

@@ -5,6 +5,7 @@ import BaseMixin from '../_util/BaseMixin';
 import { getStyle } from '../_util/props-util';
 import omit from 'omit.js';
 import { cloneElement } from '../_util/vnode';
+import { ConfigConsumerProps } from '../config-provider';
 
 function getNumberArray(num) {
   return num ? num.toString().split('').reverse().map(function (i) {
@@ -13,7 +14,7 @@ function getNumberArray(num) {
 }
 
 var ScrollNumberProps = {
-  prefixCls: PropTypes.string.def('ant-scroll-number'),
+  prefixCls: PropTypes.string,
   count: PropTypes.any,
   component: PropTypes.string,
   title: PropTypes.oneOfType([PropTypes.number, PropTypes.string, null]),
@@ -24,6 +25,11 @@ var ScrollNumberProps = {
 export default {
   mixins: [BaseMixin],
   props: ScrollNumberProps,
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     return {
       animateStarted: true,
@@ -88,7 +94,7 @@ export default {
       }
       return childrenToReturn;
     },
-    renderCurrentNumber: function renderCurrentNumber(num, i) {
+    renderCurrentNumber: function renderCurrentNumber(prefixCls, num, i) {
       var h = this.$createElement;
 
       var position = this.getPositionByNum(num, i);
@@ -101,33 +107,35 @@ export default {
       };
       return h(
         'span',
-        { 'class': this.prefixCls + '-only', style: style, key: i },
+        { 'class': prefixCls + '-only', style: style, key: i },
         [this.renderNumberList(position)]
       );
     },
-    renderNumberElement: function renderNumberElement() {
+    renderNumberElement: function renderNumberElement(prefixCls) {
       var _this2 = this;
 
       var sCount = this.sCount;
 
-      if (!sCount || isNaN(sCount)) {
-        return sCount;
+      if (sCount && Number(sCount) % 1 === 0) {
+        return getNumberArray(sCount).map(function (num, i) {
+          return _this2.renderCurrentNumber(prefixCls, num, i);
+        }).reverse();
       }
-      return getNumberArray(sCount).map(function (num, i) {
-        return _this2.renderCurrentNumber(num, i);
-      }).reverse();
+      return sCount;
     }
   },
 
   render: function render() {
     var h = arguments[0];
-    var prefixCls = this.prefixCls,
+    var customizePrefixCls = this.prefixCls,
         title = this.title,
         _component = this.component,
         Tag = _component === undefined ? 'sup' : _component,
         displayComponent = this.displayComponent,
         className = this.className;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('scroll-number', customizePrefixCls);
     if (displayComponent) {
       return cloneElement(displayComponent, {
         'class': prefixCls + '-custom-component'
@@ -154,7 +162,7 @@ export default {
     return h(
       Tag,
       newProps,
-      [this.renderNumberElement()]
+      [this.renderNumberElement(prefixCls)]
     );
   }
 };

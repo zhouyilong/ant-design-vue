@@ -26,7 +26,7 @@ export default function wrapperRaf(callback) {
   return myId;
 }
 
-wrapperRaf.cancel = function (id) {
-  raf.cancel(ids[id]);
-  delete ids[id];
+wrapperRaf.cancel = function (pid) {
+  raf.cancel(ids[pid]);
+  delete ids[pid];
 };

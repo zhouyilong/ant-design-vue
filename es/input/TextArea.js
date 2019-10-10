@@ -1,11 +1,13 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
+import classNames from 'classnames';
 import omit from 'omit.js';
 import ResizeObserver from 'resize-observer-polyfill';
 import inputProps from './inputProps';
 import calculateNodeHeight from './calculateNodeHeight';
 import hasProp from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 
 function onNextFrame(cb) {
   if (window.requestAnimationFrame) {
@@ -38,6 +40,11 @@ export default {
   props: _extends({}, inputProps, {
     autosize: [Object, Boolean]
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     var _$props = this.$props,
         value = _$props.value,
@@ -118,19 +125,11 @@ export default {
       if (!autosize || !this.$refs.textArea) {
         return;
       }
-      var minRows = autosize ? autosize.minRows : null;
-      var maxRows = autosize ? autosize.maxRows : null;
+      var minRows = autosize.minRows,
+          maxRows = autosize.maxRows;
+
       var textareaStyles = calculateNodeHeight(this.$refs.textArea, false, minRows, maxRows);
       this.textareaStyles = textareaStyles;
-    },
-    getTextAreaClassName: function getTextAreaClassName() {
-      var _ref;
-
-      var _$props2 = this.$props,
-          prefixCls = _$props2.prefixCls,
-          disabled = _$props2.disabled;
-
-      return _ref = {}, _defineProperty(_ref, prefixCls, true), _defineProperty(_ref, prefixCls + '-disabled', disabled), _ref;
     },
     handleTextareaChange: function handleTextareaChange(e) {
       if (!hasProp(this, 'value')) {
@@ -155,14 +154,20 @@ export default {
   render: function render() {
     var h = arguments[0];
     var stateValue = this.stateValue,
-        getTextAreaClassName = this.getTextAreaClassName,
         handleKeyDown = this.handleKeyDown,
         handleTextareaChange = this.handleTextareaChange,
         textareaStyles = this.textareaStyles,
         $attrs = this.$attrs,
-        $listeners = this.$listeners;
+        $listeners = this.$listeners,
+        customizePrefixCls = this.prefixCls,
+        disabled = this.disabled;
 
     var otherProps = omit(this.$props, ['prefixCls', 'autosize', 'type', 'value', 'defaultValue']);
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('input', customizePrefixCls);
+
+    var cls = classNames(prefixCls, _defineProperty({}, prefixCls + '-disabled', disabled));
+
     var textareaProps = {
       attrs: _extends({}, otherProps, $attrs),
       on: _extends({}, $listeners, {
@@ -179,7 +184,7 @@ export default {
         'value': stateValue
       },
 
-      'class': getTextAreaClassName(),
+      'class': cls,
       style: textareaStyles,
       ref: 'textArea'
     }]));

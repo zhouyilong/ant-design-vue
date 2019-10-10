@@ -19,6 +19,8 @@ import ref from 'vue-ref';
 import SelectTrigger from './SelectTrigger';
 import { defaultFilterFn, findFirstMenuItem, findIndexInValueBySingleValue, generateUUID, getLabelFromPropsValue, getMapKey, getPropValue, getValuePropValue, includesSeparators, isCombobox, isMultipleOrTags, isMultipleOrTagsOrCombobox, isSingleMode, preventDefaultEvent, saveRef, splitBySeparators, toArray, toTitle, UNSELECTABLE_ATTRIBUTE, UNSELECTABLE_STYLE, validateOptionValue } from './util';
 import { SelectPropTypes } from './PropTypes';
+import contains from '../_util/Dom/contains';
+import { isIE, isEdge } from '../_util/env';
 
 Vue.use(ref, { name: 'ant-ref' });
 var SELECT_EMPTY_VALUE_KEY = 'RC_SELECT_EMPTY_VALUE_KEY';
@@ -60,7 +62,7 @@ var Select = {
     showSearch: SelectPropTypes.showSearch.def(true),
     allowClear: SelectPropTypes.allowClear.def(false),
     placeholder: SelectPropTypes.placeholder.def(''),
-    showArrow: SelectPropTypes.showArrow.def(true),
+    // showArrow: SelectPropTypes.showArrow.def(true),
     dropdownMatchSelectWidth: PropTypes.bool.def(true),
     dropdownStyle: SelectPropTypes.dropdownStyle.def({}),
     dropdownMenuStyle: PropTypes.object.def({}),
@@ -98,6 +100,7 @@ var Select = {
     this._focused = false;
     this._mouseDown = false;
     this._options = [];
+    this._empty = false;
   },
   data: function data() {
     var props = getOptionProps(this);
@@ -120,7 +123,14 @@ var Select = {
     var _this = this;
 
     this.$nextTick(function () {
-      _this.autoFocus && _this.focus();
+      // when defaultOpen is true, we should auto focus search input
+      // https://github.com/ant-design/ant-design/issues/14254
+      if (_this.autoFocus || _this._open) {
+        _this.focus();
+      }
+      // this.setState({
+      //   _ariaId: generateUUID(),
+      // });
     });
   },
 
@@ -136,7 +146,7 @@ var Select = {
       if (isMultipleOrTags(_this2.$props)) {
         var inputNode = _this2.getInputDOMNode();
         var mirrorNode = _this2.getInputMirrorDOMNode();
-        if (inputNode.value && inputNode.value && mirrorNode) {
+        if (inputNode && inputNode.value && mirrorNode) {
           inputNode.style.width = '';
           inputNode.style.width = mirrorNode.clientWidth + 10 + 'px';
         } else if (inputNode) {
@@ -233,7 +243,8 @@ var Select = {
           option: option,
           value: singleValue,
           label: _this4.getLabelFromOption(props, option),
-          title: getValue(option, 'title')
+          title: getValue(option, 'title'),
+          disabled: getValue(option, 'disabled')
         };
       });
       if (preState) {
@@ -311,6 +322,7 @@ var Select = {
         this.onInputKeydown(event);
       } else if (keyCode === KeyCode.ENTER || keyCode === KeyCode.DOWN) {
         // vue state是同步更新，onKeyDown在onMenuSelect后会再次调用，单选时不在调用setOpenState
+        // https://github.com/vueComponent/ant-design-vue/issues/1142
         if (keyCode === KeyCode.ENTER && !isMultipleOrTags(this.$props)) {
           this.maybeFocus(true);
         } else if (!open) {
@@ -331,6 +343,7 @@ var Select = {
         return;
       }
       var state = this.$data;
+      var isRealOpen = this.getRealOpenState(state);
       var keyCode = event.keyCode;
       if (isMultipleOrTags(props) && !event.target.value && keyCode === KeyCode.BACKSPACE) {
         event.preventDefault();
@@ -351,7 +364,10 @@ var Select = {
       } else if (keyCode === KeyCode.ENTER && state._open) {
         // Aviod trigger form submit when select item
         // https://github.com/ant-design/ant-design/issues/10861
-        event.preventDefault();
+        // https://github.com/ant-design/ant-design/issues/14544
+        if (isRealOpen || !props.combobox) {
+          event.preventDefault();
+        }
       } else if (keyCode === KeyCode.ESC) {
         if (state._open) {
           this.setOpenState(false);
@@ -361,7 +377,7 @@ var Select = {
         return;
       }
 
-      if (this.getRealOpenState(state) && this.selectTriggerRef) {
+      if (isRealOpen && this.selectTriggerRef) {
         var menu = this.selectTriggerRef.getInnerMenu();
         if (menu && menu.onKeyDown(event, this.handleBackfill)) {
           event.preventDefault();
@@ -386,7 +402,7 @@ var Select = {
         }
         value = value.concat([selectedValue]);
       } else {
-        if (lastValue !== undefined && lastValue === selectedValue && selectedValue !== this.$data._backfillValue) {
+        if (!isCombobox(props) && lastValue !== undefined && lastValue === selectedValue && selectedValue !== this.$data._backfillValue) {
           this.setOpenState(false, true);
           return;
         }
@@ -418,6 +434,7 @@ var Select = {
     onArrowClick: function onArrowClick(e) {
       e.stopPropagation();
       e.preventDefault();
+      this.clearBlurTime();
       if (!this.disabled) {
         this.setOpenState(!this.$data._open, !this.$data._open);
       }
@@ -507,6 +524,11 @@ var Select = {
       var value = null;
       Object.keys(this.$data._optionsInfo).forEach(function (key) {
         var info = _this6.$data._optionsInfo[key];
+        var disabled = info.disabled;
+
+        if (disabled) {
+          return;
+        }
         var oldLable = toArray(info.label);
         if (oldLable && oldLable.join('') === label) {
           value = info.value;
@@ -605,7 +627,11 @@ var Select = {
     inputBlur: function inputBlur(e) {
       var _this8 = this;
 
-      if (e.relatedTarget && this.selectTriggerRef && this.selectTriggerRef.getInnerMenu() && this.selectTriggerRef.getInnerMenu().$el === e.relatedTarget) {
+      var target = e.relatedTarget || document.activeElement;
+
+      // https://github.com/vueComponent/ant-design-vue/issues/999
+      // https://github.com/vueComponent/ant-design-vue/issues/1223
+      if ((isIE || isEdge) && (e.relatedTarget === this.$refs.arrow || target && this.selectTriggerRef && this.selectTriggerRef.getInnerMenu() && this.selectTriggerRef.getInnerMenu().$el === target || contains(e.target, target))) {
         e.target.focus();
         e.preventDefault();
         return;
@@ -638,11 +664,9 @@ var Select = {
           } else {
             // why not use setState?
             _this8.$data._inputValue = '';
-            _this8.$nextTick(function () {
-              if (_this8.getInputDOMNode && _this8.getInputDOMNode()) {
-                _this8.getInputDOMNode().value = '';
-              }
-            });
+            if (_this8.getInputDOMNode && _this8.getInputDOMNode()) {
+              _this8.getInputDOMNode().value = '';
+            }
           }
           var tmpValue = _this8.getValueByInput(inputValue);
           if (tmpValue !== undefined) {
@@ -658,7 +682,7 @@ var Select = {
         }
         _this8.setOpenState(false);
         _this8.$emit('blur', _this8.getVLForOnChange(value));
-      }, 10);
+      }, 200);
     },
     inputFocus: function inputFocus(e) {
       if (this.$props.disabled) {
@@ -1028,6 +1052,7 @@ var Select = {
 
       var menuItems = [];
       var childrenKeys = [];
+      var empty = false;
       var options = this.renderFilterOptionsFromChildren(children, childrenKeys, menuItems);
       if (tags) {
         // tags value must be string
@@ -1035,6 +1060,12 @@ var Select = {
         value = value.filter(function (singleValue) {
           return childrenKeys.indexOf(singleValue) === -1 && (!inputValue || String(singleValue).indexOf(String(inputValue)) > -1);
         });
+
+        // sort by length
+        value.sort(function (val1, val2) {
+          return val1.length - val2.length;
+        });
+
         value.forEach(function (singleValue) {
           var key = singleValue;
           var attrs = _extends({}, UNSELECTABLE_ATTRIBUTE, {
@@ -1084,6 +1115,7 @@ var Select = {
       }
 
       if (!options.length && notFoundContent) {
+        empty = true;
         var _p = {
           attrs: UNSELECTABLE_ATTRIBUTE,
           key: 'NOT_FOUND',
@@ -1100,7 +1132,7 @@ var Select = {
           [notFoundContent]
         )];
       }
-      return options;
+      return { empty: empty, options: options };
     },
     renderFilterOptionsFromChildren: function renderFilterOptionsFromChildren() {
       var children = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
@@ -1129,6 +1161,7 @@ var Select = {
             label = key;
           }
           var childChildren = getSlots(child)['default'];
+          childChildren = typeof childChildren === 'function' ? childChildren() : childChildren;
           // Match option group label
           if (inputValue && _this13._filterOption(inputValue, child)) {
             var innerItems = childChildren.map(function (subChild) {
@@ -1394,19 +1427,19 @@ var Select = {
     },
     renderArrow: function renderArrow(multiple) {
       var h = this.$createElement;
+
+      // showArrow : Set to true if not multiple by default but keep set value.
       var _$props3 = this.$props,
-          showArrow = _$props3.showArrow,
+          _$props3$showArrow = _$props3.showArrow,
+          showArrow = _$props3$showArrow === undefined ? !multiple : _$props3$showArrow,
           loading = _$props3.loading,
           prefixCls = _$props3.prefixCls;
 
       var inputIcon = getComponentFromProp(this, 'inputIcon');
-      if (!showArrow) {
+      if (!showArrow && !loading) {
         return null;
       }
       // if loading  have loading icon
-      if (multiple && !loading) {
-        return null;
-      }
       var defaultIcon = loading ? h('i', { 'class': prefixCls + '-arrow-loading' }) : h('i', { 'class': prefixCls + '-arrow-icon' });
       return h(
         'span',
@@ -1417,7 +1450,9 @@ var Select = {
         }, { attrs: UNSELECTABLE_ATTRIBUTE }, {
           on: {
             'click': this.onArrowClick
-          }
+          },
+
+          ref: 'arrow'
         }]),
         [inputIcon || defaultIcon]
       );
@@ -1513,9 +1548,14 @@ var Select = {
 
     var props = this.$props;
     var multiple = isMultipleOrTags(props);
+    // Default set showArrow to true if not set (not set directly in defaultProps to handle multiple case)
+    var _props$showArrow = props.showArrow,
+        showArrow = _props$showArrow === undefined ? true : _props$showArrow;
+
     var state = this.$data;
     var disabled = props.disabled,
-        prefixCls = props.prefixCls;
+        prefixCls = props.prefixCls,
+        loading = props.loading;
 
     var ctrlNode = this.renderTopControlNode();
     var _$data4 = this.$data,
@@ -1524,9 +1564,12 @@ var Select = {
         value = _$data4._value;
 
     if (open) {
-      this._options = this.renderFilterOptions();
+      var filterOptions = this.renderFilterOptions();
+      this._empty = filterOptions.empty;
+      this._options = filterOptions.options;
     }
     var realOpen = this.getRealOpenState();
+    var empty = this._empty;
     var options = this._options || [];
     var $listeners = this.$listeners;
     var _$listeners$mouseente = $listeners.mouseenter,
@@ -1557,13 +1600,13 @@ var Select = {
       // ],
       key: 'selection'
     };
-    if (!isMultipleOrTagsOrCombobox(props)) {
-      selectionProps.on.keydown = this.onKeyDown;
-      // selectionProps.on.focus = this.selectionRefFocus;
-      // selectionProps.on.blur = this.selectionRefBlur;
-      selectionProps.attrs.tabIndex = props.disabled ? -1 : props.tabIndex;
-    }
-    var rootCls = (_rootCls = {}, _defineProperty(_rootCls, prefixCls, true), _defineProperty(_rootCls, prefixCls + '-open', open), _defineProperty(_rootCls, prefixCls + '-focused', open || !!this._focused), _defineProperty(_rootCls, prefixCls + '-combobox', isCombobox(props)), _defineProperty(_rootCls, prefixCls + '-disabled', disabled), _defineProperty(_rootCls, prefixCls + '-enabled', !disabled), _defineProperty(_rootCls, prefixCls + '-allow-clear', !!props.allowClear), _defineProperty(_rootCls, prefixCls + '-no-arrow', !props.showArrow), _rootCls);
+    //if (!isMultipleOrTagsOrCombobox(props)) {
+    // selectionProps.on.keydown = this.onKeyDown;
+    // selectionProps.on.focus = this.selectionRefFocus;
+    // selectionProps.on.blur = this.selectionRefBlur;
+    // selectionProps.attrs.tabIndex = props.disabled ? -1 : props.tabIndex;
+    //}
+    var rootCls = (_rootCls = {}, _defineProperty(_rootCls, prefixCls, true), _defineProperty(_rootCls, prefixCls + '-open', open), _defineProperty(_rootCls, prefixCls + '-focused', open || !!this._focused), _defineProperty(_rootCls, prefixCls + '-combobox', isCombobox(props)), _defineProperty(_rootCls, prefixCls + '-disabled', disabled), _defineProperty(_rootCls, prefixCls + '-enabled', !disabled), _defineProperty(_rootCls, prefixCls + '-allow-clear', !!props.allowClear), _defineProperty(_rootCls, prefixCls + '-no-arrow', !showArrow), _defineProperty(_rootCls, prefixCls + '-loading', !!loading), _rootCls);
     return h(
       SelectTrigger,
       _mergeJSXProps([{
@@ -1580,6 +1623,7 @@ var Select = {
           combobox: props.combobox,
           showSearch: props.showSearch,
           options: options,
+          empty: empty,
           multiple: multiple,
           disabled: disabled,
           visible: realOpen,
@@ -1629,10 +1673,11 @@ var Select = {
             'mouseout': this.markMouseLeave,
             'blur': this.selectionRefBlur,
             'focus': this.selectionRefFocus,
-            'click': this.selectionRefClick
+            'click': this.selectionRefClick,
+            'keydown': isMultipleOrTagsOrCombobox(props) ? noop : this.onKeyDown
           },
           attrs: {
-            tabindex: '-1'
+            tabIndex: props.disabled ? -1 : props.tabIndex
           }
         }]),
         [h(

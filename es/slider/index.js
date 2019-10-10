@@ -8,6 +8,8 @@ import VcSlider from '../vc-slider/src/Slider';
 import VcRange from '../vc-slider/src/Range';
 import VcHandle from '../vc-slider/src/Handle';
 import Tooltip from '../tooltip';
+import Base from '../base';
+import { ConfigConsumerProps } from '../config-provider';
 
 // export interface SliderMarks {
 //   [key]: React.ReactNode | {
@@ -47,9 +49,12 @@ var Slider = {
     event: 'change'
   },
   mixins: [BaseMixin],
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   props: _extends({}, SliderProps(), {
-    prefixCls: PropTypes.string.def('ant-slider'),
-    tooltipPrefixCls: PropTypes.string.def('ant-tooltip'),
     tipFormatter: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).def(function (value) {
       return value.toString();
     })
@@ -69,7 +74,7 @@ var Slider = {
         };
       });
     },
-    handleWithTooltip: function handleWithTooltip(_ref2) {
+    handleWithTooltip: function handleWithTooltip(tooltipPrefixCls, _ref2) {
       var _this = this;
 
       var value = _ref2.value,
@@ -81,7 +86,6 @@ var Slider = {
 
       var h = this.$createElement;
       var _$props = this.$props,
-          tooltipPrefixCls = _$props.tooltipPrefixCls,
           tipFormatter = _$props.tipFormatter,
           tooltipVisible = _$props.tooltipVisible;
       var visibles = this.visibles;
@@ -126,16 +130,27 @@ var Slider = {
     }
   },
   render: function render() {
+    var _this2 = this;
+
     var h = arguments[0];
 
     var _getOptionProps = getOptionProps(this),
         range = _getOptionProps.range,
-        restProps = _objectWithoutProperties(_getOptionProps, ['range']);
+        customizePrefixCls = _getOptionProps.prefixCls,
+        customizeTooltipPrefixCls = _getOptionProps.tooltipPrefixCls,
+        restProps = _objectWithoutProperties(_getOptionProps, ['range', 'prefixCls', 'tooltipPrefixCls']);
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('slider', customizePrefixCls);
+    var tooltipPrefixCls = getPrefixCls('tooltip', customizeTooltipPrefixCls);
     if (range) {
       var vcRangeProps = {
         props: _extends({}, restProps, {
-          handle: this.handleWithTooltip
+          prefixCls: prefixCls,
+          tooltipPrefixCls: tooltipPrefixCls,
+          handle: function handle(info) {
+            return _this2.handleWithTooltip(tooltipPrefixCls, info);
+          }
         }),
         ref: 'sliderRef',
         on: this.$listeners
@@ -144,7 +159,11 @@ var Slider = {
     }
     var vcSliderProps = {
       props: _extends({}, restProps, {
-        handle: this.handleWithTooltip
+        prefixCls: prefixCls,
+        tooltipPrefixCls: tooltipPrefixCls,
+        handle: function handle(info) {
+          return _this2.handleWithTooltip(tooltipPrefixCls, info);
+        }
       }),
       ref: 'sliderRef',
       on: this.$listeners
@@ -155,6 +174,7 @@ var Slider = {
 
 /* istanbul ignore next */
 Slider.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Slider.name, Slider);
 };
 

@@ -1,3 +1,4 @@
+import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
@@ -35,6 +36,8 @@ var CalendarPart = {
     clearIcon: PropTypes.any
   },
   render: function render() {
+    var _on;
+
     var h = arguments[0];
     var props = this.$props,
         _$listeners = this.$listeners,
@@ -61,7 +64,9 @@ var CalendarPart = {
         showWeekNumber = props.showWeekNumber;
 
     var clearIcon = getComponentFromProp(this, 'clearIcon');
-    var _$listeners$inputSele = $listeners.inputSelect,
+    var _$listeners$inputChan = $listeners.inputChange,
+        inputChange = _$listeners$inputChan === undefined ? noop : _$listeners$inputChan,
+        _$listeners$inputSele = $listeners.inputSelect,
         inputSelect = _$listeners$inputSele === undefined ? noop : _$listeners$inputSele,
         _$listeners$valueChan = $listeners.valueChange,
         valueChange = _$listeners$valueChan === undefined ? noop : _$listeners$valueChan,
@@ -95,7 +100,7 @@ var CalendarPart = {
           value: selectedValue[index]
         }),
         on: {
-          change: inputSelect
+          change: inputChange
         }
       });
     }
@@ -115,9 +120,9 @@ var CalendarPart = {
 
         clearIcon: clearIcon
       },
-      on: {
+      on: (_on = {
         'change': inputSelect
-      }
+      }, _defineProperty(_on, 'change', inputChange), _defineProperty(_on, 'select', inputSelect), _on)
     });
     var headerProps = {
       props: _extends({}, newProps, {

@@ -6,7 +6,7 @@ import omit from 'omit.js';
 import { convertDataToTree as vcConvertDataToTree, convertTreeToEntities as vcConvertTreeToEntities, conductCheck as rcConductCheck } from '../../vc-tree/src/util';
 import SelectNode from './SelectNode';
 import { SHOW_CHILD, SHOW_PARENT } from './strategies';
-import { getSlots, getPropsData } from '../../_util/props-util';
+import { getSlots, getPropsData, isEmptyElement } from '../../_util/props-util';
 
 var warnDeprecatedLabel = false;
 
@@ -19,7 +19,7 @@ export function toTitle(title) {
 }
 
 export function toArray(data) {
-  if (!data) return [];
+  if (data === undefined || data === null) return [];
 
   return Array.isArray(data) ? data : [data];
 }
@@ -207,29 +207,21 @@ export function getFilterTree(h, treeNodes, searchValue, filterFunc, valueEntiti
   }
 
   function mapFilteredNodeToData(node) {
-    if (!node) return null;
+    if (!node || isEmptyElement(node)) return null;
 
     var match = false;
     if (filterFunc(searchValue, node)) {
       match = true;
     }
-    var $slots = getSlots(node);
-    var children = ($slots['default'] || []).map(mapFilteredNodeToData).filter(function (n) {
+    var children = getSlots(node)['default'];
+    children = ((typeof children === 'function' ? children() : children) || []).map(mapFilteredNodeToData).filter(function (n) {
       return n;
     });
-    delete $slots['default'];
-    var slotsKey = Object.keys($slots);
     if (children.length || match) {
       return h(
         SelectNode,
         _mergeJSXProps([node.data, { key: valueEntities[getPropsData(node).value].key }]),
-        [children, slotsKey.length ? slotsKey.map(function (name) {
-          return h(
-            'template',
-            { slot: name },
-            [$slots[name][0].tag === 'template' ? $slots[name][0].children : $slots[name]]
-          );
-        }) : null]
+        [children]
       );
     }
 
@@ -320,7 +312,8 @@ export function formatSelectorValue(valueList, props, valueEntities) {
           value: value
         };
       });
-    } else if (showCheckedStrategy === SHOW_CHILD) {
+    }
+    if (showCheckedStrategy === SHOW_CHILD) {
       // Only get the children checked value
       var targetValueList = [];
 

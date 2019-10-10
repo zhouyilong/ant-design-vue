@@ -19,6 +19,7 @@ import Icon from '../icon';
 import { initDefaultProps, getOptionProps, hasProp, getComponentFromProp } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import isNumeric from '../_util/isNumeric';
+import { ConfigConsumerProps } from '../config-provider';
 
 var dimensionMap = {
   xs: '480px',
@@ -74,14 +75,12 @@ export default {
     event: 'collapse'
   },
   props: initDefaultProps(SiderProps, {
-    prefixCls: 'ant-layout-sider',
     collapsible: false,
     defaultCollapsed: false,
     reverseArrow: false,
     width: 200,
     collapsedWidth: 80
   }),
-
   data: function data() {
     this.uniqueId = generateId('ant-sider-');
     var matchMedia = void 0;
@@ -113,6 +112,9 @@ export default {
   inject: {
     siderHook: { 'default': function _default() {
         return {};
+      } },
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
       } }
   },
   // getChildContext() {
@@ -184,12 +186,15 @@ export default {
     var h = arguments[0];
 
     var _getOptionProps = getOptionProps(this),
-        prefixCls = _getOptionProps.prefixCls,
+        customizePrefixCls = _getOptionProps.prefixCls,
         theme = _getOptionProps.theme,
         collapsible = _getOptionProps.collapsible,
         reverseArrow = _getOptionProps.reverseArrow,
         width = _getOptionProps.width,
         collapsedWidth = _getOptionProps.collapsedWidth;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('layout-sider', customizePrefixCls);
 
     var trigger = getComponentFromProp(this, 'trigger');
     var rawWidth = this.sCollapsed ? collapsedWidth : width;
@@ -202,7 +207,9 @@ export default {
         on: {
           'click': this.toggle
         },
-        'class': prefixCls + '-zero-width-trigger' },
+
+        'class': prefixCls + '-zero-width-trigger ' + prefixCls + '-zero-width-trigger-' + (reverseArrow ? 'right' : 'left')
+      },
       [h(Icon, {
         attrs: { type: 'bars' }
       })]

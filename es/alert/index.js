@@ -6,6 +6,8 @@ import PropTypes from '../_util/vue-types';
 import getTransitionProps from '../_util/getTransitionProps';
 import { getComponentFromProp, isValidElement } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 function noop() {}
 export var AlertProps = {
   /**
@@ -33,9 +35,14 @@ export var AlertProps = {
 };
 
 var Alert = {
+  name: 'AAlert',
   props: AlertProps,
   mixins: [BaseMixin],
-  name: 'AAlert',
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     return {
       closing: true,
@@ -70,11 +77,14 @@ var Alert = {
     var _classNames;
 
     var h = arguments[0];
-    var _prefixCls = this.prefixCls,
-        prefixCls = _prefixCls === undefined ? 'ant-alert' : _prefixCls,
+    var customizePrefixCls = this.prefixCls,
         banner = this.banner,
         closing = this.closing,
         closed = this.closed;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('alert', customizePrefixCls);
+
     var closable = this.closable,
         type = this.type,
         showIcon = this.showIcon,
@@ -175,6 +185,7 @@ var Alert = {
 
 /* istanbul ignore next */
 Alert.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Alert.name, Alert);
 };
 

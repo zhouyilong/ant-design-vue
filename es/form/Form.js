@@ -10,13 +10,16 @@ import createFormField from '../vc-form/src/createFormField';
 import FormItem from './FormItem';
 import { FIELD_META_PROP, FIELD_DATA_PROP } from './constants';
 import { initDefaultProps } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 export var FormCreateOption = {
   onFieldsChange: PropTypes.func,
   onValuesChange: PropTypes.func,
   mapPropsToFields: PropTypes.func,
   validateMessages: PropTypes.any,
-  withRef: PropTypes.bool
+  withRef: PropTypes.bool,
+  name: PropTypes.string
 };
 
 // function create
@@ -63,7 +66,8 @@ export var FormProps = {
   prefixCls: PropTypes.string,
   hideRequiredMark: PropTypes.bool,
   autoFormCreate: PropTypes.func,
-  options: PropTypes.object
+  options: PropTypes.object,
+  selfUpdate: PropTypes.bool
 };
 
 export var ValidationRule = {
@@ -121,15 +125,11 @@ export var ValidationRule = {
 var Form = {
   name: 'AForm',
   props: initDefaultProps(FormProps, {
-    prefixCls: 'ant-form',
     layout: 'horizontal',
     hideRequiredMark: false
   }),
-
   Item: FormItem,
-
   createFormField: createFormField,
-
   create: function create() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -143,7 +143,8 @@ var Form = {
   createForm: function createForm(context) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    return new Vue(Form.create(_extends({}, options, { templateContext: context }))());
+    var V = Base.Vue || Vue;
+    return new V(Form.create(_extends({}, options, { templateContext: context }))());
   },
   created: function created() {
     this.formItemContexts = new Map();
@@ -174,6 +175,11 @@ var Form = {
     };
   },
 
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   watch: {
     form: function form() {
       this.$forceUpdate();
@@ -209,7 +215,7 @@ var Form = {
         _this2 = this;
 
     var h = arguments[0];
-    var prefixCls = this.prefixCls,
+    var customizePrefixCls = this.prefixCls,
         hideRequiredMark = this.hideRequiredMark,
         layout = this.layout,
         onSubmit = this.onSubmit,
@@ -218,6 +224,8 @@ var Form = {
         _options = this.options,
         options = _options === undefined ? {} : _options;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('form', customizePrefixCls);
 
     var formClassName = classNames(prefixCls, (_classNames = {}, _defineProperty(_classNames, prefixCls + '-horizontal', layout === 'horizontal'), _defineProperty(_classNames, prefixCls + '-vertical', layout === 'vertical'), _defineProperty(_classNames, prefixCls + '-inline', layout === 'inline'), _defineProperty(_classNames, prefixCls + '-hide-required-mark', hideRequiredMark), _classNames));
     if (autoFormCreate) {

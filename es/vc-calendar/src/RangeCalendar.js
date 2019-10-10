@@ -63,7 +63,7 @@ function generateOptions(length, extraOptionGen) {
   return arr;
 }
 
-function onInputSelect(direction, value) {
+function onInputSelect(direction, value, cause) {
   if (!value) {
     return;
   }
@@ -75,7 +75,7 @@ function onInputSelect(direction, value) {
     selectedValue[1 - index] = this.showTimePicker ? selectedValue[index] : undefined;
   }
   this.__emit('inputSelect', selectedValue);
-  this.fireSelectValueChange(selectedValue);
+  this.fireSelectValueChange(selectedValue, null, cause || { source: 'dateInput' });
 }
 
 var RangeCalendar = {
@@ -84,6 +84,7 @@ var RangeCalendar = {
     visible: PropTypes.bool.def(true),
     prefixCls: PropTypes.string.def('rc-calendar'),
     dateInputPlaceholder: PropTypes.any,
+    seperator: PropTypes.string.def('~'),
     defaultValue: PropTypes.any,
     value: PropTypes.any,
     hoverValue: PropTypes.any,
@@ -403,7 +404,7 @@ var RangeCalendar = {
         this.__emit('ok', sSelectedValue);
       }
     },
-    onStartInputSelect: function onStartInputSelect() {
+    onStartInputChange: function onStartInputChange() {
       for (var _len = arguments.length, oargs = Array(_len), _key = 0; _key < _len; _key++) {
         oargs[_key] = arguments[_key];
       }
@@ -411,12 +412,20 @@ var RangeCalendar = {
       var args = ['left'].concat(oargs);
       return onInputSelect.apply(this, args);
     },
-    onEndInputSelect: function onEndInputSelect() {
+    onEndInputChange: function onEndInputChange() {
       for (var _len2 = arguments.length, oargs = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
         oargs[_key2] = arguments[_key2];
       }
 
       var args = ['right'].concat(oargs);
+      return onInputSelect.apply(this, args);
+    },
+    onStartInputSelect: function onStartInputSelect(value) {
+      var args = ['left', value, { source: 'dateInputSelect' }];
+      return onInputSelect.apply(this, args);
+    },
+    onEndInputSelect: function onEndInputSelect(value) {
+      var args = ['right', value, { source: 'dateInputSelect' }];
       return onInputSelect.apply(this, args);
     },
     onStartValueChange: function onStartValueChange(leftValue) {
@@ -544,7 +553,7 @@ var RangeCalendar = {
       }
       return v1.diff(v2, 'days');
     },
-    fireSelectValueChange: function fireSelectValueChange(selectedValue, direct) {
+    fireSelectValueChange: function fireSelectValueChange(selectedValue, direct, cause) {
       var timePicker = this.timePicker,
           prevSelectedValue = this.prevSelectedValue;
 
@@ -581,7 +590,7 @@ var RangeCalendar = {
           firstSelectedValue: null
         });
         this.fireHoverValueChange([]);
-        this.__emit('select', selectedValue);
+        this.__emit('select', selectedValue, cause);
       }
       if (!hasProp(this, 'selectedValue')) {
         this.setState({
@@ -638,7 +647,8 @@ var RangeCalendar = {
         locale = props.locale,
         showClear = props.showClear,
         showToday = props.showToday,
-        type = props.type;
+        type = props.type,
+        seperator = props.seperator;
 
     var clearIcon = getComponentFromProp(this, 'clearIcon');
     var sHoverValue = this.sHoverValue,
@@ -705,6 +715,7 @@ var RangeCalendar = {
         clearIcon: clearIcon
       },
       on: {
+        inputChange: this.onStartInputChange,
         inputSelect: this.onStartInputSelect,
         valueChange: this.onStartValueChange,
         panelChange: this.onStartPanelChange
@@ -729,6 +740,7 @@ var RangeCalendar = {
         clearIcon: clearIcon
       },
       on: {
+        inputChange: this.onEndInputChange,
         inputSelect: this.onEndInputSelect,
         valueChange: this.onEndValueChange,
         panelChange: this.onEndPanelChange
@@ -776,7 +788,7 @@ var RangeCalendar = {
       });
       OkButtonNode = h(OkButton, _mergeJSXProps([{ key: 'okButtonNode' }, okButtonProps]));
     }
-    var extraFooter = this.renderFooter();
+    var extraFooter = this.renderFooter(sMode);
     return h(
       'div',
       { ref: 'rootInstance', 'class': className, attrs: { tabIndex: '0' },
@@ -808,7 +820,7 @@ var RangeCalendar = {
           [h(CalendarPart, leftPartProps), h(
             'span',
             { 'class': prefixCls + '-range-middle' },
-            ['~']
+            [seperator]
           ), h(CalendarPart, rightPartProps)]
         ), h(
           'div',

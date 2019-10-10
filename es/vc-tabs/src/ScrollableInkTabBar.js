@@ -15,6 +15,8 @@ export default {
 
     var props = _extends({}, this.$props);
     var listeners = this.$listeners;
+    var renderTabBarNode = this.$scopedSlots['default'];
+
     return h(SaveRef, {
       attrs: {
         children: function children(saveRef, getRef) {
@@ -29,8 +31,10 @@ export default {
                 attrs: { saveRef: saveRef, getRef: getRef }
               }, { props: props, on: listeners }]),
               [h(TabBarTabsNode, _mergeJSXProps([{
-                attrs: { saveRef: saveRef }
-              }, { props: props, on: listeners }])), h(InkTabBarNode, _mergeJSXProps([{
+                attrs: {
+                  saveRef: saveRef
+                }
+              }, { props: _extends({}, props, { renderTabBarNode: renderTabBarNode }), on: listeners }])), h(InkTabBarNode, _mergeJSXProps([{
                 attrs: { saveRef: saveRef, getRef: getRef }
               }, { props: props, on: listeners }]))]
             )]

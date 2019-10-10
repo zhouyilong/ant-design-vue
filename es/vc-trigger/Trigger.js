@@ -211,7 +211,7 @@ export default {
       this.preTouchTime = Date.now();
     },
     onBlur: function onBlur(e) {
-      if (!contains(e.target, e.relatedTarget)) {
+      if (!contains(e.target, e.relatedTarget || document.activeElement)) {
         this.fireEvents('blur', e);
         this.clearDelayTimer();
         if (this.isBlurToHide()) {

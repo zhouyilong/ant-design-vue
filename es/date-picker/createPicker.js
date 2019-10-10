@@ -6,6 +6,7 @@ import MonthCalendar from '../vc-calendar/src/MonthCalendar';
 import VcDatePicker from '../vc-calendar/src/Picker';
 import classNames from 'classnames';
 import Icon from '../icon';
+import { ConfigConsumerProps } from '../config-provider';
 import interopDefault from '../_util/interopDefault';
 import BaseMixin from '../_util/BaseMixin';
 import { hasProp, getOptionProps, initDefaultProps, mergeProps, getComponentFromProp, isValidElement } from '../_util/props-util';
@@ -18,15 +19,7 @@ import { cloneElement } from '../_util/vnode';
 function noop() {}
 export default function createPicker(TheCalendar, props) {
   return {
-    // static defaultProps = {
-    //   prefixCls: 'ant-calendar',
-    //   allowClear: true,
-    //   showToday: true,
-    // };
-
-    // private input: any;
     props: initDefaultProps(props, {
-      prefixCls: 'ant-calendar',
       allowClear: true,
       showToday: true
     }),
@@ -34,6 +27,11 @@ export default function createPicker(TheCalendar, props) {
     model: {
       prop: 'value',
       event: 'change'
+    },
+    inject: {
+      configProvider: { 'default': function _default() {
+          return ConfigConsumerProps;
+        } }
     },
     data: function data() {
       var value = this.value || this.defaultValue;
@@ -64,14 +62,23 @@ export default function createPicker(TheCalendar, props) {
           state.showDate = val;
         }
         this.setState(state);
+      },
+      _open: function _open(val, oldVal) {
+        var _this = this;
+
+        this.$nextTick(function () {
+          if (!hasProp(_this, 'open') && oldVal && !val) {
+            _this.focus();
+          }
+        });
       }
     },
     methods: {
       renderFooter: function renderFooter() {
         var h = this.$createElement;
-        var prefixCls = this.prefixCls,
-            $scopedSlots = this.$scopedSlots,
-            $slots = this.$slots;
+        var $scopedSlots = this.$scopedSlots,
+            $slots = this.$slots,
+            prefixCls = this._prefixCls;
 
         var renderExtraFooter = this.renderExtraFooter || $scopedSlots.renderExtraFooter || $slots.renderExtraFooter;
         return renderExtraFooter ? h(
@@ -103,9 +110,6 @@ export default function createPicker(TheCalendar, props) {
           this.setState({ _open: open });
         }
         this.$emit('openChange', open);
-        if (!open) {
-          this.focus();
-        }
       },
       focus: function focus() {
         this.$refs.input.focus();
@@ -144,9 +148,14 @@ export default function createPicker(TheCalendar, props) {
           ok = _$listeners$ok === undefined ? noop : _$listeners$ok;
 
       var props = getOptionProps(this);
-      var prefixCls = props.prefixCls,
+
+      var customizePrefixCls = props.prefixCls,
           locale = props.locale,
           localeCode = props.localeCode;
+
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('calendar', customizePrefixCls);
+      this._prefixCls = prefixCls;
 
       var dateRender = props.dateRender || $scopedSlots.dateRender;
       var monthCellContentRender = props.monthCellContentRender || $scopedSlots.monthCellContentRender;

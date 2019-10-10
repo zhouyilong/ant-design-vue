@@ -21,8 +21,9 @@ var MonthPanel = {
     locale: PropTypes.any,
     rootPrefixCls: PropTypes.string,
     // onChange: PropTypes.func,
-    disabledDate: PropTypes.func
+    disabledDate: PropTypes.func,
     // onSelect: PropTypes.func,
+    renderFooter: PropTypes.func
   },
 
   data: function data() {
@@ -70,11 +71,14 @@ var MonthPanel = {
         locale = this.locale,
         rootPrefixCls = this.rootPrefixCls,
         disabledDate = this.disabledDate,
+        renderFooter = this.renderFooter,
         _$listeners = this.$listeners,
         $listeners = _$listeners === undefined ? {} : _$listeners;
 
     var year = sValue.year();
     var prefixCls = rootPrefixCls + '-month-panel';
+
+    var footer = renderFooter && renderFooter('month');
     return h(
       'div',
       { 'class': prefixCls },
@@ -138,6 +142,10 @@ var MonthPanel = {
             'select': this.setAndSelectValue
           }
         })]
+      ), footer && h(
+        'div',
+        { 'class': prefixCls + '-footer' },
+        [footer]
       )])]
     );
   }

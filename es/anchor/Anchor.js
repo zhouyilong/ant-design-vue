@@ -7,6 +7,7 @@ import getScroll from '../_util/getScroll';
 import raf from 'raf';
 import { initDefaultProps } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
+import { ConfigConsumerProps } from '../config-provider';
 
 function getDefaultContainer() {
   return window;
@@ -96,14 +97,18 @@ export default {
   mixins: [BaseMixin],
   inheritAttrs: false,
   props: initDefaultProps(AnchorProps, {
-    prefixCls: 'ant-anchor',
     affix: true,
     showInkInFixed: false,
     getContainer: getDefaultContainer
   }),
-
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     this.links = [];
+    this._sPrefixCls = '';
     return {
       activeLink: null
     };
@@ -219,9 +224,9 @@ export default {
       if (typeof document === 'undefined') {
         return;
       }
-      var prefixCls = this.prefixCls;
+      var _sPrefixCls = this._sPrefixCls;
 
-      var linkNode = this.$el.getElementsByClassName(prefixCls + '-link-title-active')[0];
+      var linkNode = this.$el.getElementsByClassName(_sPrefixCls + '-link-title-active')[0];
       if (linkNode) {
         this.$refs.linkNode.style.top = linkNode.offsetTop + linkNode.clientHeight / 2 - 4.5 + 'px';
       }
@@ -230,7 +235,7 @@ export default {
 
   render: function render() {
     var h = arguments[0];
-    var prefixCls = this.prefixCls,
+    var customizePrefixCls = this.prefixCls,
         offsetTop = this.offsetTop,
         affix = this.affix,
         showInkInFixed = this.showInkInFixed,
@@ -238,6 +243,10 @@ export default {
         $slots = this.$slots,
         getContainer = this.getContainer;
 
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('anchor', customizePrefixCls);
+    this._sPrefixCls = prefixCls;
 
     var inkClass = classNames(prefixCls + '-ink-ball', {
       visible: activeLink

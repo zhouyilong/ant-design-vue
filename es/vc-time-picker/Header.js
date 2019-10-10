@@ -28,7 +28,6 @@ var Header = {
     currentSelectPanel: PropTypes.string,
     focusOnOpen: PropTypes.bool,
     // onKeyDown: PropTypes.func,
-    showStr: PropTypes.bool.def(true),
     clearIcon: PropTypes.any
   },
   data: function data() {
@@ -76,7 +75,6 @@ var Header = {
         return;
       }
 
-      this.showStr = true;
       this.setState({
         str: str
       });
@@ -152,35 +150,6 @@ var Header = {
       }
       this.__emit('keydown', e);
     },
-    onClear: function onClear() {
-      this.__emit('clear');
-      this.setState({ str: '' });
-    },
-    getClearButton: function getClearButton() {
-      var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          allowEmpty = this.allowEmpty,
-          clearText = this.clearText;
-
-      var clearIcon = getComponentFromProp(this, 'clearIcon');
-      if (!allowEmpty) {
-        return null;
-      }
-      return h(
-        'a',
-        {
-          attrs: {
-            role: 'button',
-
-            title: clearText
-          },
-          'class': prefixCls + '-clear-btn', on: {
-            'mousedown': this.onClear
-          }
-        },
-        [clearIcon || h('i', { 'class': prefixCls + '-clear-btn-icon' })]
-      );
-    },
     getProtoValue: function getProtoValue() {
       return this.value || this.defaultOpenValue;
     },
@@ -190,8 +159,7 @@ var Header = {
           placeholder = this.placeholder,
           inputReadOnly = this.inputReadOnly,
           invalid = this.invalid,
-          str = this.str,
-          showStr = this.showStr;
+          str = this.str;
 
       var invalidClass = invalid ? prefixCls + '-input-invalid' : '';
       return h('input', {
@@ -202,7 +170,7 @@ var Header = {
           'input': this.onInputChange
         },
         domProps: {
-          'value': showStr ? str : ''
+          'value': str
         },
         attrs: {
           placeholder: placeholder,
@@ -220,7 +188,7 @@ var Header = {
     return h(
       'div',
       { 'class': prefixCls + '-input-wrap' },
-      [this.getInput(), this.getClearButton()]
+      [this.getInput()]
     );
   }
 };

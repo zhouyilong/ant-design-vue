@@ -16,7 +16,7 @@ var scrollTo = function scrollTo(element, to, duration) {
   var perTick = difference / duration * 10;
 
   requestAnimationFrame(function () {
-    element.scrollTop = element.scrollTop + perTick;
+    element.scrollTop += perTick;
     if (element.scrollTop === to) return;
     scrollTo(element, to, duration - 10);
   });
@@ -74,20 +74,27 @@ var Select = {
         var _classnames;
 
         var cls = classnames((_classnames = {}, _defineProperty(_classnames, prefixCls + '-select-option-selected', selectedIndex === index), _defineProperty(_classnames, prefixCls + '-select-option-disabled', item.disabled), _classnames));
-        var onClick = noop;
-        if (!item.disabled) {
-          onClick = _this3.onSelect.bind(_this3, item.value);
-        }
+        var onClick = item.disabled ? noop : function () {
+          _this3.onSelect(item.value);
+        };
         return h(
           'li',
-          { 'class': cls, key: index, on: {
+          {
+            attrs: { role: 'button', disabled: item.disabled },
+            on: {
               'click': onClick
             },
-            attrs: { disabled: item.disabled }
-          },
+            'class': cls, key: index },
           [item.value]
         );
       });
+    },
+    handleMouseEnter: function handleMouseEnter(e) {
+      this.setState({ active: true });
+      this.__emit('mouseenter', e);
+    },
+    handleMouseLeave: function handleMouseLeave() {
+      this.setState({ active: false });
     },
     scrollToSelected: function scrollToSelected(duration) {
       // move to selected item
@@ -103,13 +110,6 @@ var Select = {
       var topOption = list.children[index];
       var to = topOption.offsetTop;
       scrollTo(select, to, duration);
-    },
-    handleMouseEnter: function handleMouseEnter(e) {
-      this.setState({ active: true });
-      this.__emit('mouseenter', e);
-    },
-    handleMouseLeave: function handleMouseLeave() {
-      this.setState({ active: false });
     }
   },
 
@@ -117,14 +117,15 @@ var Select = {
     var _cls;
 
     var h = arguments[0];
+    var prefixCls = this.prefixCls,
+        options = this.options,
+        active = this.active;
 
-    if (this.options.length === 0) {
+    if (options.length === 0) {
       return null;
     }
 
-    var prefixCls = this.prefixCls;
-
-    var cls = (_cls = {}, _defineProperty(_cls, prefixCls + '-select', 1), _defineProperty(_cls, prefixCls + '-select-active', this.active), _cls);
+    var cls = (_cls = {}, _defineProperty(_cls, prefixCls + '-select', 1), _defineProperty(_cls, prefixCls + '-select-active', active), _cls);
 
     return h(
       'div',

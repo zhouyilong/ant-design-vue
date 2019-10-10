@@ -10,13 +10,15 @@ import Icon from '../icon';
 import Button from '../button';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
 import defaultLocale from '../locale-provider/default';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 var tooltipProps = abstractTooltipProps();
 var btnProps = buttonTypes();
 var Popconfirm = {
   name: 'APopconfirm',
   props: _extends({}, tooltipProps, {
-    prefixCls: PropTypes.string.def('ant-popover'),
+    prefixCls: PropTypes.string,
     transitionName: PropTypes.string.def('zoom-big'),
     content: PropTypes.any,
     title: PropTypes.any,
@@ -37,6 +39,11 @@ var Popconfirm = {
     visible: function visible(val) {
       this.sVisible = val;
     }
+  },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   data: function data() {
     var props = getOptionProps(this);
@@ -70,10 +77,9 @@ var Popconfirm = {
     getPopupDomNode: function getPopupDomNode() {
       return this.$refs.tooltip.getPopupDomNode();
     },
-    renderOverlay: function renderOverlay(popconfirmLocale) {
+    renderOverlay: function renderOverlay(prefixCls, popconfirmLocale) {
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          okType = this.okType,
+      var okType = this.okType,
           okButtonProps = this.okButtonProps,
           cancelButtonProps = this.cancelButtonProps;
 
@@ -125,12 +131,20 @@ var Popconfirm = {
     }
   },
   render: function render() {
+    var _this = this;
+
     var h = arguments[0];
 
     var props = getOptionProps(this);
+    var customizePrefixCls = props.prefixCls;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('popover', customizePrefixCls);
+
     var otherProps = omit(props, ['title', 'content', 'cancelText', 'okText']);
     var tooltipProps = {
       props: _extends({}, otherProps, {
+        prefixCls: prefixCls,
         visible: this.sVisible
       }),
       ref: 'tooltip',
@@ -143,7 +157,11 @@ var Popconfirm = {
         componentName: 'Popconfirm',
         defaultLocale: defaultLocale.Popconfirm
       },
-      scopedSlots: { 'default': this.renderOverlay }
+      scopedSlots: {
+        'default': function _default(popconfirmLocale) {
+          return _this.renderOverlay(prefixCls, popconfirmLocale);
+        }
+      }
     });
     return h(
       Tooltip,
@@ -159,6 +177,7 @@ var Popconfirm = {
 
 /* istanbul ignore next */
 Popconfirm.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Popconfirm.name, Popconfirm);
 };
 

@@ -35,7 +35,8 @@ var CalendarHeader = {
     disabledMonth: PropTypes.func,
     mode: PropTypes.any,
     monthCellRender: PropTypes.func,
-    monthCellContentRender: PropTypes.func
+    monthCellContentRender: PropTypes.func,
+    renderFooter: PropTypes.func
   },
   data: function data() {
     this.nextMonth = goMonth.bind(this, 1);
@@ -156,7 +157,8 @@ var CalendarHeader = {
         showTimePicker = props.showTimePicker,
         enableNext = props.enableNext,
         enablePrev = props.enablePrev,
-        disabledMonth = props.disabledMonth;
+        disabledMonth = props.disabledMonth,
+        renderFooter = props.renderFooter;
 
 
     var panel = null;
@@ -169,7 +171,8 @@ var CalendarHeader = {
 
           disabledDate: disabledMonth,
           cellRender: props.monthCellRender,
-          contentRender: props.monthCellContentRender
+          contentRender: props.monthCellContentRender,
+          renderFooter: renderFooter
         },
         on: {
           'select': this.onMonthSelect,
@@ -184,7 +187,9 @@ var CalendarHeader = {
         attrs: {
           locale: locale,
           defaultValue: value,
-          rootPrefixCls: prefixCls
+          rootPrefixCls: prefixCls,
+
+          renderFooter: renderFooter
         },
         on: {
           'select': this.onYearSelect,
@@ -197,7 +202,9 @@ var CalendarHeader = {
         attrs: {
           locale: locale,
           defaultValue: value,
-          rootPrefixCls: prefixCls
+          rootPrefixCls: prefixCls,
+
+          renderFooter: renderFooter
         },
         on: {
           'select': this.onDecadeSelect

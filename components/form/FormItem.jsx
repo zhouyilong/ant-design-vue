@@ -213,7 +213,8 @@ export default {
     },
 
     renderHelp(prefixCls) {
-      const help = this.getHelpMessage();
+      /** 取消校验提示 by fanjunliang 20190802**/
+/*      const help = this.getHelpMessage();
       const children = help ? (
         <div class={`${prefixCls}-explain`} key="help">
           {help}
@@ -230,7 +231,7 @@ export default {
         <transition {...transitionProps} key="help">
           {children}
         </transition>
-      );
+      );*/
     },
 
     renderExtra(prefixCls) {

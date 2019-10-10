@@ -1,18 +1,27 @@
 import PropTypes from '../_util/vue-types';
 import { hasProp, getComponentFromProp } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 
 export default {
   name: 'ABreadcrumbItem',
   __ANT_BREADCRUMB_ITEM: true,
   props: {
-    prefixCls: PropTypes.string.def('ant-breadcrumb'),
+    prefixCls: PropTypes.string,
     href: PropTypes.string,
     separator: PropTypes.any
   },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   render: function render() {
     var h = arguments[0];
-    var prefixCls = this.prefixCls,
+    var customizePrefixCls = this.prefixCls,
         $slots = this.$slots;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('breadcrumb', customizePrefixCls);
 
     var children = $slots['default'];
     var link = void 0;

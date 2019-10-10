@@ -1,11 +1,9 @@
-import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-import _extends from 'babel-runtime/helpers/extends';
 import Slider from '../index';
 import Tooltip from '../../vc-tooltip';
 import '../assets/index.less';
 import '../../vc-tooltip/assets/bootstrap.less';
 
-var Handle = Slider.Handle;
+var createSliderWithTooltip = Slider.createSliderWithTooltip;
 
 
 function log(value) {
@@ -94,90 +92,7 @@ var DynamicBounds = {
   }
 };
 
-var SliderWithTooltip = {
-  data: function data() {
-    return {
-      visibles: []
-    };
-  },
-
-  methods: {
-    handleTooltipVisibleChange: function handleTooltipVisibleChange(index, visible) {
-      this.visibles[index] = visible;
-      this.visibles = _extends({}, this.visibles);
-    },
-    handleRange: function handleRange(h, _ref) {
-      var _this = this;
-
-      var value = _ref.value,
-          dragging = _ref.dragging,
-          index = _ref.index,
-          disabled = _ref.disabled,
-          style = _ref.style,
-          restProps = _objectWithoutProperties(_ref, ['value', 'dragging', 'index', 'disabled', 'style']);
-
-      var tipFormatter = function tipFormatter(value) {
-        return value + '%';
-      };
-      var tipProps = { overlayClassName: 'foo' };
-
-      var _tipProps$prefixCls = tipProps.prefixCls,
-          prefixCls = _tipProps$prefixCls === undefined ? 'rc-slider-tooltip' : _tipProps$prefixCls,
-          _tipProps$overlay = tipProps.overlay,
-          overlay = _tipProps$overlay === undefined ? tipFormatter(value) : _tipProps$overlay,
-          _tipProps$placement = tipProps.placement,
-          placement = _tipProps$placement === undefined ? 'top' : _tipProps$placement,
-          _tipProps$visible = tipProps.visible,
-          visible = _tipProps$visible === undefined ? visible || false : _tipProps$visible,
-          restTooltipProps = _objectWithoutProperties(tipProps, ['prefixCls', 'overlay', 'placement', 'visible']);
-
-      var handleStyleWithIndex = void 0;
-      if (Array.isArray(style)) {
-        handleStyleWithIndex = style[index] || style[0];
-      } else {
-        handleStyleWithIndex = style;
-      }
-
-      var tooltipProps = {
-        props: _extends({
-          prefixCls: prefixCls,
-          overlay: overlay,
-          placement: placement,
-          visible: !disabled && (this.visibles[index] || dragging) || visible
-        }, restTooltipProps),
-        key: index
-      };
-      var handleProps = {
-        props: _extends({
-          value: value
-        }, restProps),
-        on: {
-          mouseenter: function mouseenter() {
-            return _this.handleTooltipVisibleChange(index, true);
-          },
-          mouseleave: function mouseleave() {
-            return _this.handleTooltipVisibleChange(index, false);
-          },
-          visibleChange: log
-        },
-        style: _extends({}, handleStyleWithIndex)
-      };
-
-      return h(
-        Tooltip,
-        tooltipProps,
-        [h(Handle, handleProps)]
-      );
-    }
-  },
-  render: function render() {
-    var h = arguments[0];
-
-    return h(Slider, {
-      attrs: { handle: this.handleRange }
-    });
-  }
-};
+var SliderWithTooltip = createSliderWithTooltip(Slider);
 
 export default {
   render: function render() {
@@ -251,7 +166,17 @@ export default {
         'p',
         { style: pStyle },
         ['Slider with tooltip, with custom `tipFormatter`']
-      ), h(SliderWithTooltip)]
+      ), h(SliderWithTooltip, {
+        attrs: {
+          tipFormatter: function tipFormatter(v) {
+            return v + ' %';
+          },
+          tipProps: { overlayClassName: 'foo' }
+        },
+        on: {
+          'change': log
+        }
+      })]
     ), h(
       'div',
       { style: style },

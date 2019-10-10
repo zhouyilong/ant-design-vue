@@ -1,18 +1,17 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
-import { getComponentFromProp } from '../_util/props-util';
+import { getComponentFromProp, initDefaultProps } from '../_util/props-util';
 import KeyCode from '../_util/KeyCode';
 import contains from '../_util/Dom/contains';
 import LazyRenderBox from './LazyRenderBox';
 import BaseMixin from '../_util/BaseMixin';
 import getTransitionProps from '../_util/getTransitionProps';
-import getScrollBarSize from '../_util/getScrollBarSize';
+import switchScrollingEffect from '../_util/switchScrollingEffect';
 import getDialogPropTypes from './IDialogPropTypes';
 var IDialogPropTypes = getDialogPropTypes();
 
 var uuid = 0;
-var openCount = 0;
 
 /* eslint react/no-is-mounted:0 */
 function noop() {}
@@ -49,22 +48,21 @@ function offset(el) {
   pos.top += getScroll(w, true);
   return pos;
 }
-var initDefaultProps = function initDefaultProps(propTypes, defaultProps) {
-  return Object.keys(defaultProps).map(function (k) {
-    return propTypes[k].def(defaultProps[k]);
-  });
-};
+
 export default {
   mixins: [BaseMixin],
-  props: _extends({}, IDialogPropTypes, initDefaultProps(IDialogPropTypes, {
+  props: initDefaultProps(IDialogPropTypes, {
     mask: true,
     visible: false,
     keyboard: true,
     closable: true,
     maskClosable: true,
     destroyOnClose: false,
-    prefixCls: 'rc-dialog'
-  })),
+    prefixCls: 'rc-dialog',
+    getOpenCount: function getOpenCount() {
+      return null;
+    }
+  }),
   data: function data() {
     return {
       destroyPopup: false
@@ -104,12 +102,20 @@ export default {
 
     this.$nextTick(function () {
       _this2.updatedCallback(false);
+      // if forceRender is true, set element style display to be none;
+      if ((_this2.forceRender || _this2.getContainer === false && !_this2.visible) && _this2.$refs.wrap) {
+        _this2.$refs.wrap.style.display = 'none';
+      }
     });
   },
   beforeDestroy: function beforeDestroy() {
-    if (this.visible || this.inTransition) {
+    var visible = this.visible,
+        getOpenCount = this.getOpenCount;
+
+    if ((visible || this.inTransition) && !getOpenCount()) {
       this.removeScrollingEffect();
     }
+    clearTimeout(this.timeoutId);
   },
 
   methods: {
@@ -167,12 +173,24 @@ export default {
         afterClose();
       }
     },
+    onDialogMouseDown: function onDialogMouseDown() {
+      this.dialogMouseDown = true;
+    },
+    onMaskMouseUp: function onMaskMouseUp() {
+      var _this3 = this;
+
+      if (this.dialogMouseDown) {
+        this.timeoutId = setTimeout(function () {
+          _this3.dialogMouseDown = false;
+        }, 0);
+      }
+    },
     onMaskClick: function onMaskClick(e) {
       // android trigger click on open (fastclick??)
       if (Date.now() - this.openTime < 300) {
         return;
       }
-      if (e.target === e.currentTarget) {
+      if (e.target === e.currentTarget && !this.dialogMouseDown) {
         this.close(e);
       }
     },
@@ -247,12 +265,14 @@ export default {
         closer = h(
           'button',
           {
+            attrs: {
+              type: 'button',
+
+              'aria-label': 'Close'
+            },
             key: 'close',
             on: {
               'click': this.close || noop
-            },
-            attrs: {
-              'aria-label': 'Close'
             },
             'class': prefixCls + '-close'
           },
@@ -277,15 +297,14 @@ export default {
           },
           ref: 'dialog',
           style: style,
-          'class': cls
+          'class': cls,
+          on: {
+            'mousedown': this.onDialogMouseDown
+          }
         },
-        [h(
-          'div',
-          {
-            attrs: { tabIndex: 0 },
-            ref: 'sentinelStart', style: sentinelStyle },
-          ['sentinelStart']
-        ), h(
+        [h('div', {
+          attrs: { tabIndex: 0, 'aria-hidden': 'true' },
+          ref: 'sentinelStart', style: sentinelStyle }), h(
           'div',
           { 'class': prefixCls + '-content' },
           [closer, header, h(
@@ -293,13 +312,9 @@ export default {
             _mergeJSXProps([{ key: 'body', 'class': prefixCls + '-body', style: bodyStyle, ref: 'body' }, bodyProps]),
             [this.$slots['default']]
           ), footer]
-        ), h(
-          'div',
-          {
-            attrs: { tabIndex: 0 },
-            ref: 'sentinelEnd', style: sentinelStyle },
-          ['sentinelEnd']
-        )]
+        ), h('div', {
+          attrs: { tabIndex: 0, 'aria-hidden': 'true' },
+          ref: 'sentinelEnd', style: sentinelStyle })]
       );
       var dialogTransitionProps = getTransitionProps(transitionName, {
         afterLeave: this.onAnimateLeave
@@ -370,59 +385,35 @@ export default {
       }
       return transitionName;
     },
-    setScrollbar: function setScrollbar() {
-      if (this.bodyIsOverflowing && this.scrollbarWidth !== undefined) {
-        document.body.style.paddingRight = this.scrollbarWidth + 'px';
-      }
-    },
+
+    // setScrollbar() {
+    //   if (this.bodyIsOverflowing && this.scrollbarWidth !== undefined) {
+    //     document.body.style.paddingRight = `${this.scrollbarWidth}px`;
+    //   }
+    // },
     addScrollingEffect: function addScrollingEffect() {
-      openCount++;
+      var getOpenCount = this.getOpenCount;
+
+      var openCount = getOpenCount();
       if (openCount !== 1) {
         return;
       }
-      this.checkScrollbar();
-      this.setScrollbar();
+      switchScrollingEffect();
       document.body.style.overflow = 'hidden';
-      // this.adjustDialog();
     },
     removeScrollingEffect: function removeScrollingEffect() {
-      openCount--;
+      var getOpenCount = this.getOpenCount;
+
+      var openCount = getOpenCount();
       if (openCount !== 0) {
         return;
       }
       document.body.style.overflow = '';
-      this.resetScrollbar();
+      switchScrollingEffect(true);
       // this.resetAdjustments();
     },
     close: function close(e) {
       this.__emit('close', e);
-    },
-    checkScrollbar: function checkScrollbar() {
-      var fullWindowWidth = window.innerWidth;
-      if (!fullWindowWidth) {
-        // workaround for missing window.innerWidth in IE8
-        var documentElementRect = document.documentElement.getBoundingClientRect();
-        fullWindowWidth = documentElementRect.right - Math.abs(documentElementRect.left);
-      }
-      this.bodyIsOverflowing = document.body.clientWidth < fullWindowWidth;
-      if (this.bodyIsOverflowing) {
-        this.scrollbarWidth = getScrollBarSize();
-      }
-    },
-    resetScrollbar: function resetScrollbar() {
-      document.body.style.paddingRight = '';
-    },
-    adjustDialog: function adjustDialog() {
-      if (this.$refs.wrap && this.scrollbarWidth !== undefined) {
-        var modalIsOverflowing = this.$refs.wrap.scrollHeight > document.documentElement.clientHeight;
-        this.$refs.wrap.style.paddingLeft = (!this.bodyIsOverflowing && modalIsOverflowing ? this.scrollbarWidth : '') + 'px';
-        this.$refs.wrap.style.paddingRight = (this.bodyIsOverflowing && !modalIsOverflowing ? this.scrollbarWidth : '') + 'px';
-      }
-    },
-    resetAdjustments: function resetAdjustments() {
-      if (this.$refs.wrap) {
-        this.$refs.wrap.style.paddingLeft = this.$refs.wrap.style.paddingLeft = '';
-      }
     }
   },
   render: function render() {
@@ -451,7 +442,8 @@ export default {
         },
         on: {
           'keydown': this.onKeydown,
-          'click': maskClosable ? this.onMaskClick : noop
+          'click': maskClosable ? this.onMaskClick : noop,
+          'mouseup': maskClosable ? this.onMaskMouseUp : noop
         },
 
         'class': prefixCls + '-wrap ' + (wrapClassName || ''),

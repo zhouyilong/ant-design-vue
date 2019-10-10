@@ -17,7 +17,7 @@ function traverseNodesKey(rootChildren, callback) {
 
     var children = getSlots(node)['default'];
     if (callback(key) !== false) {
-      traverseNodesKey(children, callback);
+      traverseNodesKey(typeof children === 'function' ? children() : children, callback);
     }
   }
 

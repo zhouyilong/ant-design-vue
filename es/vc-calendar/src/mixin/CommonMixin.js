@@ -33,9 +33,14 @@ export default {
       return format;
     },
     focus: function focus() {
-      if (this.$refs.rootInstance) {
+      if (this.focusElement) {
+        this.focusElement.focus();
+      } else if (this.$refs.rootInstance) {
         this.$refs.rootInstance.focus();
       }
+    },
+    saveFocusElement: function saveFocusElement(focusElement) {
+      this.focusElement = focusElement;
     }
   }
 };

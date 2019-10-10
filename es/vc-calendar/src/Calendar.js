@@ -4,27 +4,17 @@ import BaseMixin from '../../_util/BaseMixin';
 import { getOptionProps, hasProp, getComponentFromProp } from '../../_util/props-util';
 import { cloneElement } from '../../_util/vnode';
 import KeyCode from '../../_util/KeyCode';
-import * as moment from 'moment';
+import moment from 'moment';
 import DateTable from './date/DateTable';
 import CalendarHeader from './calendar/CalendarHeader';
 import CalendarFooter from './calendar/CalendarFooter';
-import CalendarMixin from './mixin/CalendarMixin';
+import CalendarMixin, { getNowByCurrentStateValue } from './mixin/CalendarMixin';
 import CommonMixin from './mixin/CommonMixin';
 import DateInput from './date/DateInput';
 import enUs from './locale/en_US';
 import { getTimeConfig, getTodayTime, syncTime } from './util';
 import { goStartMonth, goEndMonth, goTime as _goTime } from './util/toTime';
 
-function isMoment(value) {
-  if (Array.isArray(value)) {
-    return value.length === 0 || value.findIndex(function (val) {
-      return val === undefined || moment.isMoment(val);
-    }) !== -1;
-  } else {
-    return value === undefined || moment.isMoment(value);
-  }
-}
-var MomentType = PropTypes.custom(isMoment);
 var Calendar = {
   props: {
     locale: PropTypes.object.def(enUs),
@@ -32,9 +22,10 @@ var Calendar = {
     visible: PropTypes.bool.def(true),
     prefixCls: PropTypes.string.def('rc-calendar'),
     // prefixCls: PropTypes.string,
-    defaultValue: MomentType,
-    value: MomentType,
-    selectedValue: MomentType,
+    defaultValue: PropTypes.object,
+    value: PropTypes.object,
+    selectedValue: PropTypes.object,
+    defaultSelectedValue: PropTypes.object,
     mode: PropTypes.oneOf(['time', 'date', 'month', 'year', 'decade']),
     // locale: PropTypes.object,
     showDateInput: PropTypes.bool.def(true),
@@ -58,23 +49,54 @@ var Calendar = {
     renderSidebar: PropTypes.func.def(function () {
       return null;
     }),
-    clearIcon: PropTypes.any
+    clearIcon: PropTypes.any,
+    focusablePanel: PropTypes.bool.def(true)
   },
 
   mixins: [BaseMixin, CommonMixin, CalendarMixin],
 
   data: function data() {
+    var props = this.$props;
     return {
-      sMode: this.mode || 'date'
+      sMode: this.mode || 'date',
+      sValue: props.value || props.defaultValue || moment(),
+      sSelectedValue: props.selectedValue || props.defaultSelectedValue
     };
   },
 
   watch: {
     mode: function mode(val) {
       this.setState({ sMode: val });
+    },
+    value: function value(val) {
+      var sValue = val || this.defaultValue || getNowByCurrentStateValue(this.sValue);
+      this.setState({
+        sValue: sValue
+      });
+    },
+    selectedValue: function selectedValue(val) {
+      this.setState({
+        sSelectedValue: val
+      });
     }
   },
+  mounted: function mounted() {
+    var _this = this;
+
+    this.$nextTick(function () {
+      _this.saveFocusElement(DateInput.getInstance());
+    });
+  },
+
   methods: {
+    onPanelChange: function onPanelChange(value, mode) {
+      var sValue = this.sValue;
+
+      if (!hasProp(this, 'mode')) {
+        this.setState({ sMode: mode });
+      }
+      this.__emit('panelChange', value || sValue, mode);
+    },
     onKeyDown: function onKeyDown(event) {
       if (event.target.nodeName.toLowerCase() === 'input') {
         return undefined;
@@ -155,6 +177,11 @@ var Calendar = {
         source: 'dateInput'
       });
     },
+    onDateInputSelect: function onDateInputSelect(value) {
+      this.onSelect(value, {
+        source: 'dateInputSelect'
+      });
+    },
     onDateTableSelect: function onDateTableSelect(value) {
       var timePicker = this.timePicker,
           sSelectedValue = this.sSelectedValue;
@@ -175,14 +202,6 @@ var Calendar = {
       this.onSelect(now, {
         source: 'todayButton'
       });
-    },
-    onPanelChange: function onPanelChange(value, mode) {
-      var sValue = this.sValue;
-
-      if (!hasProp(this, 'mode')) {
-        this.setState({ sMode: mode });
-      }
-      this.__emit('panelChange', value || sValue, mode);
     },
     getRootDOMNode: function getRootDOMNode() {
       return this.$el;
@@ -207,10 +226,10 @@ var Calendar = {
         timePicker = this.timePicker,
         disabledTime = this.disabledTime,
         showDateInput = this.showDateInput,
-        renderSidebar = this.renderSidebar,
         sValue = this.sValue,
         sSelectedValue = this.sSelectedValue,
         sMode = this.sMode,
+        renderFooter = this.renderFooter,
         props = this.$props;
 
     var clearIcon = getComponentFromProp(this, 'clearIcon');
@@ -259,21 +278,29 @@ var Calendar = {
       },
       key: 'date-input', on: {
         'clear': this.onClear,
-        'change': this.onDateInputChange
+        'change': this.onDateInputChange,
+        'select': this.onDateInputSelect
       }
     }) : null;
-    var children = [renderSidebar(), h(
+    var children = [];
+    if (props.renderSidebar) {
+      children.push(props.renderSidebar());
+    }
+    children.push(h(
       'div',
       { 'class': prefixCls + '-panel', key: 'panel' },
       [dateInputElement, h(
         'div',
-        { 'class': prefixCls + '-date-panel' },
+        {
+          attrs: { tabIndex: props.focusablePanel ? 0 : undefined },
+          'class': prefixCls + '-date-panel' },
         [h(CalendarHeader, {
           attrs: {
             locale: locale,
             mode: sMode,
             value: sValue,
 
+            renderFooter: renderFooter,
             showTimePicker: showTimePicker,
             prefixCls: prefixCls
           },
@@ -310,6 +337,7 @@ var Calendar = {
         ), h(CalendarFooter, {
           attrs: {
             showOk: props.showOk,
+            mode: sMode,
             renderFooter: props.renderFooter,
             locale: locale,
             prefixCls: prefixCls,
@@ -332,7 +360,7 @@ var Calendar = {
           }
         })]
       )]
-    )];
+    ));
 
     return this.renderRoot({
       children: children,

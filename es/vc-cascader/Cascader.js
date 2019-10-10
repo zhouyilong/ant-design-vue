@@ -8,7 +8,7 @@ import Menus from './Menus';
 import KeyCode from '../_util/KeyCode';
 import arrayTreeFilter from 'array-tree-filter';
 import shallowEqualArrays from 'shallow-equal/arrays';
-import { hasProp, getEvents } from '../_util/props-util';
+import { hasProp, getEvents, getSlot } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import { cloneElement } from '../_util/vnode';
 
@@ -56,7 +56,7 @@ export default {
   props: {
     value: PropTypes.array,
     defaultValue: PropTypes.array,
-    options: PropTypes.array.def([]).isRequired,
+    options: PropTypes.array,
     // onChange: PropTypes.func,
     // onPopupVisibleChange: PropTypes.func,
     popupVisible: PropTypes.bool,
@@ -102,13 +102,12 @@ export default {
     value: function value(val, oldValue) {
       if (!shallowEqualArrays(val, oldValue)) {
         var newValues = {
-          sValue: val || [],
-          sActiveValue: val || []
+          sValue: val || []
         };
         // allow activeValue diff from value
         // https://github.com/ant-design/ant-design/issues/2767
-        if (hasProp(this, 'loadData')) {
-          delete newValues.sActiveValue;
+        if (!hasProp(this, 'loadData')) {
+          newValues.sActiveValue = val || [];
         }
         this.setState(newValues);
       }
@@ -135,7 +134,8 @@ export default {
     getCurrentLevelOptions: function getCurrentLevelOptions() {
       var _this = this;
 
-      var options = this.options,
+      var _options = this.options,
+          options = _options === undefined ? [] : _options,
           _sActiveValue = this.sActiveValue,
           sActiveValue = _sActiveValue === undefined ? [] : _sActiveValue;
 
@@ -152,7 +152,7 @@ export default {
     getActiveOptions: function getActiveOptions(activeValue) {
       var _this2 = this;
 
-      return arrayTreeFilter(this.options, function (o, level) {
+      return arrayTreeFilter(this.options || [], function (o, level) {
         return o[_this2.getFieldName('value')] === activeValue[level];
       }, { childrenKeyName: this.getFieldName('children') });
     },
@@ -229,6 +229,13 @@ export default {
       }
       this.setState(newState);
     },
+    handleItemDoubleClick: function handleItemDoubleClick() {
+      var changeOnSelect = this.$props.changeOnSelect;
+
+      if (changeOnSelect) {
+        this.setPopupVisible(false);
+      }
+    },
     handleKeyDown: function handleKeyDown(e) {
       var _this4 = this;
 
@@ -250,11 +257,11 @@ export default {
       var currentIndex = currentOptions.map(function (o) {
         return o[_this4.getFieldName('value')];
       }).indexOf(activeValue[currentLevel]);
-      if (e.keyCode !== KeyCode.DOWN && e.keyCode !== KeyCode.UP && e.keyCode !== KeyCode.LEFT && e.keyCode !== KeyCode.RIGHT && e.keyCode !== KeyCode.ENTER && e.keyCode !== KeyCode.BACKSPACE && e.keyCode !== KeyCode.ESC) {
+      if (e.keyCode !== KeyCode.DOWN && e.keyCode !== KeyCode.UP && e.keyCode !== KeyCode.LEFT && e.keyCode !== KeyCode.RIGHT && e.keyCode !== KeyCode.ENTER && e.keyCode !== KeyCode.SPACE && e.keyCode !== KeyCode.BACKSPACE && e.keyCode !== KeyCode.ESC && e.keyCode !== KeyCode.TAB) {
         return;
       }
       // Press any keys above to reopen menu
-      if (!this.sPopupVisible && e.keyCode !== KeyCode.BACKSPACE && e.keyCode !== KeyCode.LEFT && e.keyCode !== KeyCode.RIGHT && e.keyCode !== KeyCode.ESC) {
+      if (!this.sPopupVisible && e.keyCode !== KeyCode.BACKSPACE && e.keyCode !== KeyCode.LEFT && e.keyCode !== KeyCode.RIGHT && e.keyCode !== KeyCode.ESC && e.keyCode !== KeyCode.TAB) {
         this.setPopupVisible(true);
         return;
       }
@@ -281,7 +288,7 @@ export default {
         if (currentOptions[currentIndex] && currentOptions[currentIndex][this.getFieldName('children')]) {
           activeValue.push(currentOptions[currentIndex][this.getFieldName('children')][0][this.getFieldName('value')]);
         }
-      } else if (e.keyCode === KeyCode.ESC) {
+      } else if (e.keyCode === KeyCode.ESC || e.keyCode === KeyCode.TAB) {
         this.setPopupVisible(false);
         return;
       }
@@ -309,7 +316,8 @@ export default {
     var prefixCls = $props.prefixCls,
         transitionName = $props.transitionName,
         popupClassName = $props.popupClassName,
-        options = $props.options,
+        _$props$options = $props.options,
+        options = _$props$options === undefined ? [] : _$props$options,
         disabled = $props.disabled,
         builtinPlacements = $props.builtinPlacements,
         popupPlacement = $props.popupPlacement,
@@ -332,7 +340,8 @@ export default {
           expandIcon: expandIcon
         }),
         on: _extends({}, $listeners, {
-          select: handleMenuSelect
+          select: handleMenuSelect,
+          itemDoubleClick: this.handleItemDoubleClick
         })
       };
       menus = h(Menus, menusProps);
@@ -355,10 +364,11 @@ export default {
       }),
       ref: 'trigger'
     };
+    var children = getSlot(this, 'default')[0];
     return h(
       Trigger,
       triggerProps,
-      [$slots['default'] && cloneElement($slots['default'][0], {
+      [children && cloneElement(children, {
         on: {
           keydown: handleKeyDown
         },

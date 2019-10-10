@@ -1,23 +1,30 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
+import PropTypes from '../_util/vue-types';
+import { ConfigConsumerProps } from '../config-provider';
+
 export default {
   name: 'ACheckableTag',
   model: {
     prop: 'checked'
   },
   props: {
-    prefixCls: {
-      'default': 'ant-tag',
-      type: String
-    },
+    prefixCls: PropTypes.string,
     checked: Boolean
+  },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
   },
   computed: {
     classes: function classes() {
       var _ref;
 
-      var prefixCls = this.prefixCls,
-          checked = this.checked;
+      var checked = this.checked,
+          customizePrefixCls = this.prefixCls;
 
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('tag', customizePrefixCls);
       return _ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-checkable', true), _defineProperty(_ref, prefixCls + '-checkable-checked', checked), _ref;
     }
   },

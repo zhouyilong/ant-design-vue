@@ -2,18 +2,27 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
 import { getComponentFromProp } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 
 export default {
   name: 'ACardMeta',
   props: {
-    prefixCls: PropTypes.string.def('ant-card'),
+    prefixCls: PropTypes.string,
     title: PropTypes.any,
     description: PropTypes.any
   },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   render: function render() {
     var h = arguments[0];
-    var _$props$prefixCls = this.$props.prefixCls,
-        prefixCls = _$props$prefixCls === undefined ? 'ant-card' : _$props$prefixCls;
+    var customizePrefixCls = this.$props.prefixCls;
+
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('card', customizePrefixCls);
 
     var classString = _defineProperty({}, prefixCls + '-meta', true);
 

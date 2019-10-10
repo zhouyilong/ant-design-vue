@@ -14,26 +14,27 @@ export default {
     var props = context.props,
         slots = context.slots,
         listeners = context.listeners,
-        data = context.data;
+        data = context.data,
+        scopedSlots = context.scopedSlots;
 
-    var $slots = slots();
+    var $slots = slots() || {};
     var children = $slots['default'];
-    delete $slots['default'];
+    var slotsKey = Object.keys($slots);
+    var scopedSlotsTemp = {}; // for vue 2.5.x
+    slotsKey.forEach(function (name) {
+      scopedSlotsTemp[name] = function () {
+        return $slots[name];
+      };
+    });
     var treeNodeProps = _extends({}, data, {
       on: _extends({}, listeners, data.nativeOn),
-      props: props
+      props: props,
+      scopedSlots: _extends({}, scopedSlotsTemp, scopedSlots)
     });
-    var slotsKey = Object.keys($slots);
     return h(
       TreeNode,
       treeNodeProps,
-      [children, slotsKey.length ? slotsKey.map(function (name) {
-        return h(
-          'template',
-          { slot: name },
-          [$slots[name]]
-        );
-      }) : null]
+      [children]
     );
   }
 };

@@ -6,12 +6,12 @@
 
 var HIDDEN_TEXTAREA_STYLE = '\n  min-height:0 !important;\n  max-height:none !important;\n  height:0 !important;\n  visibility:hidden !important;\n  overflow:hidden !important;\n  position:absolute !important;\n  z-index:-1000 !important;\n  top:0 !important;\n  right:0 !important\n';
 
-var SIZING_STYLE = ['letter-spacing', 'line-height', 'padding-top', 'padding-bottom', 'font-family', 'font-weight', 'font-size', 'text-rendering', 'text-transform', 'width', 'text-indent', 'padding-left', 'padding-right', 'border-width', 'box-sizing'];
+var SIZING_STYLE = ['letter-spacing', 'line-height', 'padding-top', 'padding-bottom', 'font-family', 'font-weight', 'font-size', 'font-variant', 'text-rendering', 'text-transform', 'width', 'text-indent', 'padding-left', 'padding-right', 'border-width', 'box-sizing'];
 
 var computedStyleCache = {};
 var hiddenTextarea = void 0;
 
-function calculateNodeStyling(node) {
+export function calculateNodeStyling(node) {
   var useCache = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
   var nodeRef = node.getAttribute('id') || node.getAttribute('data-reactid') || node.getAttribute('name');

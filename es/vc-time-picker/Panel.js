@@ -1,8 +1,8 @@
+import moment from 'moment';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import Header from './Header';
 import Combobox from './Combobox';
-import moment from 'moment';
 import { getComponentFromProp } from '../_util/props-util';
 
 function noop() {}
@@ -18,6 +18,20 @@ function generateOptions(length, disabledOptions, hideDisabledOptions) {
   }
   return arr;
 }
+
+function toNearestValidTime(time, hourOptions, minuteOptions, secondOptions) {
+  var hour = hourOptions.slice().sort(function (a, b) {
+    return Math.abs(time.hour() - a) - Math.abs(time.hour() - b);
+  })[0];
+  var minute = minuteOptions.slice().sort(function (a, b) {
+    return Math.abs(time.minute() - a) - Math.abs(time.minute() - b);
+  })[0];
+  var second = secondOptions.slice().sort(function (a, b) {
+    return Math.abs(time.second() - a) - Math.abs(time.second() - b);
+  })[0];
+  return moment(hour + ':' + minute + ':' + second, 'HH:mm:ss');
+}
+
 var Panel = {
   mixins: [BaseMixin],
   props: {
@@ -58,8 +72,7 @@ var Panel = {
     return {
       sValue: this.value,
       selectionRange: [],
-      currentSelectPanel: '',
-      showStr: true
+      currentSelectPanel: ''
     };
   },
 
@@ -67,12 +80,7 @@ var Panel = {
     value: function value(val) {
       if (val) {
         this.setState({
-          sValue: val,
-          showStr: true
-        });
-      } else {
-        this.setState({
-          showStr: false
+          sValue: val
         });
       }
     }
@@ -82,6 +90,9 @@ var Panel = {
     onChange: function onChange(newValue) {
       this.setState({ sValue: newValue });
       this.__emit('change', newValue);
+    },
+    onAmPmChange: function onAmPmChange(ampm) {
+      this.__emit('amPmChange', ampm);
     },
     onCurrentSelectPanelChange: function onCurrentSelectPanelChange(currentSelectPanel) {
       this.setState({ currentSelectPanel: currentSelectPanel });
@@ -141,7 +152,6 @@ var Panel = {
         inputReadOnly = this.inputReadOnly,
         sValue = this.sValue,
         currentSelectPanel = this.currentSelectPanel,
-        showStr = this.showStr,
         _$listeners = this.$listeners,
         $listeners = _$listeners === undefined ? {} : _$listeners;
 
@@ -160,7 +170,7 @@ var Panel = {
     var hourOptions = generateOptions(24, disabledHourOptions, hideDisabledOptions, hourStep);
     var minuteOptions = generateOptions(60, disabledMinuteOptions, hideDisabledOptions, minuteStep);
     var secondOptions = generateOptions(60, disabledSecondOptions, hideDisabledOptions, secondStep);
-
+    var validDefaultOpenValue = toNearestValidTime(defaultOpenValue, hourOptions, minuteOptions, secondOptions);
     return h(
       'div',
       { 'class': prefixCls + '-inner' },
@@ -168,7 +178,7 @@ var Panel = {
         attrs: {
           clearText: clearText,
           prefixCls: prefixCls,
-          defaultOpenValue: defaultOpenValue,
+          defaultOpenValue: validDefaultOpenValue,
           value: sValue,
           currentSelectPanel: currentSelectPanel,
 
@@ -185,20 +195,18 @@ var Panel = {
           focusOnOpen: focusOnOpen,
 
           inputReadOnly: inputReadOnly,
-          showStr: showStr,
           clearIcon: clearIcon
         },
         on: {
           'esc': esc,
           'change': this.onChange,
-          'clear': clear,
           'keydown': keydown
         }
       }), h(Combobox, {
         attrs: {
           prefixCls: prefixCls,
           value: sValue,
-          defaultOpenValue: defaultOpenValue,
+          defaultOpenValue: validDefaultOpenValue,
           format: format,
 
           showHour: showHour,
@@ -216,6 +224,7 @@ var Panel = {
         },
         on: {
           'change': this.onChange,
+          'amPmChange': this.onAmPmChange,
           'currentSelectPanelChange': this.onCurrentSelectPanelChange
         }
       }), addon(this)]

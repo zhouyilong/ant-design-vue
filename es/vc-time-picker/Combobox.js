@@ -28,6 +28,7 @@ var Combobox = {
     prefixCls: PropTypes.string,
     value: PropTypes.object,
     // onChange: PropTypes.func,
+    // onAmPmChange: PropTypes.func,
     showHour: PropTypes.bool,
     showMinute: PropTypes.bool,
     showSecond: PropTypes.bool,
@@ -45,9 +46,10 @@ var Combobox = {
     onItemChange: function onItemChange(type, itemValue) {
       var defaultOpenValue = this.defaultOpenValue,
           use12Hours = this.use12Hours,
+          propValue = this.value,
           isAM = this.isAM;
 
-      var value = (this.value || defaultOpenValue).clone();
+      var value = (propValue || defaultOpenValue).clone();
 
       if (type === 'hour') {
         if (use12Hours) {
@@ -74,6 +76,7 @@ var Combobox = {
             }
           }
         }
+        this.__emit('amPmChange', ampm);
       } else {
         value.second(+itemValue);
       }
@@ -83,6 +86,8 @@ var Combobox = {
       this.__emit('currentSelectPanelChange', range);
     },
     getHourSelect: function getHourSelect(hour) {
+      var _this = this;
+
       var h = this.$createElement;
       var prefixCls = this.prefixCls,
           hourOptions = this.hourOptions,
@@ -117,22 +122,27 @@ var Combobox = {
         },
         on: {
           'select': this.onItemChange,
-          'mouseenter': this.onEnterSelectPanel.bind(this, 'hour')
+          'mouseenter': function mouseenter() {
+            return _this.onEnterSelectPanel('hour');
+          }
         }
       });
     },
     getMinuteSelect: function getMinuteSelect(minute) {
+      var _this2 = this;
+
       var h = this.$createElement;
       var prefixCls = this.prefixCls,
           minuteOptions = this.minuteOptions,
           disabledMinutes = this.disabledMinutes,
           defaultOpenValue = this.defaultOpenValue,
-          showMinute = this.showMinute;
+          showMinute = this.showMinute,
+          propValue = this.value;
 
       if (!showMinute) {
         return null;
       }
-      var value = this.value || defaultOpenValue;
+      var value = propValue || defaultOpenValue;
       var disabledOptions = disabledMinutes(value.hour());
 
       return h(Select, {
@@ -146,22 +156,27 @@ var Combobox = {
         },
         on: {
           'select': this.onItemChange,
-          'mouseenter': this.onEnterSelectPanel.bind(this, 'minute')
+          'mouseenter': function mouseenter() {
+            return _this2.onEnterSelectPanel('minute');
+          }
         }
       });
     },
     getSecondSelect: function getSecondSelect(second) {
+      var _this3 = this;
+
       var h = this.$createElement;
       var prefixCls = this.prefixCls,
           secondOptions = this.secondOptions,
           disabledSeconds = this.disabledSeconds,
           showSecond = this.showSecond,
-          defaultOpenValue = this.defaultOpenValue;
+          defaultOpenValue = this.defaultOpenValue,
+          propValue = this.value;
 
       if (!showSecond) {
         return null;
       }
-      var value = this.value || defaultOpenValue;
+      var value = propValue || defaultOpenValue;
       var disabledOptions = disabledSeconds(value.hour(), value.minute());
 
       return h(Select, {
@@ -175,11 +190,15 @@ var Combobox = {
         },
         on: {
           'select': this.onItemChange,
-          'mouseenter': this.onEnterSelectPanel.bind(this, 'second')
+          'mouseenter': function mouseenter() {
+            return _this3.onEnterSelectPanel('second');
+          }
         }
       });
     },
     getAMPMSelect: function getAMPMSelect() {
+      var _this4 = this;
+
       var h = this.$createElement;
       var prefixCls = this.prefixCls,
           use12Hours = this.use12Hours,
@@ -208,7 +227,9 @@ var Combobox = {
         },
         on: {
           'select': this.onItemChange,
-          'mouseenter': this.onEnterSelectPanel.bind(this, 'ampm')
+          'mouseenter': function mouseenter() {
+            return _this4.onEnterSelectPanel('ampm');
+          }
         }
       });
     }
@@ -217,9 +238,10 @@ var Combobox = {
   render: function render() {
     var h = arguments[0];
     var prefixCls = this.prefixCls,
-        defaultOpenValue = this.defaultOpenValue;
+        defaultOpenValue = this.defaultOpenValue,
+        propValue = this.value;
 
-    var value = this.value || defaultOpenValue;
+    var value = propValue || defaultOpenValue;
     return h(
       'div',
       { 'class': prefixCls + '-combobox' },

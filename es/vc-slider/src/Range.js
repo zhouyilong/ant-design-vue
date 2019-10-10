@@ -146,10 +146,14 @@ var Range = {
       nextBounds[this.prevMovedHandleIndex] = value;
       this.onChange({ bounds: nextBounds });
     },
-    onEnd: function onEnd() {
-      this.setState({ sHandle: null });
+    onEnd: function onEnd(force) {
+      var sHandle = this.sHandle;
+
       this.removeDocumentEvents();
-      this.$emit('afterChange', this.bounds);
+      if (sHandle || force) {
+        this.$emit('afterChange', this.bounds);
+      }
+      this.setState({ sHandle: null });
     },
     onMove: function onMove(e, position) {
       utils.pauseEvent(e);
@@ -170,7 +174,7 @@ var Range = {
         var bounds = this.bounds,
             sHandle = this.sHandle;
 
-        var oldValue = bounds[sHandle];
+        var oldValue = bounds[sHandle === null ? this.recent : sHandle];
         var mutatedValue = valueMutator(oldValue, this.$props);
         var value = this.trimAlignValue(mutatedValue);
         if (value === oldValue) return;
@@ -247,10 +251,12 @@ var Range = {
       var _this3 = this;
 
       var nextBounds = [].concat(_toConsumableArray(this.bounds));
-      var sHandle = this.sHandle;
+      var sHandle = this.sHandle,
+          recent = this.recent;
 
-      nextBounds[sHandle] = value;
-      var nextHandle = sHandle;
+      var handle = sHandle === null ? recent : sHandle;
+      nextBounds[handle] = value;
+      var nextHandle = handle;
       if (this.$props.pushable !== false) {
         this.pushSurroundingHandles(nextBounds, nextHandle);
       } else if (this.$props.allowCross) {

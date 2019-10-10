@@ -3,23 +3,29 @@ import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import Wave from '../_util/wave';
 import Icon from '../icon';
-var rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/;
-var isTwoCNChar = rxTwoCNChar.test.bind(rxTwoCNChar);
 import buttonTypes from './buttonTypes';
 import { filterEmpty } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
+
+var rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/;
+var isTwoCNChar = rxTwoCNChar.test.bind(rxTwoCNChar);
 var props = buttonTypes();
 export default {
   name: 'AButton',
   inheritAttrs: false,
   __ANT_BUTTON: true,
   props: props,
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     return {
       sizeMap: {
         large: 'lg',
         small: 'sm'
       },
-      // clicked: false,
       sLoading: !!this.loading,
       hasTwoCNChar: false
     };
@@ -29,7 +35,7 @@ export default {
     classes: function classes() {
       var _ref;
 
-      var prefixCls = this.prefixCls,
+      var customizePrefixCls = this.prefixCls,
           type = this.type,
           shape = this.shape,
           size = this.size,
@@ -41,17 +47,23 @@ export default {
           icon = this.icon,
           $slots = this.$slots;
 
+      var getPrefixCls = this.configProvider.getPrefixCls;
+      var prefixCls = getPrefixCls('btn', customizePrefixCls);
+      var autoInsertSpace = this.configProvider.autoInsertSpaceInButton !== false;
+
       var sizeCls = sizeMap[size] || '';
       var children = filterEmpty($slots['default']);
-      return _ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-' + type, type), _defineProperty(_ref, prefixCls + '-' + shape, shape), _defineProperty(_ref, prefixCls + '-' + sizeCls, sizeCls), _defineProperty(_ref, prefixCls + '-icon-only', !children && children !== 0 && icon), _defineProperty(_ref, prefixCls + '-loading', sLoading), _defineProperty(_ref, prefixCls + '-background-ghost', ghost || type === 'ghost'), _defineProperty(_ref, prefixCls + '-two-chinese-chars', hasTwoCNChar), _defineProperty(_ref, prefixCls + '-block', block), _ref;
+      return _ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-' + type, type), _defineProperty(_ref, prefixCls + '-' + shape, shape), _defineProperty(_ref, prefixCls + '-' + sizeCls, sizeCls), _defineProperty(_ref, prefixCls + '-icon-only', !children && children !== 0 && icon), _defineProperty(_ref, prefixCls + '-loading', sLoading), _defineProperty(_ref, prefixCls + '-background-ghost', ghost || type === 'ghost'), _defineProperty(_ref, prefixCls + '-two-chinese-chars', hasTwoCNChar && autoInsertSpace), _defineProperty(_ref, prefixCls + '-block', block), _ref;
     }
   },
   watch: {
-    loading: function loading(val) {
+    loading: function loading(val, preVal) {
       var _this = this;
 
-      clearTimeout(this.delayTimeout);
-      if (typeof val !== 'boolean' && val && val.delay) {
+      if (preVal && typeof preVal !== 'boolean') {
+        clearTimeout(this.delayTimeout);
+      }
+      if (val && typeof val !== 'boolean' && val.delay) {
         this.delayTimeout = setTimeout(function () {
           _this.sLoading = !!val;
         }, val.delay);
@@ -123,7 +135,8 @@ export default {
     var _this2 = this;
 
     var h = arguments[0];
-    var htmlType = this.htmlType,
+    var type = this.type,
+        htmlType = this.htmlType,
         classes = this.classes,
         icon = this.icon,
         disabled = this.disabled,
@@ -147,8 +160,9 @@ export default {
       attrs: { type: iconType }
     }) : null;
     var children = filterEmpty($slots['default']);
+    var autoInsertSpace = this.configProvider.autoInsertSpaceInButton !== false;
     var kids = children.map(function (child) {
-      return _this2.insertSpace(child, _this2.isNeedInserted());
+      return _this2.insertSpace(child, _this2.isNeedInserted() && autoInsertSpace);
     });
 
     if ($attrs.href !== undefined) {
@@ -157,13 +171,19 @@ export default {
         _mergeJSXProps([buttonProps, { ref: 'buttonNode' }]),
         [iconNode, kids]
       );
-    } else {
-      return h(Wave, [h(
-        'button',
-        _mergeJSXProps([buttonProps, { ref: 'buttonNode', attrs: { type: htmlType || 'button' }
-        }]),
-        [iconNode, kids]
-      )]);
     }
+
+    var buttonNode = h(
+      'button',
+      _mergeJSXProps([buttonProps, { ref: 'buttonNode', attrs: { type: htmlType || 'button' }
+      }]),
+      [iconNode, kids]
+    );
+
+    if (type === 'link') {
+      return buttonNode;
+    }
+
+    return h(Wave, [buttonNode]);
   }
 };

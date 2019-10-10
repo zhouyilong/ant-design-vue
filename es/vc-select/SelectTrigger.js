@@ -44,6 +44,7 @@ export default {
     multiple: PropTypes.bool,
     inputValue: PropTypes.string,
     filterOption: PropTypes.any,
+    empty: PropTypes.bool,
     options: PropTypes.any,
     prefixCls: PropTypes.string,
     popupClassName: PropTypes.string,
@@ -174,14 +175,15 @@ export default {
         dropdownMatchSelectWidth = $props.dropdownMatchSelectWidth,
         options = $props.options,
         getPopupContainer = $props.getPopupContainer,
-        showAction = $props.showAction;
+        showAction = $props.showAction,
+        empty = $props.empty;
     var mouseenter = $listeners.mouseenter,
         mouseleave = $listeners.mouseleave,
         popupFocus = $listeners.popupFocus,
         dropdownVisibleChange = $listeners.dropdownVisibleChange;
 
     var dropdownPrefixCls = this.getDropdownPrefixCls();
-    var popupClassName = (_popupClassName = {}, _defineProperty(_popupClassName, dropdownClassName, !!dropdownClassName), _defineProperty(_popupClassName, dropdownPrefixCls + '--' + (multiple ? 'multiple' : 'single'), 1), _popupClassName);
+    var popupClassName = (_popupClassName = {}, _defineProperty(_popupClassName, dropdownClassName, !!dropdownClassName), _defineProperty(_popupClassName, dropdownPrefixCls + '--' + (multiple ? 'multiple' : 'single'), 1), _defineProperty(_popupClassName, dropdownPrefixCls + '--empty', empty), _popupClassName);
     var popupElement = this.getDropdownElement({
       props: {
         menuItems: options,

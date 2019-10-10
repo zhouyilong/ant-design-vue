@@ -6,7 +6,9 @@ import Select, { AbstractSelectProps, SelectValue } from '../select';
 import Input from '../input';
 import InputElement from './InputElement';
 import PropTypes from '../_util/vue-types';
+import { ConfigConsumerProps } from '../config-provider';
 import { getComponentFromProp, getOptionProps, filterEmpty, isValidElement } from '../_util/props-util';
+import Base from '../base';
 
 // const DataSourceItemObject = PropTypes.shape({
 //   value: String,
@@ -51,6 +53,11 @@ var AutoComplete = {
     prop: 'value',
     event: 'change'
   },
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   provide: function provide() {
     return {
       savePopupRef: this.savePopupRef
@@ -86,12 +93,15 @@ var AutoComplete = {
 
     var h = arguments[0];
     var size = this.size,
-        prefixCls = this.prefixCls,
+        customizePrefixCls = this.prefixCls,
         optionLabelProp = this.optionLabelProp,
         dataSource = this.dataSource,
         $slots = this.$slots,
         $listeners = this.$listeners;
 
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('select', customizePrefixCls);
 
     var cls = (_cls = {}, _defineProperty(_cls, prefixCls + '-lg', size === 'large'), _defineProperty(_cls, prefixCls + '-sm', size === 'small'), _defineProperty(_cls, prefixCls + '-show-search', true), _defineProperty(_cls, prefixCls + '-auto-complete', true), _cls);
 
@@ -143,6 +153,7 @@ var AutoComplete = {
 
 /* istanbul ignore next */
 AutoComplete.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(AutoComplete.name, AutoComplete);
   Vue.component(AutoComplete.Option.name, AutoComplete.Option);
   Vue.component(AutoComplete.OptGroup.name, AutoComplete.OptGroup);

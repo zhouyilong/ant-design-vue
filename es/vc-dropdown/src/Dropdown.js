@@ -1,5 +1,6 @@
 import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
+import classNames from 'classnames';
 import PropTypes from '../../_util/vue-types';
 import Trigger from '../../vc-trigger';
 import placements from './placements';
@@ -14,10 +15,12 @@ export default {
     prefixCls: PropTypes.string.def('rc-dropdown'),
     transitionName: PropTypes.string,
     overlayClassName: PropTypes.string.def(''),
+    openClassName: PropTypes.string,
     animation: PropTypes.any,
     align: PropTypes.object,
     overlayStyle: PropTypes.object.def({}),
     placement: PropTypes.string.def('bottomLeft'),
+    overlay: PropTypes.any,
     trigger: PropTypes.array.def(['hover']),
     alignPoint: PropTypes.bool,
     showAction: PropTypes.array.def([]),
@@ -79,6 +82,16 @@ export default {
 
       return !alignPoint;
     },
+    getOverlayElement: function getOverlayElement() {
+      var overlay = this.overlay || this.$slots.overlay || this.$scopedSlots.overlay;
+      var overlayElement = void 0;
+      if (typeof overlay === 'function') {
+        overlayElement = overlay();
+      } else {
+        overlayElement = overlay;
+      }
+      return overlayElement;
+    },
     getMenuElement: function getMenuElement() {
       var _this = this;
 
@@ -87,6 +100,7 @@ export default {
           $slots = this.$slots;
 
       this.childOriginEvents = getEvents($slots.overlay[0]);
+      var overlayElement = this.getOverlayElement();
       var extraOverlayProps = {
         props: {
           prefixCls: prefixCls + '-menu',
@@ -98,10 +112,30 @@ export default {
           click: onClick
         }
       };
+      if (typeof overlayElement.type === 'string') {
+        delete extraOverlayProps.props.prefixCls;
+      }
       return cloneElement($slots.overlay[0], extraOverlayProps);
+    },
+    getMenuElementOrLambda: function getMenuElementOrLambda() {
+      var overlay = this.overlay || this.$slots.overlay || this.$scopedSlots.overlay;
+      if (typeof overlay === 'function') {
+        return this.getMenuElement;
+      }
+      return this.getMenuElement();
     },
     getPopupDomNode: function getPopupDomNode() {
       return this.$refs.trigger.getPopupDomNode();
+    },
+    getOpenClassName: function getOpenClassName() {
+      var _$props = this.$props,
+          openClassName = _$props.openClassName,
+          prefixCls = _$props.prefixCls;
+
+      if (openClassName !== undefined) {
+        return openClassName;
+      }
+      return prefixCls + '-open';
     },
     afterVisibleChange: function afterVisibleChange(visible) {
       if (visible && this.getMinOverlayWidthMatchTrigger()) {
@@ -114,25 +148,31 @@ export default {
           }
         }
       }
+    },
+    renderChildren: function renderChildren() {
+      var children = this.$slots['default'] && this.$slots['default'][0];
+      var sVisible = this.sVisible;
+
+      return sVisible && children ? cloneElement(children, { 'class': this.getOpenClassName() }) : children;
     }
   },
 
   render: function render() {
     var h = arguments[0];
 
-    var _$props = this.$props,
-        prefixCls = _$props.prefixCls,
-        transitionName = _$props.transitionName,
-        animation = _$props.animation,
-        align = _$props.align,
-        placement = _$props.placement,
-        getPopupContainer = _$props.getPopupContainer,
-        showAction = _$props.showAction,
-        hideAction = _$props.hideAction,
-        overlayClassName = _$props.overlayClassName,
-        overlayStyle = _$props.overlayStyle,
-        trigger = _$props.trigger,
-        otherProps = _objectWithoutProperties(_$props, ['prefixCls', 'transitionName', 'animation', 'align', 'placement', 'getPopupContainer', 'showAction', 'hideAction', 'overlayClassName', 'overlayStyle', 'trigger']);
+    var _$props2 = this.$props,
+        prefixCls = _$props2.prefixCls,
+        transitionName = _$props2.transitionName,
+        animation = _$props2.animation,
+        align = _$props2.align,
+        placement = _$props2.placement,
+        getPopupContainer = _$props2.getPopupContainer,
+        showAction = _$props2.showAction,
+        hideAction = _$props2.hideAction,
+        overlayClassName = _$props2.overlayClassName,
+        overlayStyle = _$props2.overlayStyle,
+        trigger = _$props2.trigger,
+        otherProps = _objectWithoutProperties(_$props2, ['prefixCls', 'transitionName', 'animation', 'align', 'placement', 'getPopupContainer', 'showAction', 'hideAction', 'overlayClassName', 'overlayStyle', 'trigger']);
 
     var triggerHideAction = hideAction;
     if (!triggerHideAction && trigger.indexOf('contextmenu') !== -1) {
@@ -165,7 +205,7 @@ export default {
     return h(
       Trigger,
       triggerProps,
-      [child && !child.tag ? h('span', [child]) : child, h(
+      [this.renderChildren(), h(
         'template',
         { slot: 'popup' },
         [this.$slots.overlay && this.getMenuElement()]

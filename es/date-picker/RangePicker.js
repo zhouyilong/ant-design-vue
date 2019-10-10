@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import shallowequal from 'shallowequal';
 import Icon from '../icon';
 import Tag from '../tag';
+import { ConfigConsumerProps } from '../config-provider';
 import interopDefault from '../_util/interopDefault';
 import { RangePickerProps } from './interface';
 import { hasProp, getOptionProps, initDefaultProps, mergeProps, getComponentFromProp, isValidElement } from '../_util/props-util';
@@ -79,11 +80,14 @@ export default {
     event: 'change'
   },
   props: initDefaultProps(RangePickerProps(), {
-    prefixCls: 'ant-calendar',
-    tagPrefixCls: 'ant-tag',
     allowClear: true,
     showToday: false
   }),
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     var value = this.value || this.defaultValue || [];
 
@@ -115,8 +119,16 @@ export default {
       this.setState(state);
     },
     open: function open(val) {
-      this.setState({
-        sOpen: val
+      var state = { sOpen: val };
+      this.setState(state);
+    },
+    sOpen: function sOpen(val, oldVal) {
+      var _this = this;
+
+      this.$nextTick(function () {
+        if (!hasProp(_this, 'open') && oldVal && !val) {
+          _this.focus();
+        }
       });
     }
   },
@@ -156,10 +168,6 @@ export default {
         this.clearHoverValue();
       }
       this.$emit('openChange', open);
-
-      if (!open) {
-        this.focus();
-      }
     },
     handleShowDateChange: function handleShowDateChange(showDate) {
       this.setState({ sShowDate: showDate });
@@ -215,14 +223,14 @@ export default {
       this.$refs.picker.blur();
     },
     renderFooter: function renderFooter() {
-      var _this = this;
+      var _this2 = this;
 
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          ranges = this.ranges,
+      var ranges = this.ranges,
           $scopedSlots = this.$scopedSlots,
-          $slots = this.$slots,
-          tagPrefixCls = this.tagPrefixCls;
+          $slots = this.$slots;
+      var prefixCls = this._prefixCls,
+          tagPrefixCls = this._tagPrefixCls;
 
       var renderExtraFooter = this.renderExtraFooter || $scopedSlots.renderExtraFooter || $slots.renderExtraFooter;
       if (!ranges && !renderExtraFooter) {
@@ -244,12 +252,12 @@ export default {
             },
             on: {
               'click': function click() {
-                return _this.handleRangeClick(value);
+                return _this2.handleRangeClick(value);
               },
               'mouseenter': function mouseenter() {
-                return _this.setState({ sHoverValue: value });
+                return _this2.setState({ sHoverValue: value });
               },
-              'mouseleave': _this.handleRangeMouseLeave
+              'mouseleave': _this2.handleRangeMouseLeave
             }
           },
           [range]
@@ -266,7 +274,7 @@ export default {
 
   render: function render() {
     var _classNames,
-        _this2 = this;
+        _this3 = this;
 
     var h = arguments[0];
 
@@ -289,7 +297,8 @@ export default {
         blur = _$listeners$blur === undefined ? noop : _$listeners$blur,
         _$listeners$panelChan = $listeners.panelChange,
         panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan;
-    var prefixCls = props.prefixCls,
+    var customizePrefixCls = props.prefixCls,
+        customizeTagPrefixCls = props.tagPrefixCls,
         popupStyle = props.popupStyle,
         disabledDate = props.disabledDate,
         disabledTime = props.disabledTime,
@@ -299,6 +308,12 @@ export default {
         locale = props.locale,
         localeCode = props.localeCode,
         format = props.format;
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('calendar', customizePrefixCls);
+    var tagPrefixCls = getPrefixCls('tag', customizeTagPrefixCls);
+    this._prefixCls = prefixCls;
+    this._tagPrefixCls = tagPrefixCls;
 
     var dateRender = props.dateRender || $scopedSlots.dateRender;
     fixLocale(value, localeCode);
@@ -320,7 +335,7 @@ export default {
     };
     if (props.timePicker) {
       pickerChangeHandler.on.change = function (changedValue) {
-        return _this2.handleChange(changedValue);
+        return _this3.handleChange(changedValue);
       };
     } else {
       calendarProps = { on: {}, props: {} };

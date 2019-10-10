@@ -1,9 +1,9 @@
 import _slicedToArray from 'babel-runtime/helpers/slicedToArray';
-import { PREFIX_CLS } from './Constants';
 import Select from '../select';
 import { Group, Button } from '../radio';
 import PropTypes from '../_util/vue-types';
 import { initDefaultProps } from '../_util/props-util';
+import { ConfigConsumerProps } from '../config-provider';
 var Option = Select.Option;
 
 export var HeaderProps = {
@@ -21,21 +21,23 @@ export var HeaderProps = {
 
 export default {
   props: initDefaultProps(HeaderProps, {
-    prefixCls: PREFIX_CLS + '-header',
     yearSelectOffset: 10,
     yearSelectTotal: 20
   }),
-
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   // private calenderHeaderNode: HTMLDivElement;
   methods: {
-    getYearSelectElement: function getYearSelectElement(year) {
+    getYearSelectElement: function getYearSelectElement(prefixCls, year) {
       var _this = this;
 
       var h = this.$createElement;
       var yearSelectOffset = this.yearSelectOffset,
           yearSelectTotal = this.yearSelectTotal,
           locale = this.locale,
-          prefixCls = this.prefixCls,
           fullscreen = this.fullscreen,
           validRange = this.validRange;
 
@@ -85,12 +87,11 @@ export default {
       }
       return months;
     },
-    getMonthSelectElement: function getMonthSelectElement(month, months) {
+    getMonthSelectElement: function getMonthSelectElement(prefixCls, month, months) {
       var _this2 = this;
 
       var h = this.$createElement;
-      var prefixCls = this.prefixCls,
-          fullscreen = this.fullscreen,
+      var fullscreen = this.fullscreen,
           validRange = this.validRange,
           value = this.value;
 
@@ -105,7 +106,8 @@ export default {
         var currentYear = value.get('year');
         if (rangeEnd.get('year') === currentYear) {
           end = rangeEnd.get('month') + 1;
-        } else if (rangeStart.get('year') === currentYear) {
+        }
+        if (rangeStart.get('year') === currentYear) {
           start = rangeStart.get('month');
         }
       }
@@ -175,14 +177,17 @@ export default {
 
   render: function render() {
     var h = arguments[0];
-    var type = this.type,
+    var customizePrefixCls = this.prefixCls,
+        type = this.type,
         value = this.value,
-        prefixCls = this.prefixCls,
         locale = this.locale,
         fullscreen = this.fullscreen;
 
-    var yearSelect = this.getYearSelectElement(value.year());
-    var monthSelect = type === 'date' ? this.getMonthSelectElement(value.month(), this.getMonthsLocale(value)) : null;
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('fullcalendar', customizePrefixCls);
+
+    var yearSelect = this.getYearSelectElement(prefixCls, value.year());
+    var monthSelect = type === 'date' ? this.getMonthSelectElement(prefixCls, value.month(), this.getMonthsLocale(value)) : null;
     var size = fullscreen ? 'default' : 'small';
     var typeSwitch = h(
       Group,

@@ -1,10 +1,10 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import { filterEmpty } from '../_util/props-util';
+import PropTypes from '../_util/vue-types';
+import { ConfigConsumerProps } from '../config-provider';
+
 var ButtonGroupProps = {
-  prefixCls: {
-    'default': 'ant-btn-group',
-    type: String
-  },
+  prefixCls: PropTypes.string,
   size: {
     validator: function validator(value) {
       return ['small', 'large', 'default'].includes(value);
@@ -15,6 +15,11 @@ export { ButtonGroupProps };
 export default {
   name: 'AButtonGroup',
   props: ButtonGroupProps,
+  inject: {
+    configProvider: { 'default': function _default() {
+        return ConfigConsumerProps;
+      } }
+  },
   data: function data() {
     return {
       sizeMap: {
@@ -23,24 +28,31 @@ export default {
       }
     };
   },
-
-  computed: {
-    classes: function classes() {
-      var _ref;
-
-      var prefixCls = this.prefixCls,
-          size = this.size,
-          sizeMap = this.sizeMap;
-
-      var sizeCls = sizeMap[size] || '';
-      return [(_ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-' + sizeCls, sizeCls), _ref)];
-    }
-  },
   render: function render() {
+    var _classes;
+
     var h = arguments[0];
-    var classes = this.classes,
+    var customizePrefixCls = this.prefixCls,
+        size = this.size,
+        sizeMap = this.sizeMap,
         $slots = this.$slots;
 
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var prefixCls = getPrefixCls('btn-group', customizePrefixCls);
+
+    // large => lg
+    // small => sm
+    var sizeCls = '';
+    switch (size) {
+      case 'large':
+        sizeCls = 'lg';
+        break;
+      case 'small':
+        sizeCls = 'sm';
+      default:
+        break;
+    }
+    var classes = (_classes = {}, _defineProperty(_classes, '' + prefixCls, true), _defineProperty(_classes, prefixCls + '-' + sizeCls, sizeCls), _classes);
     return h(
       'div',
       { 'class': classes },

@@ -7,6 +7,7 @@ import AsyncValidator from 'async-validator';
 import warning from 'warning';
 import get from 'lodash/get';
 import set from 'lodash/set';
+import eq from 'lodash/eq';
 import omit from 'lodash/omit';
 import createFieldsStore from './createFieldsStore';
 import { cloneElement } from '../../_util/vnode';
@@ -60,7 +61,7 @@ function createBaseForm() {
         this.instances = {};
         this.cachedBind = {};
         this.clearedFieldMetaCache = {};
-
+        this.formItems = {};
         this.renderFields = {};
         this.domFields = {};
 
@@ -122,7 +123,7 @@ function createBaseForm() {
             Object.keys(valuesAll).forEach(function (key) {
               return set(valuesAllSet, key, valuesAll[key]);
             });
-            onValuesChange(this, set({}, name, value), valuesAllSet);
+            onValuesChange(_extends(_defineProperty({}, formPropName, this.getForm()), this.$props), set({}, name, value), valuesAllSet);
           }
           var field = this.fieldsStore.getField(name);
           return { name: name, field: _extends({}, field, { value: value, touched: true }), fieldMeta: fieldMeta };
@@ -139,6 +140,7 @@ function createBaseForm() {
 
           var validate = fieldMeta.validate;
 
+          this.fieldsStore.setFieldsAsDirty();
           var newField = _extends({}, field, {
             dirty: hasRules(validate)
           });
@@ -156,6 +158,7 @@ function createBaseForm() {
           var newField = _extends({}, field, {
             dirty: true
           });
+          this.fieldsStore.setFieldsAsDirty();
           this.validateFieldsInternal([newField], {
             action: action,
             options: {
@@ -176,13 +179,14 @@ function createBaseForm() {
           }
           return cache[action].fn;
         },
-        getFieldDecorator: function getFieldDecorator(name, fieldOption) {
+        getFieldDecorator: function getFieldDecorator(name, fieldOption, formItem) {
           var _this2 = this;
 
           var _getFieldProps = this.getFieldProps(name, fieldOption),
               props = _getFieldProps.props,
               restProps = _objectWithoutProperties(_getFieldProps, ['props']);
 
+          this.formItems[name] = formItem;
           return function (fieldElem) {
             // We should put field in record if it is rendered
             _this2.renderFields[name] = true;
@@ -193,7 +197,7 @@ function createBaseForm() {
             if (process.env.NODE_ENV !== 'production') {
               var valuePropName = fieldMeta.valuePropName;
               warning(!slotHasProp(fieldElem, valuePropName), '`getFieldDecorator` will override `' + valuePropName + '`, ' + ('so please don\'t set `' + valuePropName + ' and v-model` directly ') + 'and use `setFieldsValue` to set it.');
-              warning(!(!slotHasProp(fieldElem, valuePropName) && valuePropName in originalProps && !(fieldOption && fieldOption.initialValue)), getComponentName(fieldElem.componentOptions) + ' `default value` can not collect, ' + ' please use `option.initialValue` to set default value.');
+              warning(!(!slotHasProp(fieldElem, valuePropName) && valuePropName in originalProps && !(fieldOption && initialValue in fieldOption)), getComponentName(fieldElem.componentOptions) + ' `default value` can not collect, ' + ' please use `option.initialValue` to set default value.');
               var defaultValuePropName = 'default' + valuePropName[0].toUpperCase() + valuePropName.slice(1);
               warning(!slotHasProp(fieldElem, defaultValuePropName), '`' + defaultValuePropName + '` is invalid ' + ('for `getFieldDecorator` will set `' + valuePropName + '`,') + ' please use `option.initialValue` instead.');
             }
@@ -227,7 +231,7 @@ function createBaseForm() {
             throw new Error('Must call `getFieldProps` with valid name string!');
           }
           if (process.env.NODE_ENV !== 'production') {
-            warning(this.fieldsStore.isValidNestedFieldName(name), 'One field name cannot be part of another, e.g. `a` and `a.b`.');
+            warning(this.fieldsStore.isValidNestedFieldName(name), 'One field name cannot be part of another, e.g. `a` and `a.b`. Check field: ' + name);
             warning(!('exclusive' in usersFieldOption), '`option.exclusive` of `getFieldProps`|`getFieldDecorator` had been remove.');
           }
 
@@ -316,16 +320,28 @@ function createBaseForm() {
 
           var fields = this.fieldsStore.flattenRegisteredFields(maybeNestedFields);
           this.fieldsStore.setFields(fields);
+          var changedFields = Object.keys(fields).reduce(function (acc, name) {
+            return set(acc, name, _this4.fieldsStore.getField(name));
+          }, {});
           if (onFieldsChange) {
-            var changedFields = Object.keys(fields).reduce(function (acc, name) {
+            var _changedFields = Object.keys(fields).reduce(function (acc, name) {
               return set(acc, name, _this4.fieldsStore.getField(name));
             }, {});
-            onFieldsChange(this, changedFields, this.fieldsStore.getNestedAllFields());
+            onFieldsChange(this, _changedFields, this.fieldsStore.getNestedAllFields());
           }
-          if (templateContext) {
-            templateContext.$forceUpdate();
-          } else {
-            this.$forceUpdate();
+          var formContext = templateContext || this;
+          var allUpdate = false;
+          Object.keys(changedFields).forEach(function (key) {
+            var formItem = _this4.formItems[key];
+            formItem = typeof formItem === 'function' ? formItem() : formItem;
+            if (formItem && formItem.itemSelfUpdate) {
+              formItem.$forceUpdate();
+            } else {
+              allUpdate = true;
+            }
+          });
+          if (allUpdate) {
+            formContext.$forceUpdate();
           }
           this.$nextTick(function () {
             callback && callback();
@@ -351,7 +367,7 @@ function createBaseForm() {
           this.setFields(newFields, callback);
           if (onValuesChange) {
             var allValues = this.fieldsStore.getAllValues();
-            onValuesChange(this, changedValues, allValues);
+            onValuesChange(_extends(_defineProperty({}, formPropName, this.getForm()), this.$props), changedValues, allValues);
           }
         },
         saveRef: function saveRef(name, _, component) {
@@ -469,7 +485,38 @@ function createBaseForm() {
             var errorsGroup = _extends({}, alreadyErrors);
             if (errors && errors.length) {
               errors.forEach(function (e) {
-                var fieldName = e.field;
+                var errorFieldName = e.field;
+                var fieldName = errorFieldName;
+
+                // Handle using array validation rule.
+                // ref: https://github.com/ant-design/ant-design/issues/14275
+                Object.keys(allRules).some(function (ruleFieldName) {
+                  var rules = allRules[ruleFieldName] || [];
+
+                  // Exist if match rule
+                  if (ruleFieldName === errorFieldName) {
+                    fieldName = ruleFieldName;
+                    return true;
+                  }
+
+                  // Skip if not match array type
+                  if (rules.every(function (_ref2) {
+                    var type = _ref2.type;
+                    return type !== 'array';
+                  }) && errorFieldName.indexOf(ruleFieldName) !== 0) {
+                    return false;
+                  }
+
+                  // Exist if match the field name
+                  var restPath = errorFieldName.slice(ruleFieldName.length + 1);
+                  if (/^\d+$/.test(restPath)) {
+                    fieldName = ruleFieldName;
+                    return true;
+                  }
+
+                  return false;
+                });
+
                 var field = get(errorsGroup, fieldName);
                 if ((typeof field === 'undefined' ? 'undefined' : _typeof(field)) !== 'object' || Array.isArray(field)) {
                   set(errorsGroup, fieldName, { errors: [] });
@@ -484,7 +531,7 @@ function createBaseForm() {
               var fieldErrors = get(errorsGroup, name);
               var nowField = _this7.fieldsStore.getField(name);
               // avoid concurrency problems
-              if (nowField.value !== allValues[name]) {
+              if (!eq(nowField.value, allValues[name])) {
                 expired.push({
                   name: name
                 });
@@ -499,8 +546,8 @@ function createBaseForm() {
             _this7.setFields(nowAllFields);
             if (callback) {
               if (expired.length) {
-                expired.forEach(function (_ref2) {
-                  var name = _ref2.name;
+                expired.forEach(function (_ref3) {
+                  var name = _ref3.name;
 
                   var fieldErrors = [{
                     message: name + ' need to revalidate',
@@ -550,9 +597,7 @@ function createBaseForm() {
               return field;
             });
             if (!fields.length) {
-              if (callback) {
-                callback(null, _this8.fieldsStore.getFieldsValue(fieldNames));
-              }
+              callback(null, _this8.fieldsStore.getFieldsValue(fieldNames));
               return;
             }
             if (!('firstFields' in options)) {
@@ -567,7 +612,7 @@ function createBaseForm() {
             }, callback);
           });
           pending['catch'](function (e) {
-            if (console.error) {
+            if (console.error && process.env.NODE_ENV !== 'production') {
               console.error(e);
             }
             return e;
@@ -584,7 +629,7 @@ function createBaseForm() {
           var _this9 = this;
 
           if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-            warning(false, '`submit` is deprecated.' + "Actually, it's more convenient to handle submitting status by yourself.");
+            warning(false, '`submit` is deprecated. ' + "Actually, it's more convenient to handle submitting status by yourself.");
           }
           var fn = function fn() {
             _this9.setState({

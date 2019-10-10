@@ -147,8 +147,8 @@ export default {
         }
         var activeKeyProps = {};
 
-        var clonedMenuItems = menuItems;
         var defaultActiveFirst = defaultActiveFirstOption;
+        var clonedMenuItems = menuItems;
         if (selectedKeys.length || firstActiveValue) {
           if (props.visible && !this.lastVisible) {
             activeKeyProps.activeKey = selectedKeys[0] || firstActiveValue;

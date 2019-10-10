@@ -1,10 +1,11 @@
+import moment from 'moment';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
+import { initDefaultProps, hasProp, getComponentFromProp, isValidElement, getEvents } from '../_util/props-util';
+import { cloneElement } from '../_util/vnode';
 import Trigger from '../vc-trigger';
 import Panel from './Panel';
 import placements from './placements';
-import moment from 'moment';
-import { initDefaultProps, hasProp, getComponentFromProp } from '../_util/props-util';
 
 function noop() {}
 
@@ -37,11 +38,13 @@ export default {
     showMinute: PropTypes.bool,
     showSecond: PropTypes.bool,
     popupClassName: PropTypes.string,
+    popupStyle: PropTypes.object,
     disabledHours: PropTypes.func,
     disabledMinutes: PropTypes.func,
     disabledSeconds: PropTypes.func,
     hideDisabledOptions: PropTypes.bool,
     // onChange: PropTypes.func,
+    // onAmPmChange: PropTypes.func,
     // onOpen: PropTypes.func,
     // onClose: PropTypes.func,
     // onFocus: PropTypes.func,
@@ -65,6 +68,7 @@ export default {
     defaultOpen: false,
     inputReadOnly: false,
     popupClassName: '',
+    popupStyle: {},
     align: {},
     id: '',
     allowEmpty: true,
@@ -122,7 +126,11 @@ export default {
     onPanelChange: function onPanelChange(value) {
       this.setValue(value);
     },
-    onPanelClear: function onPanelClear() {
+    onAmPmChange: function onAmPmChange(ampm) {
+      this.__emit('amPmChange', ampm);
+    },
+    onClear: function onClear(event) {
+      event.stopPropagation();
       this.setValue(null);
       this.setOpen(false);
     },
@@ -228,7 +236,7 @@ export default {
         },
         ref: 'panel', on: {
           'change': this.onPanelChange,
-          'clear': this.onPanelClear,
+          'amPmChange': this.onAmPmChange,
           'esc': this.onEsc,
           'keydown': onKeyDown2
         }
@@ -285,6 +293,51 @@ export default {
     },
     onBlur: function onBlur(e) {
       this.__emit('blur', e);
+    },
+    renderClearButton: function renderClearButton() {
+      var _this2 = this;
+
+      var h = this.$createElement;
+      var sValue = this.sValue;
+      var _$props = this.$props,
+          prefixCls = _$props.prefixCls,
+          allowEmpty = _$props.allowEmpty,
+          clearText = _$props.clearText;
+
+      if (!allowEmpty || !sValue) {
+        return null;
+      }
+      var clearIcon = getComponentFromProp(this, 'clearIcon');
+      if (isValidElement(clearIcon)) {
+        var _ref = getEvents(clearIcon) || {},
+            _click = _ref.click;
+
+        return cloneElement(clearIcon, {
+          on: {
+            click: function click() {
+              if (_click) _click.apply(undefined, arguments);
+              _this2.onClear.apply(_this2, arguments);
+            }
+          }
+        });
+      }
+
+      return h(
+        'a',
+        {
+          attrs: {
+            role: 'button',
+
+            title: clearText,
+
+            tabIndex: 0
+          },
+          'class': prefixCls + '-clear', on: {
+            'click': this.onClear
+          }
+        },
+        [clearIcon || h('i', { 'class': prefixCls + '-clear-icon' })]
+      );
     }
   },
 
@@ -305,7 +358,8 @@ export default {
         sOpen = this.sOpen,
         sValue = this.sValue,
         onFocus = this.onFocus,
-        onBlur = this.onBlur;
+        onBlur = this.onBlur,
+        popupStyle = this.popupStyle;
 
     var popupClassName = this.getPopupClassName();
     var inputIcon = getComponentFromProp(this, 'inputIcon');
@@ -315,6 +369,7 @@ export default {
         attrs: {
           prefixCls: prefixCls + '-panel',
           popupClassName: popupClassName,
+          popupStyle: popupStyle,
           popupAlign: align,
           builtinPlacements: placements,
           popupPlacement: placement,
@@ -358,7 +413,7 @@ export default {
           domProps: {
             'value': sValue && sValue.format(this.getFormat()) || ''
           }
-        }), inputIcon || h('span', { 'class': prefixCls + '-icon' })]
+        }), inputIcon || h('span', { 'class': prefixCls + '-icon' }), this.renderClearButton()]
       )]
     );
   }

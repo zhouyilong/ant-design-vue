@@ -13,6 +13,8 @@ import { hasProp, filterEmpty, getOptionProps, getStyle, getClass, getAttrs, get
 import BaseMixin from '../_util/BaseMixin';
 import { cloneElement } from '../_util/vnode';
 import warning from '../_util/warning';
+import { ConfigConsumerProps } from '../config-provider';
+import Base from '../base';
 
 var CascaderOptionType = PropTypes.shape({
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -65,7 +67,7 @@ var CascaderProps = {
   /** 是否支持清除*/
   allowClear: PropTypes.bool.def(true),
   showSearch: PropTypes.oneOfType([Boolean, ShowSearchType]),
-  notFoundContent: PropTypes.any.def('Not Found'),
+  notFoundContent: PropTypes.any,
   loadData: PropTypes.func,
   /** 次级菜单的展开方式，可选 'click' 和 'hover' */
   expandTrigger: CascaderExpandTrigger,
@@ -73,8 +75,8 @@ var CascaderProps = {
   changeOnSelect: PropTypes.bool,
   /** 浮层可见变化时回调 */
   // onPopupVisibleChange?: (popupVisible: boolean) => void;
-  prefixCls: PropTypes.string.def('ant-cascader'),
-  inputPrefixCls: PropTypes.string.def('ant-input'),
+  prefixCls: PropTypes.string,
+  inputPrefixCls: PropTypes.string,
   getPopupContainer: PropTypes.func,
   popupVisible: PropTypes.bool,
   fieldNames: FieldNamesType,
@@ -153,7 +155,7 @@ var Cascader = {
 
   inject: {
     configProvider: { 'default': function _default() {
-        return {};
+        return ConfigConsumerProps;
       } },
     localeData: { 'default': function _default() {
         return {};
@@ -311,9 +313,10 @@ var Cascader = {
         this.setState({ inputValue: '' });
       }
     },
-    generateFilteredOptions: function generateFilteredOptions(prefixCls) {
+    generateFilteredOptions: function generateFilteredOptions(prefixCls, renderEmpty) {
       var _ref5;
 
+      var h = this.$createElement;
       var showSearch = this.showSearch,
           notFoundContent = this.notFoundContent,
           $scopedSlots = this.$scopedSlots;
@@ -373,7 +376,7 @@ var Cascader = {
           })), _ref4;
         });
       }
-      return [(_ref5 = {}, _defineProperty(_ref5, names.label, notFoundContent), _defineProperty(_ref5, names.value, 'ANT_CASCADER_NOT_FOUND'), _defineProperty(_ref5, 'disabled', true), _ref5)];
+      return [(_ref5 = {}, _defineProperty(_ref5, names.label, notFoundContent || renderEmpty(h, 'Cascader')), _defineProperty(_ref5, names.value, 'ANT_CASCADER_NOT_FOUND'), _defineProperty(_ref5, 'disabled', true), _ref5)];
     },
     focus: function focus() {
       if (this.showSearch) {
@@ -410,8 +413,8 @@ var Cascader = {
     suffixIcon = Array.isArray(suffixIcon) ? suffixIcon[0] : suffixIcon;
     var getContextPopupContainer = configProvider.getPopupContainer;
 
-    var prefixCls = props.prefixCls,
-        inputPrefixCls = props.inputPrefixCls,
+    var customizePrefixCls = props.prefixCls,
+        customizeInputPrefixCls = props.inputPrefixCls,
         _props$placeholder = props.placeholder,
         placeholder = _props$placeholder === undefined ? localeData.placeholder : _props$placeholder,
         size = props.size,
@@ -420,6 +423,11 @@ var Cascader = {
         _props$showSearch = props.showSearch,
         showSearch = _props$showSearch === undefined ? false : _props$showSearch,
         otherProps = _objectWithoutProperties(props, ['prefixCls', 'inputPrefixCls', 'placeholder', 'size', 'disabled', 'allowClear', 'showSearch']);
+
+    var getPrefixCls = this.configProvider.getPrefixCls;
+    var renderEmpty = this.configProvider.renderEmpty;
+    var prefixCls = getPrefixCls('cascader', customizePrefixCls);
+    var inputPrefixCls = getPrefixCls('input', customizeInputPrefixCls);
 
     var sizeCls = classNames((_classNames = {}, _defineProperty(_classNames, inputPrefixCls + '-lg', size === 'large'), _defineProperty(_classNames, inputPrefixCls + '-sm', size === 'small'), _classNames));
     var clearIcon = allowClear && !disabled && value.length > 0 || inputValue ? h(Icon, {
@@ -443,7 +451,7 @@ var Cascader = {
 
     var options = props.options;
     if (inputValue) {
-      options = this.generateFilteredOptions(prefixCls);
+      options = this.generateFilteredOptions(prefixCls, renderEmpty);
     }
     // Dropdown menu should keep previous status until it is fully closed.
     if (!sPopupVisible) {
@@ -459,8 +467,8 @@ var Cascader = {
     }
     // The default value of `matchInputWidth` is `true`
     var resultListMatchInputWidth = showSearch.matchInputWidth !== false;
-    if (resultListMatchInputWidth && inputValue && this.input) {
-      dropdownMenuColumnStyle.width = this.input.input.offsetWidth;
+    if (resultListMatchInputWidth && inputValue && this.$refs.input) {
+      dropdownMenuColumnStyle.width = this.$refs.input.$el.offsetWidth + 'px';
     }
     // showSearch时，focus、blur在input上触发，反之在ref='picker'上触发
     var inputProps = {
@@ -524,6 +532,7 @@ var Cascader = {
       props: _extends({}, props, {
         getPopupContainer: getPopupContainer,
         options: options,
+        prefixCls: prefixCls,
         value: value,
         popupVisible: sPopupVisible,
         dropdownMenuColumnStyle: dropdownMenuColumnStyle,
@@ -545,6 +554,7 @@ var Cascader = {
 
 /* istanbul ignore next */
 Cascader.install = function (Vue) {
+  Vue.use(Base);
   Vue.component(Cascader.name, Cascader);
 };
 

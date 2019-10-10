@@ -13,15 +13,15 @@ export default {
   name: 'ScrollableTabBarNode',
   mixins: [BaseMixin],
   props: {
-    saveRef: PropTypes.func.def(function () {}),
+    activeKey: PropTypes.any,
     getRef: PropTypes.func.def(function () {}),
+    saveRef: PropTypes.func.def(function () {}),
     tabBarPosition: PropTypes.oneOf(['left', 'right', 'top', 'bottom']).def('left'),
     prefixCls: PropTypes.string.def(''),
     scrollAnimated: PropTypes.bool.def(true),
     navWrapper: PropTypes.func.def(function (arg) {
       return arg;
     }),
-    activeKey: PropTypes.any,
     prevIcon: PropTypes.any,
     nextIcon: PropTypes.any
   },
