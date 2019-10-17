@@ -256,6 +256,7 @@ export default {
 
     var vcUploadProps = {
       props: _extends({}, this.$props, {
+        prefixCls: prefixCls,
         beforeUpload: this.reBeforeUpload
       }),
       on: {
@@ -267,7 +268,6 @@ export default {
         reject: this.onReject
       },
       ref: 'uploadRef',
-      'class': prefixCls + '-btn',
       attrs: this.$attrs
     };
 

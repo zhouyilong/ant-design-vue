@@ -197,7 +197,7 @@ function createBaseForm() {
             if (process.env.NODE_ENV !== 'production') {
               var valuePropName = fieldMeta.valuePropName;
               warning(!slotHasProp(fieldElem, valuePropName), '`getFieldDecorator` will override `' + valuePropName + '`, ' + ('so please don\'t set `' + valuePropName + ' and v-model` directly ') + 'and use `setFieldsValue` to set it.');
-              warning(!(!slotHasProp(fieldElem, valuePropName) && valuePropName in originalProps && !(fieldOption && initialValue in fieldOption)), getComponentName(fieldElem.componentOptions) + ' `default value` can not collect, ' + ' please use `option.initialValue` to set default value.');
+              warning(!(!slotHasProp(fieldElem, valuePropName) && valuePropName in originalProps && !(fieldOption && 'initialValue' in fieldOption)), getComponentName(fieldElem.componentOptions) + ' `default value` can not collect, ' + ' please use `option.initialValue` to set default value.');
               var defaultValuePropName = 'default' + valuePropName[0].toUpperCase() + valuePropName.slice(1);
               warning(!slotHasProp(fieldElem, defaultValuePropName), '`' + defaultValuePropName + '` is invalid ' + ('for `getFieldDecorator` will set `' + valuePropName + '`,') + ' please use `option.initialValue` instead.');
             }

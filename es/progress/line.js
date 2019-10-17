@@ -15,13 +15,13 @@ var Line = {
 
     var percentStyle = {
       width: validProgress(percent) + '%',
-      height: strokeWidth || (size === 'small' ? '6px' : '8px'),
+      height: (strokeWidth || (size === 'small' ? 6 : 8)) + 'px',
       background: strokeColor,
       borderRadius: strokeLinecap === 'square' ? 0 : '100px'
     };
     var successPercentStyle = {
       width: validProgress(successPercent) + '%',
-      height: strokeWidth || (size === 'small' ? '6px' : '8px'),
+      height: (strokeWidth || (size === 'small' ? 6 : 8)) + 'px',
       borderRadius: strokeLinecap === 'square' ? 0 : '100px'
     };
     var successSegment = successPercent !== undefined ? h('div', { 'class': prefixCls + '-success-bg', style: successPercentStyle }) : null;

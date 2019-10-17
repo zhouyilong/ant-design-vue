@@ -75,20 +75,25 @@ export default {
   },
   methods: {
     onRadioChange: function onRadioChange(ev) {
+      var _this = this;
+
       var lastValue = this.stateValue;
       var value = ev.target.value;
 
       if (!hasProp(this, 'value')) {
         this.stateValue = value;
       }
-      if (value !== lastValue) {
-        this.$emit('input', value);
-        this.$emit('change', ev);
-      }
+      // nextTick for https://github.com/vueComponent/ant-design-vue/issues/1280
+      this.$nextTick(function () {
+        if (value !== lastValue) {
+          _this.$emit('input', value);
+          _this.$emit('change', ev);
+        }
+      });
     }
   },
   render: function render() {
-    var _this = this;
+    var _this2 = this;
 
     var h = arguments[0];
     var _$listeners = this.$listeners,
@@ -121,7 +126,7 @@ export default {
               attrs: { prefixCls: prefixCls,
                 disabled: props.disabled,
                 value: option,
-                checked: _this.stateValue === option
+                checked: _this2.stateValue === option
               }
             },
             [option]
@@ -134,7 +139,7 @@ export default {
               attrs: { prefixCls: prefixCls,
                 disabled: option.disabled || props.disabled,
                 value: option.value,
-                checked: _this.stateValue === option.value
+                checked: _this2.stateValue === option.value
               }
             },
             [option.label]
