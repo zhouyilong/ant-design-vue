@@ -12,7 +12,7 @@ import ColumnManager from './ColumnManager';
 import HeadTable from './HeadTable';
 import BodyTable from './BodyTable';
 import ExpandableTable from './ExpandableTable';
-import { initDefaultProps, getOptionProps } from '../../_util/props-util';
+import { initDefaultProps, getOptionProps, getListeners } from '../../_util/props-util';
 import BaseMixin from '../../_util/BaseMixin';
 
 export default {
@@ -145,7 +145,7 @@ export default {
     var _this2 = this;
 
     ['rowClick', 'rowDoubleclick', 'rowContextmenu', 'rowMouseenter', 'rowMouseleave'].forEach(function (name) {
-      warningOnce(_this2.$listeners[name] === undefined, name + ' is deprecated, please use customRow instead.');
+      warningOnce(getListeners(_this2)[name] === undefined, name + ' is deprecated, please use customRow instead.');
     });
 
     warningOnce(this.getBodyWrapper === undefined, 'getBodyWrapper is deprecated, please use custom components instead.');
@@ -504,8 +504,7 @@ export default {
     var h = arguments[0];
 
     var props = getOptionProps(this);
-    var $listeners = this.$listeners,
-        columnManager = this.columnManager,
+    var columnManager = this.columnManager,
         getRowKey = this.getRowKey;
 
     var prefixCls = props.prefixCls;
@@ -526,7 +525,7 @@ export default {
         columnManager: columnManager,
         getRowKey: getRowKey
       }),
-      on: _extends({}, $listeners),
+      on: getListeners(this),
       scopedSlots: {
         'default': function _default(expander) {
           _this5.expander = expander;

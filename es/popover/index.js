@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import Tooltip from '../tooltip';
 import abstractTooltipProps from '../tooltip/abstractTooltipProps';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
 
@@ -47,7 +47,7 @@ var Popover = {
         prefixCls: prefixCls
       }),
       ref: 'tooltip',
-      on: this.$listeners
+      on: getListeners(this)
     };
     return h(
       Tooltip,

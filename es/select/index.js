@@ -7,7 +7,7 @@ import omit from 'omit.js';
 import PropTypes from '../_util/vue-types';
 import { Select as VcSelect, Option, OptGroup } from '../vc-select';
 import { ConfigConsumerProps } from '../config-provider';
-import { getComponentFromProp, getOptionProps, filterEmpty, isValidElement } from '../_util/props-util';
+import { getComponentFromProp, getOptionProps, filterEmpty, isValidElement, getListeners } from '../_util/props-util';
 import Icon from '../icon';
 import { cloneElement } from '../_util/vnode';
 import Base from '../base';
@@ -44,7 +44,7 @@ var AbstractSelectProps = function AbstractSelectProps() {
   };
 };
 var Value = PropTypes.shape({
-  key: PropTypes.string
+  key: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 }).loose;
 
 var SelectValue = PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.arrayOf(PropTypes.oneOfType([Value, PropTypes.string, PropTypes.number])), Value]);
@@ -244,7 +244,7 @@ var Select = {
         dropdownRender: getComponentFromProp(this, 'dropdownRender', {}, false),
         getPopupContainer: getPopupContainer || getContextPopupContainer
       }),
-      on: this.$listeners,
+      on: getListeners(this),
       'class': cls,
       ref: 'vcSelect'
     };

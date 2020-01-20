@@ -1,5 +1,5 @@
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-/* eslint react/no-multi-comp:0, no-console:0, no-alert: 0 */
+/* eslint no-console:0, no-alert: 0 */
 import BaseMixin from '../../_util/BaseMixin';
 import '../assets/index.less';
 import '../../vc-dialog/assets/index.less';

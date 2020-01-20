@@ -2,6 +2,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
+import { ColProps } from '../grid/Col';
 import Vue from 'vue';
 import isRegExp from 'lodash/isRegExp';
 import warning from '../_util/warning';
@@ -9,7 +10,7 @@ import createDOMForm from '../vc-form/src/createDOMForm';
 import createFormField from '../vc-form/src/createFormField';
 import FormItem from './FormItem';
 import { FIELD_META_PROP, FIELD_DATA_PROP } from './constants';
-import { initDefaultProps } from '../_util/props-util';
+import { initDefaultProps, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
 
@@ -61,6 +62,8 @@ export var WrappedFormUtils = {
 
 export var FormProps = {
   layout: PropTypes.oneOf(['horizontal', 'inline', 'vertical']),
+  labelCol: PropTypes.shape(ColProps).loose,
+  wrapperCol: PropTypes.shape(ColProps).loose,
   form: PropTypes.object,
   // onSubmit: React.FormEventHandler<any>;
   prefixCls: PropTypes.string,
@@ -200,9 +203,7 @@ var Form = {
 
   methods: {
     onSubmit: function onSubmit(e) {
-      var $listeners = this.$listeners;
-
-      if (!$listeners.submit) {
+      if (!getListeners(this).submit) {
         e.preventDefault();
       } else {
         this.$emit('submit', e);

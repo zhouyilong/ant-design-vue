@@ -26,7 +26,17 @@ var SearchInput = {
         return {};
       } }
   },
+  data: function data() {
+    return {
+      mirrorSearchValue: this.searchValue
+    };
+  },
 
+  watch: {
+    searchValue: function searchValue(val) {
+      this.mirrorSearchValue = val;
+    }
+  },
   created: function created() {
     this.inputRef = createRef();
     this.mirrorInputRef = createRef();
@@ -101,6 +111,19 @@ var SearchInput = {
       if (this.inputRef.current) {
         this.inputRef.current.blur();
       }
+    },
+    handleInputChange: function handleInputChange(e) {
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+      var _searchValue = this.searchValue,
+          searchValue = _searchValue === undefined ? '' : _searchValue;
+
+      if (composing || searchValue === value) {
+        this.mirrorSearchValue = value;
+        return;
+      }
+      this.vcTreeSelect.onSearchInputChange(e);
     }
   },
 
@@ -113,9 +136,9 @@ var SearchInput = {
         renderPlaceholder = _$props3.renderPlaceholder,
         open = _$props3.open,
         ariaId = _$props3.ariaId;
-    var _vcTreeSelect = this.vcTreeSelect,
-        onSearchInputChange = _vcTreeSelect.onSearchInputChange,
-        onSearchInputKeyDown = _vcTreeSelect.onSearchInputKeyDown;
+    var onSearchInputKeyDown = this.vcTreeSelect.onSearchInputKeyDown,
+        handleInputChange = this.handleInputChange,
+        mirrorSearchValue = this.mirrorSearchValue;
 
     return h(
       'span',
@@ -128,10 +151,12 @@ var SearchInput = {
         directives: [{
           name: 'ant-ref',
           value: this.inputRef
+        }, {
+          name: 'ant-input'
         }]
       }, {
         on: {
-          'input': onSearchInputChange,
+          'input': handleInputChange,
           'keydown': onSearchInputKeyDown
         },
         domProps: {
@@ -155,7 +180,7 @@ var SearchInput = {
         }, {
           'class': prefixCls + '-search__field__mirror'
         }]),
-        [searchValue, '\xA0']
+        [mirrorSearchValue, '\xA0']
       ), renderPlaceholder ? renderPlaceholder() : null]
     );
   }

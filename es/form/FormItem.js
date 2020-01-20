@@ -317,8 +317,12 @@ export default {
     },
     renderWrapper: function renderWrapper(prefixCls, children) {
       var h = this.$createElement;
+      var _FormProps = this.FormProps;
+      _FormProps = _FormProps === undefined ? {} : _FormProps;
+      var _FormProps$wrapperCol = _FormProps.wrapperCol,
+          wrapperColForm = _FormProps$wrapperCol === undefined ? {} : _FormProps$wrapperCol;
       var _wrapperCol = this.wrapperCol,
-          wrapperCol = _wrapperCol === undefined ? {} : _wrapperCol;
+          wrapperCol = _wrapperCol === undefined ? wrapperColForm : _wrapperCol;
 
       var cls = wrapperCol['class'],
           style = wrapperCol.style,
@@ -386,8 +390,12 @@ export default {
     },
     renderLabel: function renderLabel(prefixCls) {
       var h = this.$createElement;
+      var _FormProps2 = this.FormProps;
+      _FormProps2 = _FormProps2 === undefined ? {} : _FormProps2;
+      var _FormProps2$labelCol = _FormProps2.labelCol,
+          labelColForm = _FormProps2$labelCol === undefined ? {} : _FormProps2$labelCol;
       var _labelCol = this.labelCol,
-          labelCol = _labelCol === undefined ? {} : _labelCol,
+          labelCol = _labelCol === undefined ? labelColForm : _labelCol,
           colon = this.colon,
           id = this.id;
 

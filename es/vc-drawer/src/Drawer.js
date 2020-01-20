@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import Vue from 'vue';
 import ref from 'vue-ref';
 import BaseMixin from '../../_util/BaseMixin';
-import { initDefaultProps, getEvents } from '../../_util/props-util';
+import { initDefaultProps, getEvents, getListeners } from '../../_util/props-util';
 import { cloneElement } from '../../_util/vnode';
 import ContainerRender from '../../_util/ContainerRender';
 import getScrollBarSize from '../../_util/getScrollBarSize';
@@ -359,7 +359,9 @@ var Drawer = {
           }
         }
       }
-      var change = this.$listeners.change;
+
+      var _getListeners = getListeners(this),
+          change = _getListeners.change;
 
       if (change && this.isOpenChange && this.sFirstEnter) {
         change(open);

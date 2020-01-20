@@ -11,7 +11,7 @@ import Tag from '../tag';
 import { ConfigConsumerProps } from '../config-provider';
 import interopDefault from '../_util/interopDefault';
 import { RangePickerProps } from './interface';
-import { hasProp, getOptionProps, initDefaultProps, mergeProps, getComponentFromProp, isValidElement } from '../_util/props-util';
+import { hasProp, getOptionProps, initDefaultProps, mergeProps, getComponentFromProp, isValidElement, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import { cloneElement } from '../_util/vnode';
 function noop() {}
@@ -285,18 +285,19 @@ export default {
         showDate = this.sShowDate,
         hoverValue = this.sHoverValue,
         open = this.sOpen,
-        $listeners = this.$listeners,
         $scopedSlots = this.$scopedSlots;
-    var _$listeners$calendarC = $listeners.calendarChange,
-        calendarChange = _$listeners$calendarC === undefined ? noop : _$listeners$calendarC,
-        _$listeners$ok = $listeners.ok,
-        ok = _$listeners$ok === undefined ? noop : _$listeners$ok,
-        _$listeners$focus = $listeners.focus,
-        focus = _$listeners$focus === undefined ? noop : _$listeners$focus,
-        _$listeners$blur = $listeners.blur,
-        blur = _$listeners$blur === undefined ? noop : _$listeners$blur,
-        _$listeners$panelChan = $listeners.panelChange,
-        panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan;
+
+    var listeners = getListeners(this);
+    var _listeners$calendarCh = listeners.calendarChange,
+        calendarChange = _listeners$calendarCh === undefined ? noop : _listeners$calendarCh,
+        _listeners$ok = listeners.ok,
+        ok = _listeners$ok === undefined ? noop : _listeners$ok,
+        _listeners$focus = listeners.focus,
+        focus = _listeners$focus === undefined ? noop : _listeners$focus,
+        _listeners$blur = listeners.blur,
+        blur = _listeners$blur === undefined ? noop : _listeners$blur,
+        _listeners$panelChang = listeners.panelChange,
+        panelChange = _listeners$panelChang === undefined ? noop : _listeners$panelChang;
     var customizePrefixCls = props.prefixCls,
         customizeTagPrefixCls = props.tagPrefixCls,
         popupStyle = props.popupStyle,
@@ -449,7 +450,7 @@ export default {
     };
     var vcDatePickerProps = mergeProps({
       props: props,
-      on: $listeners
+      on: listeners
     }, pickerChangeHandler, {
       props: {
         calendar: calendar,

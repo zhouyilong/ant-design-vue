@@ -1,5 +1,5 @@
 import _extends from 'babel-runtime/helpers/extends';
-import { getOptionProps } from '../_util/props-util';
+import { getOptionProps, getListeners } from '../_util/props-util';
 import Upload from './Upload';
 import { UploadProps } from './interface';
 
@@ -14,7 +14,7 @@ export default {
       props: _extends({}, props, {
         type: 'drag'
       }),
-      on: this.$listeners,
+      on: getListeners(this),
       style: { height: this.height }
     };
     return h(

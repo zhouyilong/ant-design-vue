@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import PropTypes from '../_util/vue-types';
-import { initDefaultProps, getOptionProps } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, getListeners } from '../_util/props-util';
 import classNames from 'classnames';
 import Icon from '../icon';
 import VcInputNumber from '../vc-input-number/src';
@@ -81,7 +81,7 @@ var InputNumber = {
       }, others),
       'class': inputNumberClass,
       ref: 'inputNumberRef',
-      on: this.$listeners
+      on: getListeners(this)
     };
     return h(VcInputNumber, vcInputNumberprops);
   }

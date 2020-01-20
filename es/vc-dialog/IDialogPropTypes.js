@@ -36,7 +36,10 @@ function IDialogPropTypes() {
     dialogClass: PropTypes.object.def({}),
     closeIcon: PropTypes.any,
     forceRender: PropTypes.bool,
-    getOpenCount: PropTypes.func
+    getOpenCount: PropTypes.func,
+    // https://github.com/ant-design/ant-design/issues/19771
+    // https://github.com/react-component/dialog/issues/95
+    focusTriggerAfterClose: PropTypes.bool
   };
 }
 

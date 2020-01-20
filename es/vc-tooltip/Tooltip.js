@@ -4,7 +4,7 @@ import PropTypes from '../_util/vue-types';
 import Trigger from '../vc-trigger';
 import { placements } from './placements';
 import Content from './Content';
-import { hasProp, getComponentFromProp, getOptionProps } from '../_util/props-util';
+import { hasProp, getComponentFromProp, getOptionProps, getListeners } from '../_util/props-util';
 function noop() {}
 export default {
   props: {
@@ -74,6 +74,7 @@ export default {
     if (hasProp(this, 'visible')) {
       extraProps.popupVisible = this.$props.visible;
     }
+    var listeners = getListeners(this);
     var triggerProps = {
       props: _extends({
         popupClassName: overlayClassName,
@@ -92,9 +93,9 @@ export default {
         popupStyle: overlayStyle,
         mouseEnterDelay: mouseEnterDelay
       }, extraProps),
-      on: _extends({}, this.$listeners, {
-        popupVisibleChange: this.$listeners.visibleChange || noop,
-        popupAlign: this.$listeners.popupAlign || noop
+      on: _extends({}, listeners, {
+        popupVisibleChange: listeners.visibleChange || noop,
+        popupAlign: listeners.popupAlign || noop
       }),
       ref: 'trigger'
     };

@@ -6,6 +6,7 @@ import PropTypes from '../_util/vue-types';
 import DropdownMenu from './DropdownMenu';
 import { isSingleMode, saveRef } from './util';
 import BaseMixin from '../_util/BaseMixin';
+import { getListeners } from '../_util/props-util';
 
 var BUILT_IN_PLACEMENTS = {
   bottomLeft: {
@@ -106,10 +107,11 @@ export default {
           getDropdownPrefixCls = this.getDropdownPrefixCls,
           backfillValue = this.backfillValue,
           menuItemSelectedIcon = this.menuItemSelectedIcon;
-      var _$listeners = this.$listeners,
-          menuSelect = _$listeners.menuSelect,
-          menuDeselect = _$listeners.menuDeselect,
-          popupScroll = _$listeners.popupScroll;
+
+      var _getListeners = getListeners(this),
+          menuSelect = _getListeners.menuSelect,
+          menuDeselect = _getListeners.menuDeselect,
+          popupScroll = _getListeners.popupScroll;
 
       var props = this.$props;
 
@@ -162,8 +164,7 @@ export default {
 
     var h = arguments[0];
     var $props = this.$props,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
     var multiple = $props.multiple,
         visible = $props.visible,
         inputValue = $props.inputValue,
@@ -177,10 +178,12 @@ export default {
         getPopupContainer = $props.getPopupContainer,
         showAction = $props.showAction,
         empty = $props.empty;
-    var mouseenter = $listeners.mouseenter,
-        mouseleave = $listeners.mouseleave,
-        popupFocus = $listeners.popupFocus,
-        dropdownVisibleChange = $listeners.dropdownVisibleChange;
+
+    var _getListeners2 = getListeners(this),
+        mouseenter = _getListeners2.mouseenter,
+        mouseleave = _getListeners2.mouseleave,
+        popupFocus = _getListeners2.popupFocus,
+        dropdownVisibleChange = _getListeners2.dropdownVisibleChange;
 
     var dropdownPrefixCls = this.getDropdownPrefixCls();
     var popupClassName = (_popupClassName = {}, _defineProperty(_popupClassName, dropdownClassName, !!dropdownClassName), _defineProperty(_popupClassName, dropdownPrefixCls + '--' + (multiple ? 'multiple' : 'single'), 1), _defineProperty(_popupClassName, dropdownPrefixCls + '--empty', empty), _popupClassName);

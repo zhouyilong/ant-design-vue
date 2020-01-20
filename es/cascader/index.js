@@ -9,7 +9,7 @@ import omit from 'omit.js';
 import KeyCode from '../_util/KeyCode';
 import Input from '../input';
 import Icon from '../icon';
-import { hasProp, filterEmpty, getOptionProps, getStyle, getClass, getAttrs, getComponentFromProp, isValidElement } from '../_util/props-util';
+import { hasProp, filterEmpty, getOptionProps, getStyle, getClass, getAttrs, getComponentFromProp, isValidElement, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import { cloneElement } from '../_util/vnode';
 import warning from '../_util/warning';
@@ -273,7 +273,7 @@ var Cascader = {
       }
     },
     handleKeyDown: function handleKeyDown(e) {
-      if (e.keyCode === KeyCode.BACKSPACE) {
+      if (e.keyCode === KeyCode.BACKSPACE || e.keyCode === KeyCode.SPACE) {
         e.stopPropagation();
       }
     },
@@ -401,7 +401,6 @@ var Cascader = {
     var $slots = this.$slots,
         sPopupVisible = this.sPopupVisible,
         inputValue = this.inputValue,
-        $listeners = this.$listeners,
         configProvider = this.configProvider,
         localeData = this.localeData;
     var _$data2 = this.$data,
@@ -422,7 +421,8 @@ var Cascader = {
         allowClear = props.allowClear,
         _props$showSearch = props.showSearch,
         showSearch = _props$showSearch === undefined ? false : _props$showSearch,
-        otherProps = _objectWithoutProperties(props, ['prefixCls', 'inputPrefixCls', 'placeholder', 'size', 'disabled', 'allowClear', 'showSearch']);
+        notFoundContent = props.notFoundContent,
+        otherProps = _objectWithoutProperties(props, ['prefixCls', 'inputPrefixCls', 'placeholder', 'size', 'disabled', 'allowClear', 'showSearch', 'notFoundContent']);
 
     var getPrefixCls = this.configProvider.getPrefixCls;
     var renderEmpty = this.configProvider.renderEmpty;
@@ -450,9 +450,17 @@ var Cascader = {
     var tempInputProps = omit(otherProps, ['options', 'popupPlacement', 'transitionName', 'displayRender', 'changeOnSelect', 'expandTrigger', 'popupVisible', 'getPopupContainer', 'loadData', 'popupClassName', 'filterOption', 'renderFilteredOption', 'sortFilteredOption', 'notFoundContent', 'defaultValue', 'fieldNames']);
 
     var options = props.options;
-    if (inputValue) {
-      options = this.generateFilteredOptions(prefixCls, renderEmpty);
+    var names = getFilledFieldNames(this.$props);
+    if (options && options.length > 0) {
+      if (inputValue) {
+        options = this.generateFilteredOptions(prefixCls, renderEmpty);
+      }
+    } else {
+      var _ref6;
+
+      options = [(_ref6 = {}, _defineProperty(_ref6, names.label, notFoundContent || renderEmpty(h, 'Cascader')), _defineProperty(_ref6, names.value, 'ANT_CASCADER_NOT_FOUND'), _defineProperty(_ref6, 'disabled', true), _ref6)];
     }
+
     // Dropdown menu should keep previous status until it is fully closed.
     if (!sPopupVisible) {
       options = this.cachedOptions;
@@ -467,7 +475,7 @@ var Cascader = {
     }
     // The default value of `matchInputWidth` is `true`
     var resultListMatchInputWidth = showSearch.matchInputWidth !== false;
-    if (resultListMatchInputWidth && inputValue && this.$refs.input) {
+    if (resultListMatchInputWidth && (inputValue || isNotFound) && this.$refs.input) {
       dropdownMenuColumnStyle.width = this.$refs.input.$el.offsetWidth + 'px';
     }
     // showSearch时，focus、blur在input上触发，反之在ref='picker'上触发
@@ -539,7 +547,7 @@ var Cascader = {
         expandIcon: expandIcon,
         loadingIcon: loadingIcon
       }),
-      on: _extends({}, $listeners, {
+      on: _extends({}, getListeners(this), {
         popupVisibleChange: this.handlePopupVisibleChange,
         change: this.handleChange
       })

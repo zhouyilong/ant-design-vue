@@ -1,6 +1,6 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
-import { getStyle, getComponentFromProp } from '../_util/props-util';
+import { getStyle, getComponentFromProp, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 
 function noop() {}
@@ -72,8 +72,7 @@ export default {
         clearCloseTimer = this.clearCloseTimer,
         startCloseTimer = this.startCloseTimer,
         $slots = this.$slots,
-        close = this.close,
-        $listeners = this.$listeners;
+        close = this.close;
 
     var componentClass = prefixCls + '-notice';
     var className = (_className = {}, _defineProperty(_className, '' + componentClass, 1), _defineProperty(_className, componentClass + '-closable', closable), _className);
@@ -87,7 +86,7 @@ export default {
         on: {
           'mouseenter': clearCloseTimer,
           'mouseleave': startCloseTimer,
-          'click': $listeners.click || noop
+          'click': getListeners(this).click || noop
         }
       },
       [h(

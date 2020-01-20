@@ -1,7 +1,7 @@
 import _extends from 'babel-runtime/helpers/extends';
 import generateSelector, { selectorPropTypes } from '../Base/BaseSelector';
 import { toTitle } from '../util';
-import { getOptionProps } from '../../../_util/props-util';
+import { getOptionProps, getListeners } from '../../../_util/props-util';
 import { createRef } from '../util';
 var Selector = generateSelector('single');
 
@@ -63,7 +63,7 @@ var SingleSelector = {
       props: _extends({}, getOptionProps(this), {
         renderSelection: this.renderSelection
       }),
-      on: this.$listeners,
+      on: getListeners(this),
       directives: [{
         name: 'ant-ref',
         value: this.selectorRef

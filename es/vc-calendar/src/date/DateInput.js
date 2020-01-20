@@ -81,12 +81,15 @@ var DateInput = {
       });
       this.__emit('clear', null);
     },
-    onInputChange: function onInputChange(event) {
-      var str = event.target.value;
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (isIE && !isIE9 && this.str === str) {
-        return;
-      }
+    onInputChange: function onInputChange(e) {
+      var _e$target = e.target,
+          str = _e$target.value,
+          composing = _e$target.composing;
+      var _str = this.str,
+          oldStr = _str === undefined ? '' : _str;
+
+      if (composing || oldStr === str) return;
+
       var _$props = this.$props,
           disabledDate = _$props.disabledDate,
           format = _$props.format,
@@ -190,6 +193,8 @@ var DateInput = {
           directives: [{
             name: 'ant-ref',
             value: this.saveDateInput
+          }, {
+            name: 'ant-input'
           }]
         }, {
           'class': prefixCls + '-input ' + invalidClass,

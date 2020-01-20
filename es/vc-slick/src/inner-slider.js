@@ -5,7 +5,7 @@ import debounce from 'lodash/debounce';
 import classnames from 'classnames';
 import Vue from 'vue';
 import ref from 'vue-ref';
-import { getStyle } from '../../_util/props-util';
+import { getStyle, getListeners } from '../../_util/props-util';
 import BaseMixin from '../../_util/BaseMixin';
 import defaultProps from './default-props';
 import initialState from './initial-state';
@@ -242,7 +242,7 @@ export default {
       var slidesToLoad = state.lazyLoadedList.filter(function (value) {
         return _this4.lazyLoadedList.indexOf(value) < 0;
       });
-      if (this.$listeners.lazyLoad && slidesToLoad.length > 0) {
+      if (getListeners(this).lazyLoad && slidesToLoad.length > 0) {
         this.$emit('lazyLoad', slidesToLoad);
       }
       this.setState(state, function () {

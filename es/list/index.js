@@ -13,7 +13,7 @@ import Pagination, { PaginationConfig } from '../pagination';
 import { Row } from '../grid';
 
 import Item from './Item';
-import { initDefaultProps, getComponentFromProp, filterEmpty } from '../_util/props-util';
+import { initDefaultProps, getComponentFromProp, filterEmpty, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import Base from '../base';
 
@@ -156,7 +156,6 @@ var List = {
         dataSource = this.dataSource,
         size = this.size,
         loading = this.loading,
-        $listeners = this.$listeners,
         $slots = this.$slots,
         paginationCurrent = this.paginationCurrent;
 
@@ -249,7 +248,7 @@ var List = {
 
     return h(
       'div',
-      _mergeJSXProps([{ 'class': classString }, { on: $listeners }]),
+      _mergeJSXProps([{ 'class': classString }, { on: getListeners(this) }]),
       [(paginationPosition === 'top' || paginationPosition === 'both') && paginationContent, header && h(
         'div',
         { 'class': prefixCls + '-header' },

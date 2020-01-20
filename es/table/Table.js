@@ -14,7 +14,7 @@ import Column from './Column';
 import ColumnGroup from './ColumnGroup';
 import createBodyRow from './createBodyRow';
 import { flatArray, treeMap, flatFilter } from './util';
-import { initDefaultProps, mergeProps, getOptionProps, isValidElement, filterEmpty, getAllProps, getComponentFromProp } from '../_util/props-util';
+import { initDefaultProps, mergeProps, getOptionProps, isValidElement, filterEmpty, getAllProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import { ConfigConsumerProps } from '../config-provider';
 import { TableProps } from './interface';
@@ -1112,7 +1112,7 @@ export default {
           expandIconAsCell: expandIconAsCell,
           emptyText: !(loading.props && loading.props.spinning) && mergedLocale.emptyText
         }),
-        on: this.$listeners,
+        on: getListeners(this),
         'class': classString
       };
       return h(VcTable, vcTableProps);

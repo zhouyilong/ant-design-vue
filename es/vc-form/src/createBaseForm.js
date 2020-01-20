@@ -12,7 +12,7 @@ import omit from 'lodash/omit';
 import createFieldsStore from './createFieldsStore';
 import { cloneElement } from '../../_util/vnode';
 import BaseMixin from '../../_util/BaseMixin';
-import { getOptionProps, getEvents, slotHasProp, getComponentName } from '../../_util/props-util';
+import { getOptionProps, getEvents, slotHasProp, getComponentName, getListeners } from '../../_util/props-util';
 import PropTypes from '../../_util/vue-types';
 
 import { argumentContainer, identity, normalizeValidateRules, getValidateTriggers, getValueFromEvent, hasRules, getParams, isEmptyObject, flattenArray } from './utils';
@@ -645,8 +645,7 @@ function createBaseForm() {
 
       render: function render() {
         var h = arguments[0];
-        var $listeners = this.$listeners,
-            $slots = this.$slots;
+        var $slots = this.$slots;
 
         var formProps = _defineProperty({}, formPropName, this.getForm());
 
@@ -656,7 +655,7 @@ function createBaseForm() {
 
         var wrappedComponentProps = {
           props: mapProps.call(this, _extends({}, formProps, restProps)),
-          on: $listeners,
+          on: getListeners(this),
           ref: 'WrappedComponent',
           directives: [{
             name: 'ant-ref',

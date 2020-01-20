@@ -1,7 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
-import { getComponentFromProp } from '../_util/props-util';
+import { getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 export default {
@@ -52,7 +52,7 @@ export default {
     ) : null;
     return h(
       'div',
-      _mergeJSXProps([{ on: this.$listeners }, { 'class': classString }]),
+      _mergeJSXProps([{ on: getListeners(this) }, { 'class': classString }]),
       [avatarDom, MetaDetail]
     );
   }

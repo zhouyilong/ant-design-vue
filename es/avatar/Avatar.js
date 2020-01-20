@@ -2,6 +2,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
+import { getListeners } from '../_util/props-util';
 
 export default {
   name: 'AAvatar',
@@ -173,7 +174,7 @@ export default {
     }
     return h(
       'span',
-      { on: this.$listeners, 'class': classString, style: sizeStyle },
+      { on: getListeners(this), 'class': classString, style: sizeStyle },
       [children]
     );
   }

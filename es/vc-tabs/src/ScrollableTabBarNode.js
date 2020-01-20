@@ -85,7 +85,6 @@ export default {
         return;
       }
       // wait next, prev show hide
-      /* eslint react/no-did-update-set-state:0 */
       if (this.isNextPrevShown(this.$data) !== this.isNextPrevShown(this.setNextPrev())) {
         this.$forceUpdate();
         this.$nextTick(function () {
@@ -269,8 +268,8 @@ export default {
 
       this.setOffset(offset + navWrapNodeWH);
     },
-    nextClick: function nextClick() {
-      // this.__emit('nextClick', e)
+    nextClick: function nextClick(e) {
+      this.__emit('nextClick', e);
       var navWrapNode = this.$props.getRef('navWrap');
       var navWrapNodeWH = this.getOffsetWH(navWrapNode);
       var offset = this.offset;

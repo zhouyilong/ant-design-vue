@@ -1,7 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 
 function isString(str) {
   return typeof str === 'string';
@@ -114,7 +114,7 @@ export default {
     var classString = (_classString = {}, _defineProperty(_classString, prefixCls + '-item', true), _defineProperty(_classString, prefixCls + '-item-' + status, true), _defineProperty(_classString, prefixCls + '-item-custom', getComponentFromProp(this, 'icon')), _classString);
     var stepProps = {
       'class': classString,
-      on: this.$listeners
+      on: getListeners(this)
     };
     var stepItemStyle = {};
     if (itemWidth) {

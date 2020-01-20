@@ -1,6 +1,6 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _extends from 'babel-runtime/helpers/extends';
-/* eslint react/no-multi-comp:0, no-console:0, no-alert: 0 */
+/* eslint no-console:0, no-alert: 0 */
 
 import '../assets/index.less';
 import '../../vc-dialog/assets/index.less';

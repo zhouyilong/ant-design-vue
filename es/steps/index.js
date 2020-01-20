@@ -1,6 +1,6 @@
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
-import { initDefaultProps, getOptionProps } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, getListeners } from '../_util/props-util';
 import VcSteps from '../vc-steps';
 import Icon from '../icon';
 import { ConfigConsumerProps } from '../config-provider';
@@ -59,7 +59,7 @@ var Steps = {
         iconPrefix: iconPrefix,
         prefixCls: prefixCls
       }, props),
-      on: this.$listeners,
+      on: getListeners(this),
       scopedSlots: this.$scopedSlots
     };
     return h(

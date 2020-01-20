@@ -4,7 +4,7 @@ import { cloneElement } from '../_util/vnode';
 import VcTooltip from '../vc-tooltip';
 import _getPlacements from './placements';
 import PropTypes from '../_util/vue-types';
-import { hasProp, getComponentFromProp, getClass, getStyle, isValidElement } from '../_util/props-util';
+import { hasProp, getComponentFromProp, getClass, getStyle, isValidElement, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import abstractTooltipProps from './abstractTooltipProps';
 
@@ -78,7 +78,7 @@ export default {
       var h = this.$createElement;
 
       var isAntBtn = ele.componentOptions && ele.componentOptions.Ctor.options.__ANT_BUTTON;
-      if (isAntBtn && (ele.componentOptions.propsData.disabled || ele.componentOptions.propsData.disabled === '') || ele.tag === 'button' && ele.data && ele.data.attrs.disabled !== false) {
+      if (isAntBtn && (ele.componentOptions.propsData.disabled || ele.componentOptions.propsData.disabled === '') || ele.tag === 'button' && ele.data && ele.data.attrs && ele.data.attrs.disabled !== undefined) {
         // Pick some layout related style properties up to span
         // Prevent layout bugs like https://github.com/ant-design/ant-design/issues/5254
         var _splitObject = splitObject(getStyle(ele), ['position', 'left', 'right', 'top', 'bottom', 'float', 'display', 'zIndex']),
@@ -148,8 +148,7 @@ export default {
     var h = arguments[0];
     var $props = this.$props,
         $data = this.$data,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
     var customizePrefixCls = $props.prefixCls,
         openClassName = $props.openClassName,
         getPopupContainer = $props.getPopupContainer;
@@ -179,7 +178,7 @@ export default {
         visible: sVisible
       }),
       ref: 'tooltip',
-      on: _extends({}, $listeners, {
+      on: _extends({}, getListeners(this), {
         visibleChange: this.onVisibleChange,
         popupAlign: this.onPopupAlign
       })

@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _slicedToArray from 'babel-runtime/helpers/slicedToArray';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
-import { getOptionProps, hasProp, initDefaultProps } from '../_util/props-util';
+import { getOptionProps, hasProp, initDefaultProps, getListeners } from '../_util/props-util';
 import * as moment from 'moment';
 import FullCalendar from '../vc-calendar/src/FullCalendar';
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
@@ -196,7 +196,6 @@ var Calendar = {
       var props = getOptionProps(this);
       var value = this.sValue,
           mode = this.sMode,
-          $listeners = this.$listeners,
           $scopedSlots = this.$scopedSlots;
 
       if (value && localeCode) {
@@ -241,7 +240,7 @@ var Calendar = {
           dateCellRender: dateCellRender,
           disabledDate: disabledDate
         }),
-        on: _extends({}, $listeners, {
+        on: _extends({}, getListeners(this), {
           select: this.onSelect
         })
       };

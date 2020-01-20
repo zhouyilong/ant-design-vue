@@ -1,6 +1,6 @@
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
-import { getOptionProps } from '../../../_util/props-util';
+import { getOptionProps, getListeners } from '../../../_util/props-util';
 import MonthPanel from '../month/MonthPanel';
 import YearPanel from '../year/YearPanel';
 import DecadePanel from '../decade/DecadePanel';
@@ -22,6 +22,7 @@ function showIf(condition, el) {
 }
 
 var CalendarHeader = {
+  name: 'CalendarHeader',
   mixins: [BaseMixin],
   props: {
     prefixCls: PropTypes.string,
@@ -51,7 +52,7 @@ var CalendarHeader = {
   methods: {
     onMonthSelect: function onMonthSelect(value) {
       this.__emit('panelChange', value, 'date');
-      if (this.$listeners.monthSelect) {
+      if (getListeners(this).monthSelect) {
         this.__emit('monthSelect', value);
       } else {
         this.__emit('valueChange', value);
@@ -66,6 +67,13 @@ var CalendarHeader = {
     onDecadeSelect: function onDecadeSelect(value) {
       this.__emit('panelChange', value, 'year');
       this.__emit('valueChange', value);
+    },
+    changeYear: function changeYear(direction) {
+      if (direction > 0) {
+        this.nextYear();
+      } else {
+        this.previousYear();
+      }
     },
     monthYearElement: function monthYearElement(showTimePicker) {
       var _this = this;
@@ -166,13 +174,14 @@ var CalendarHeader = {
       panel = h(MonthPanel, {
         attrs: {
           locale: locale,
-          defaultValue: value,
+          value: value,
           rootPrefixCls: prefixCls,
 
           disabledDate: disabledMonth,
           cellRender: props.monthCellRender,
           contentRender: props.monthCellContentRender,
-          renderFooter: renderFooter
+          renderFooter: renderFooter,
+          changeYear: this.changeYear
         },
         on: {
           'select': this.onMonthSelect,

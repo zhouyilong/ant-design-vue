@@ -16,7 +16,7 @@ if (typeof window !== 'undefined') {
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
 import Icon from '../icon';
-import { initDefaultProps, getOptionProps, hasProp, getComponentFromProp } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, hasProp, getComponentFromProp, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import isNumeric from '../_util/isNumeric';
 import { ConfigConsumerProps } from '../config-provider';
@@ -245,7 +245,7 @@ export default {
     };
     var siderCls = classNames(prefixCls, prefixCls + '-' + theme, (_classNames = {}, _defineProperty(_classNames, prefixCls + '-collapsed', !!this.sCollapsed), _defineProperty(_classNames, prefixCls + '-has-trigger', collapsible && trigger !== null && !zeroWidthTrigger), _defineProperty(_classNames, prefixCls + '-below', !!this.below), _defineProperty(_classNames, prefixCls + '-zero-width', parseFloat(siderWidth) === 0), _classNames));
     var divProps = {
-      on: this.$listeners,
+      on: getListeners(this),
       'class': siderCls,
       style: divStyle
     };

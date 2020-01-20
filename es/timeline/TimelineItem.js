@@ -1,7 +1,7 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, initDefaultProps, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, initDefaultProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 export var TimeLineItemProps = {
@@ -42,7 +42,7 @@ export default {
     var dotClassName = classNames((_classNames2 = {}, _defineProperty(_classNames2, prefixCls + '-item-head', true), _defineProperty(_classNames2, prefixCls + '-item-head-custom', dot), _defineProperty(_classNames2, prefixCls + '-item-head-' + color, true), _classNames2));
     var liProps = {
       'class': itemClassName,
-      on: this.$listeners
+      on: getListeners(this)
     };
     return h(
       'li',

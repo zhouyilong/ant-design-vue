@@ -4,7 +4,7 @@ import Vue from 'vue';
 import ref from 'vue-ref';
 import BaseMixin from '../../_util/BaseMixin';
 import { cloneElement } from '../../_util/vnode';
-import { getStyle } from '../../_util/props-util';
+import { getStyle, getListeners } from '../../_util/props-util';
 import InnerSlider from './inner-slider';
 import defaultProps from './default-props';
 import { canUseDOM } from './utils/innerSliderUtils';
@@ -208,7 +208,7 @@ export default {
         children: newChildren,
         __propsSymbol__: Symbol()
       }),
-      on: _extends({}, this.$listeners),
+      on: getListeners(this),
       directives: [{
         name: 'ant-ref',
         value: this.innerSliderRefHandler

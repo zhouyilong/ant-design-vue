@@ -3,6 +3,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
 
 import { Store } from './createStore';
+import { getListeners } from '../_util/props-util';
 
 var BodyRowProps = {
   store: Store,
@@ -59,7 +60,7 @@ export default function createTableRow() {
 
       return h(
         Component,
-        _mergeJSXProps([{ 'class': className }, { on: this.$listeners }]),
+        _mergeJSXProps([{ 'class': className }, { on: getListeners(this) }]),
         [this.$slots['default']]
       );
     }

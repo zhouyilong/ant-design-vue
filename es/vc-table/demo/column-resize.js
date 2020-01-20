@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
-/* eslint-disable no-console,func-names,react/no-multi-comp */
+/* eslint-disable no-console,func-names */
 import Table from '../index';
 import '../assets/index.less';
 import BaseMixin from '../../_util/BaseMixin';

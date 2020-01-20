@@ -2,6 +2,7 @@ import _slicedToArray from 'babel-runtime/helpers/slicedToArray';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import { cloneElement } from '../_util/vnode';
+import { getOptionProps, getListeners } from '../_util/props-util';
 function chaining() {
   for (var _len = arguments.length, fns = Array(_len), _key = 0; _key < _len; _key++) {
     fns[_key] = arguments[_key];
@@ -22,6 +23,8 @@ function chaining() {
   };
 }
 export default {
+  name: 'InputElement',
+  inheritAttrs: false,
   props: {
     value: PropTypes.any,
     disabled: PropTypes.bool
@@ -40,28 +43,26 @@ export default {
   render: function render() {
     var _$slots = this.$slots,
         $slots = _$slots === undefined ? {} : _$slots,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners,
-        _$props = this.$props,
-        $props = _$props === undefined ? {} : _$props,
         _$attrs = this.$attrs,
         $attrs = _$attrs === undefined ? {} : _$attrs;
 
-    var value = $props.value === undefined ? '' : $props.value;
+    var listeners = getListeners(this);
+    var props = getOptionProps(this);
+    var value = props.value === undefined ? '' : props.value;
     var children = $slots['default'][0];
     var _$slots$default$0$com = $slots['default'][0].componentOptions,
         componentOptions = _$slots$default$0$com === undefined ? {} : _$slots$default$0$com;
     var _componentOptions$lis = componentOptions.listeners,
-        listeners = _componentOptions$lis === undefined ? {} : _componentOptions$lis;
+        events = _componentOptions$lis === undefined ? {} : _componentOptions$lis;
 
-    var newEvent = _extends({}, listeners);
+    var newEvent = _extends({}, events);
 
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-      for (var _iterator = Object.entries($listeners)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      for (var _iterator = Object.entries(listeners)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var _ref = _step.value;
 
         var _ref2 = _slicedToArray(_ref, 2);
@@ -69,7 +70,7 @@ export default {
         var eventName = _ref2[0];
         var event = _ref2[1];
 
-        newEvent[eventName] = chaining(event, listeners[eventName]);
+        newEvent[eventName] = chaining(event, events[eventName]);
       }
     } catch (err) {
       _didIteratorError = true;
@@ -90,7 +91,7 @@ export default {
       domProps: {
         value: value
       },
-      props: $props,
+      props: props,
       on: newEvent,
       attrs: _extends({}, $attrs, { value: value }),
       ref: 'ele'

@@ -3,7 +3,7 @@ import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import Header from './Header';
 import Combobox from './Combobox';
-import { getComponentFromProp } from '../_util/props-util';
+import { getComponentFromProp, getListeners } from '../_util/props-util';
 
 function noop() {}
 
@@ -151,18 +151,17 @@ var Panel = {
         secondStep = this.secondStep,
         inputReadOnly = this.inputReadOnly,
         sValue = this.sValue,
-        currentSelectPanel = this.currentSelectPanel,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+        currentSelectPanel = this.currentSelectPanel;
 
     var clearIcon = getComponentFromProp(this, 'clearIcon');
-    var _$listeners$esc = $listeners.esc,
-        esc = _$listeners$esc === undefined ? noop : _$listeners$esc,
-        _$listeners$clear = $listeners.clear,
-        clear = _$listeners$clear === undefined ? noop : _$listeners$clear,
-        _$listeners$keydown = $listeners.keydown,
-        keydown = _$listeners$keydown === undefined ? noop : _$listeners$keydown;
 
+    var _getListeners = getListeners(this),
+        _getListeners$esc = _getListeners.esc,
+        esc = _getListeners$esc === undefined ? noop : _getListeners$esc,
+        _getListeners$clear = _getListeners.clear,
+        clear = _getListeners$clear === undefined ? noop : _getListeners$clear,
+        _getListeners$keydown = _getListeners.keydown,
+        keydown = _getListeners$keydown === undefined ? noop : _getListeners$keydown;
 
     var disabledHourOptions = this.disabledHours2();
     var disabledMinuteOptions = disabledMinutes(sValue ? sValue.hour() : null);

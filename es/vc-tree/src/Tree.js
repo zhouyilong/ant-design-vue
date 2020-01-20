@@ -366,7 +366,7 @@ var Tree = {
       this.__emit('click', e, treeNode);
     },
     onNodeDoubleClick: function onNodeDoubleClick(e, treeNode) {
-      this.__emit('doubleclick', e, treeNode);
+      this.__emit('dblclick', e, treeNode);
     },
     onNodeSelect: function onNodeSelect(e, treeNode) {
       var selectedKeys = this.$data._selectedKeys;

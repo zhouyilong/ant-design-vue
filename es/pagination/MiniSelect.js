@@ -1,6 +1,6 @@
 import _extends from 'babel-runtime/helpers/extends';
 import VcSelect, { SelectProps } from '../select';
-import { getOptionProps, filterEmpty } from '../_util/props-util';
+import { getOptionProps, filterEmpty, getListeners } from '../_util/props-util';
 
 export default {
   props: _extends({}, SelectProps),
@@ -13,7 +13,7 @@ export default {
       props: _extends({}, selectOptionsProps, {
         size: 'small'
       }),
-      on: this.$listeners
+      on: getListeners(this)
     };
     return h(
       VcSelect,

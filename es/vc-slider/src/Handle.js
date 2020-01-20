@@ -3,7 +3,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import classNames from 'classnames';
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
-import { getOptionProps } from '../../_util/props-util';
+import { getOptionProps, getListeners } from '../../_util/props-util';
 import addEventListener from '../../_util/Dom/addEventListener';
 
 export default {
@@ -101,7 +101,7 @@ export default {
         tabIndex: disabled ? null : tabIndex || 0
       }, ariaProps),
       'class': className,
-      on: _extends({}, this.$listeners, {
+      on: _extends({}, getListeners(this), {
         blur: this.handleBlur,
         keydown: this.handleKeyDown,
         mousedown: this.handleMousedown

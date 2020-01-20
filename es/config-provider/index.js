@@ -56,7 +56,7 @@ var ConfigProvider = {
     }
   },
   render: function render() {
-    return this.$slots['default'] ? filterEmpty(this.$slots['default']) : null;
+    return this.$slots['default'] ? filterEmpty(this.$slots['default'])[0] : null;
   }
 };
 

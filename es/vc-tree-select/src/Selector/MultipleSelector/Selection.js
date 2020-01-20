@@ -1,7 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropTypes from '../../../../_util/vue-types';
 import { toTitle, UNSELECTABLE_ATTRIBUTE, UNSELECTABLE_STYLE } from '../../util';
-import { getComponentFromProp } from '../../../../_util/props-util';
+import { getComponentFromProp, getListeners } from '../../../../_util/props-util';
 import BaseMixin from '../../../../_util/BaseMixin';
 
 var Selection = {
@@ -31,7 +31,6 @@ var Selection = {
         maxTagTextLength = _$props.maxTagTextLength,
         label = _$props.label,
         value = _$props.value;
-    var $listeners = this.$listeners;
 
     var content = label || value;
     if (maxTagTextLength && typeof content === 'string' && content.length > maxTagTextLength) {
@@ -49,7 +48,7 @@ var Selection = {
           title: toTitle(label)
         },
         'class': prefixCls + '-selection__choice' }]),
-      [$listeners.remove && h(
+      [getListeners(this).remove && h(
         'span',
         { 'class': prefixCls + '-selection__choice__remove', on: {
             'click': this.onRemove

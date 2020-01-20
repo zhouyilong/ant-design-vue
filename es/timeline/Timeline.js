@@ -4,7 +4,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, initDefaultProps, filterEmpty, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, initDefaultProps, filterEmpty, getComponentFromProp, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import TimelineItem from './TimelineItem';
 import Icon from '../icon';
@@ -88,7 +88,7 @@ export default {
     var timelineProps = {
       props: _extends({}, restProps),
       'class': classString,
-      on: this.$listeners
+      on: getListeners(this)
     };
     return h(
       'ul',

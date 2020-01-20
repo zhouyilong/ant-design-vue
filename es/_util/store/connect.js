@@ -2,7 +2,7 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _extends from 'babel-runtime/helpers/extends';
 import shallowEqual from 'shallowequal';
 import omit from 'omit.js';
-import { getOptionProps } from '../props-util';
+import { getOptionProps, getListeners } from '../props-util';
 import PropTypes from '../vue-types';
 import proxyComponent from '../proxyComponent';
 
@@ -22,7 +22,7 @@ export default function connect(mapStateToProps) {
       __propsSymbol__: PropTypes.any
     };
     Object.keys(tempProps).forEach(function (k) {
-      props[k] = _extends({}, k, { required: false });
+      props[k] = _extends({}, tempProps[k], { required: false });
     });
     var Connect = {
       name: 'Connect_' + getDisplayName(WrappedComponent),
@@ -85,10 +85,8 @@ export default function connect(mapStateToProps) {
         var h = arguments[0];
 
         this.preProps = _extends({}, this.$props);
-        var $listeners = this.$listeners,
-            _$slots = this.$slots,
+        var _$slots = this.$slots,
             $slots = _$slots === undefined ? {} : _$slots,
-            $attrs = this.$attrs,
             $scopedSlots = this.$scopedSlots,
             subscribed = this.subscribed,
             store = this.store;
@@ -99,8 +97,7 @@ export default function connect(mapStateToProps) {
           props: _extends({}, props, subscribed, {
             store: store
           }),
-          on: $listeners,
-          attrs: $attrs,
+          on: getListeners(this),
           scopedSlots: $scopedSlots
         };
         return h(

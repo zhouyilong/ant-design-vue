@@ -6,7 +6,7 @@ import { connect } from '../../_util/store';
 import shallowEqual from 'shallowequal';
 import TableRow from './TableRow';
 import { remove } from './utils';
-import { initDefaultProps, getOptionProps } from '../../_util/props-util';
+import { initDefaultProps, getOptionProps, getListeners } from '../../_util/props-util';
 
 export var ExpandableTableProps = function ExpandableTableProps() {
   return {
@@ -238,8 +238,7 @@ var ExpandableTable = {
   render: function render() {
     var data = this.data,
         childrenColumnName = this.childrenColumnName,
-        $scopedSlots = this.$scopedSlots,
-        $listeners = this.$listeners;
+        $scopedSlots = this.$scopedSlots;
 
     var props = getOptionProps(this);
     var needIndentSpaced = data.some(function (record) {
@@ -248,7 +247,7 @@ var ExpandableTable = {
 
     return $scopedSlots['default'] && $scopedSlots['default']({
       props: props,
-      on: $listeners,
+      on: getListeners(this),
       needIndentSpaced: needIndentSpaced,
       renderRows: this.renderRows,
       handleExpandChange: this.handleExpandChange,

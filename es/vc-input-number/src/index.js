@@ -3,7 +3,7 @@ import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 // based on rc-input-number 4.4.0
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
-import { initDefaultProps, hasProp, getOptionProps } from '../../_util/props-util';
+import { initDefaultProps, hasProp, getOptionProps, getListeners } from '../../_util/props-util';
 import classNames from 'classnames';
 import isNegativeZero from 'is-negative-zero';
 import KeyCode from '../../_util/KeyCode';
@@ -71,7 +71,9 @@ var inputNumberProps = {
   pattern: PropTypes.string,
   decimalSeparator: PropTypes.string,
   autoComplete: PropTypes.string,
-  title: PropTypes.string
+  title: PropTypes.string,
+  name: PropTypes.string,
+  id: PropTypes.string
 };
 
 export default {
@@ -703,15 +705,16 @@ export default {
     }
     var isUpDisabled = !!upDisabledClass || disabled || readOnly;
     var isDownDisabled = !!downDisabledClass || disabled || readOnly;
-    var _$listeners = this.$listeners,
-        _$listeners$mouseente = _$listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = _$listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        _$listeners$mouseover = _$listeners.mouseover,
-        mouseover = _$listeners$mouseover === undefined ? noop : _$listeners$mouseover,
-        _$listeners$mouseout = _$listeners.mouseout,
-        mouseout = _$listeners$mouseout === undefined ? noop : _$listeners$mouseout;
+
+    var _getListeners = getListeners(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        _getListeners$mouseov = _getListeners.mouseover,
+        mouseover = _getListeners$mouseov === undefined ? noop : _getListeners$mouseov,
+        _getListeners$mouseou = _getListeners.mouseout,
+        mouseout = _getListeners$mouseou === undefined ? noop : _getListeners$mouseou;
 
     var contentProps = {
       on: { mouseenter: mouseenter, mouseleave: mouseleave, mouseover: mouseover, mouseout: mouseout },

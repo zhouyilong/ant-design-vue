@@ -1,6 +1,6 @@
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _extends from 'babel-runtime/helpers/extends';
-/* eslint react/no-multi-comp:0, no-console:0 */
+/* eslint no-console:0 */
 
 import '../assets/index.less';
 import './demo.less';

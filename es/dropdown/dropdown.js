@@ -3,7 +3,7 @@ import RcDropdown from '../vc-dropdown/src/index';
 import DropdownButton from './dropdown-button';
 import PropTypes from '../_util/vue-types';
 import { cloneElement } from '../_util/vnode';
-import { getOptionProps, getPropsData, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, getPropsData, getComponentFromProp, getListeners } from '../_util/props-util';
 import getDropdownProps from './getDropdownProps';
 import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
@@ -87,8 +87,7 @@ var Dropdown = {
 
   render: function render() {
     var h = arguments[0];
-    var $slots = this.$slots,
-        $listeners = this.$listeners;
+    var $slots = this.$slots;
 
     var props = getOptionProps(this);
     var customizePrefixCls = props.prefixCls,
@@ -102,7 +101,9 @@ var Dropdown = {
 
     var dropdownTrigger = cloneElement($slots['default'], {
       'class': prefixCls + '-trigger',
-      disabled: disabled
+      props: {
+        disabled: disabled
+      }
     });
     var triggerActions = disabled ? [] : trigger;
     var alignPoint = void 0;
@@ -118,7 +119,7 @@ var Dropdown = {
         transitionName: this.getTransitionName(),
         trigger: triggerActions
       }),
-      on: $listeners
+      on: getListeners(this)
     };
     return h(
       RcDropdown,

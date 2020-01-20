@@ -8,6 +8,7 @@ import defaultRequest from './request';
 import getUid from './uid';
 import attrAccept from './attr-accept';
 import traverseFileTree from './traverseFileTree';
+import { getListeners } from '../../_util/props-util';
 
 var upLoadPropTypes = {
   componentTag: PropTypes.string,
@@ -220,7 +221,7 @@ var AjaxUploader = {
       dragover: this.onFileDrop
     };
     var tagProps = {
-      on: _extends({}, this.$listeners, events),
+      on: _extends({}, getListeners(this), events),
       attrs: {
         role: 'button',
         tabIndex: disabled ? null : '0'

@@ -10,7 +10,7 @@ import Button from '../button';
 import buttonTypes from '../button/buttonTypes';
 var ButtonType = buttonTypes().type;
 import LocaleReceiver from '../locale-provider/LocaleReceiver';
-import { initDefaultProps, getComponentFromProp, getClass, getStyle, mergeProps } from '../_util/props-util';
+import { initDefaultProps, getComponentFromProp, getClass, getStyle, mergeProps, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 var mousePosition = null;
@@ -63,7 +63,8 @@ var modalProps = function modalProps() {
     maskStyle: PropTypes.object,
     mask: PropTypes.bool,
     keyboard: PropTypes.bool,
-    wrapProps: PropTypes.object
+    wrapProps: PropTypes.object,
+    focusTriggerAfterClose: PropTypes.bool
   };
   return initDefaultProps(props, defaultProps);
 };
@@ -72,6 +73,7 @@ export var destroyFns = [];
 
 export default {
   name: 'AModal',
+  inheritAttrs: false,
   model: {
     prop: 'visible',
     event: 'change'
@@ -156,8 +158,8 @@ export default {
         visible = this.visible,
         wrapClassName = this.wrapClassName,
         centered = this.centered,
-        $listeners = this.$listeners,
-        $slots = this.$slots;
+        $slots = this.$slots,
+        $attrs = this.$attrs;
 
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -188,11 +190,12 @@ export default {
         mousePosition: mousePosition,
         closeIcon: closeIcon
       }),
-      on: _extends({}, $listeners, {
+      on: _extends({}, getListeners(this), {
         close: this.handleCancel
       }),
       'class': getClass(this),
-      style: getStyle(this)
+      style: getStyle(this),
+      attrs: $attrs
     };
     return h(
       Dialog,

@@ -4,15 +4,16 @@ import _extends from 'babel-runtime/helpers/extends';
 import omit from 'omit.js';
 import debounce from 'lodash/debounce';
 import PropTypes from '../_util/vue-types';
+import warning from '../_util/warning';
 import { conductExpandParent, convertTreeToEntities } from '../vc-tree/src/util';
 import Tree, { TreeProps } from './Tree';
 import { calcRangeKeys, getFullKeyList } from './util';
 import Icon from '../icon';
 import BaseMixin from '../_util/BaseMixin';
-import { initDefaultProps, getOptionProps } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
-// export type ExpandAction = false | 'click' | 'doubleClick'; export interface
+// export type ExpandAction = false | 'click' | 'dblclick'; export interface
 // DirectoryTreeProps extends TreeProps {   expandAction?: ExpandAction; }
 // export interface DirectoryTreeState {   expandedKeys?: string[];
 // selectedKeys?: string[]; }
@@ -39,7 +40,7 @@ export default {
     event: 'check'
   },
   props: initDefaultProps(_extends({}, TreeProps(), {
-    expandAction: PropTypes.oneOf([false, 'click', 'doubleclick'])
+    expandAction: PropTypes.oneOf([false, 'click', 'doubleclick', 'dblclick'])
   }), {
     showIcon: true,
     expandAction: 'click'
@@ -116,11 +117,12 @@ export default {
 
       // Expand the tree
 
-      if (expandAction === 'doubleclick') {
+      if (expandAction === 'dblclick' || expandAction === 'doubleclick') {
         this.onDebounceExpand(event, node);
       }
 
       this.$emit('doubleclick', event, node);
+      this.$emit('dblclick', event, node);
     },
     onSelect: function onSelect(keys, event) {
       var multiple = this.$props.multiple;
@@ -202,6 +204,8 @@ export default {
         expandedKeys = _$data._expandedKeys,
         selectedKeys = _$data._selectedKeys;
 
+    var listeners = getListeners(this);
+    warning(!listeners.doubleclick, '`doubleclick` is deprecated. please use `dblclick` instead.');
     var treeProps = {
       props: _extends({
         icon: getIcon
@@ -212,10 +216,10 @@ export default {
       }),
       ref: 'tree',
       'class': prefixCls + '-directory',
-      on: _extends({}, omit(this.$listeners, ['update:selectedKeys']), {
+      on: _extends({}, omit(listeners, ['update:selectedKeys']), {
         select: this.onSelect,
         click: this.onClick,
-        doubleclick: this.onDoubleClick,
+        dblclick: this.onDoubleClick,
         expand: this.onExpand
       })
     };

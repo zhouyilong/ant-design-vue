@@ -10,7 +10,7 @@ import warning from 'warning';
 import Vue from 'vue';
 import Option from './Option';
 import OptGroup from './OptGroup';
-import { hasProp, getSlotOptions, getPropsData, getValueByProp as getValue, getComponentFromProp, getEvents, getClass, getStyle, getAttrs, getOptionProps, getSlots } from '../_util/props-util';
+import { hasProp, getSlotOptions, getPropsData, getValueByProp as getValue, getComponentFromProp, getEvents, getClass, getStyle, getAttrs, getOptionProps, getSlots, getListeners } from '../_util/props-util';
 import getTransitionProps from '../_util/getTransitionProps';
 import { cloneElement } from '../_util/vnode';
 import BaseMixin from '../_util/BaseMixin';
@@ -117,7 +117,8 @@ var Select = {
       _skipBuildOptionsInfo: true,
       _ariaId: generateUUID()
     };
-    return _extends({}, state, this.getDerivedStateFromProps(props, state));
+    return _extends({}, state, {
+      _mirrorInputValue: state._inputValue }, this.getDerivedStateFromProps(props, state));
   },
   mounted: function mounted() {
     var _this = this;
@@ -137,6 +138,10 @@ var Select = {
   watch: {
     __propsSymbol__: function __propsSymbol__() {
       _extends(this.$data, this.getDerivedStateFromProps(getOptionProps(this), this.$data));
+    },
+
+    '$data._inputValue': function $data_inputValue(val) {
+      this.$data._mirrorInputValue = val;
     }
   },
   updated: function updated() {
@@ -277,10 +282,22 @@ var Select = {
       }
       return value;
     },
-    onInputChange: function onInputChange(event) {
+    onInputChange: function onInputChange(e) {
+      var _e$target = e.target,
+          val = _e$target.value,
+          composing = _e$target.composing;
+
+      var _$data$_inputValue = this.$data._inputValue,
+          _inputValue = _$data$_inputValue === undefined ? '' : _$data$_inputValue;
+
+      if (composing || _inputValue === val) {
+        this.setState({
+          _mirrorInputValue: val
+        });
+        return;
+      }
       var tokenSeparators = this.$props.tokenSeparators;
 
-      var val = event.target.value;
       if (isMultipleOrTags(this.$props) && tokenSeparators.length && includesSeparators(val, tokenSeparators)) {
         var nextValue = this.getValueByInput(val);
         if (nextValue !== undefined) {
@@ -585,14 +602,14 @@ var Select = {
           state = this.$data;
 
       var hidden = false;
-      if (state._inputValue) {
+      if (state._mirrorInputValue) {
         hidden = true;
       }
       var value = state._value;
       if (value.length) {
         hidden = true;
       }
-      if (isCombobox(props) && value.length === 1 && state._value && !state._value[0]) {
+      if (!state._mirrorInputValue && isCombobox(props) && value.length === 1 && state._value && !state._value[0]) {
         hidden = false;
       }
       var placeholder = props.placeholder;
@@ -707,7 +724,9 @@ var Select = {
       var h = this.$createElement;
 
       var props = this.$props;
-      var inputValue = this.$data._inputValue;
+      var _$data = this.$data,
+          inputValue = _$data._inputValue,
+          _mirrorInputValue = _$data._mirrorInputValue;
 
       var attrs = getAttrs(this);
       var defaultInput = h('input', {
@@ -742,10 +761,12 @@ var Select = {
           directives: [{
             name: 'ant-ref',
             value: this.saveInputRef
+          }, {
+            name: 'ant-input'
           }],
           on: {
             input: this.onInputChange,
-            keydown: chaining(this.onInputKeydown, inputEvents.keydown, this.$listeners.inputKeydown),
+            keydown: chaining(this.onInputKeydown, inputEvents.keydown, getListeners(this).inputKeydown),
             focus: chaining(this.inputFocus, inputEvents.focus),
             blur: chaining(this.inputBlur, inputEvents.blur)
           }
@@ -760,7 +781,7 @@ var Select = {
             // ref='inputMirrorRef'
             'class': props.prefixCls + '-search__field__mirror'
           }]),
-          [inputValue, '\xA0']
+          [_mirrorInputValue, '\xA0']
         )]
       );
     },
@@ -900,9 +921,9 @@ var Select = {
     },
     _filterOption: function _filterOption(input, child) {
       var defaultFilter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : defaultFilterFn;
-      var _$data = this.$data,
-          value = _$data._value,
-          backfillValue = _$data._backfillValue;
+      var _$data2 = this.$data,
+          value = _$data2._value,
+          backfillValue = _$data2._backfillValue;
 
       var lastValue = value[value.length - 1];
       if (!input || lastValue && lastValue === backfillValue) {
@@ -1234,10 +1255,10 @@ var Select = {
 
       var h = this.$createElement;
       var props = this.$props;
-      var _$data2 = this.$data,
-          value = _$data2._value,
-          inputValue = _$data2._inputValue,
-          open = _$data2._open;
+      var _$data3 = this.$data,
+          value = _$data3._value,
+          inputValue = _$data3._inputValue,
+          open = _$data3._open;
       var choiceTransitionName = props.choiceTransitionName,
           prefixCls = props.prefixCls,
           maxTagTextLength = props.maxTagTextLength,
@@ -1467,9 +1488,9 @@ var Select = {
       var _$props4 = this.$props,
           prefixCls = _$props4.prefixCls,
           allowClear = _$props4.allowClear;
-      var _$data3 = this.$data,
-          value = _$data3._value,
-          inputValue = _$data3._inputValue;
+      var _$data4 = this.$data,
+          value = _$data4._value,
+          inputValue = _$data4._inputValue;
 
       var clearIcon = getComponentFromProp(this, 'clearIcon');
       var clear = h(
@@ -1558,10 +1579,10 @@ var Select = {
         loading = props.loading;
 
     var ctrlNode = this.renderTopControlNode();
-    var _$data4 = this.$data,
-        open = _$data4._open,
-        inputValue = _$data4._inputValue,
-        value = _$data4._value;
+    var _$data5 = this.$data,
+        open = _$data5._open,
+        inputValue = _$data5._inputValue,
+        value = _$data5._value;
 
     if (open) {
       var filterOptions = this.renderFilterOptions();
@@ -1571,13 +1592,14 @@ var Select = {
     var realOpen = this.getRealOpenState();
     var empty = this._empty;
     var options = this._options || [];
-    var $listeners = this.$listeners;
-    var _$listeners$mouseente = $listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = $listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        _$listeners$popupScro = $listeners.popupScroll,
-        popupScroll = _$listeners$popupScro === undefined ? noop : _$listeners$popupScro;
+
+    var _getListeners = getListeners(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        _getListeners$popupSc = _getListeners.popupScroll,
+        popupScroll = _getListeners$popupSc === undefined ? noop : _getListeners$popupSc;
 
     var selectionProps = {
       props: {},

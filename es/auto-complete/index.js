@@ -7,7 +7,7 @@ import Input from '../input';
 import InputElement from './InputElement';
 import PropTypes from '../_util/vue-types';
 import { ConfigConsumerProps } from '../config-provider';
-import { getComponentFromProp, getOptionProps, filterEmpty, isValidElement } from '../_util/props-util';
+import { getComponentFromProp, getOptionProps, filterEmpty, isValidElement, getListeners } from '../_util/props-util';
 import Base from '../base';
 
 // const DataSourceItemObject = PropTypes.shape({
@@ -73,7 +73,9 @@ var AutoComplete = {
       var $slots = this.$slots;
 
       var children = filterEmpty($slots['default']);
-      var element = children.length ? children[0] : h(Input);
+      var element = children.length ? children[0] : h(Input, {
+        attrs: { lazy: false }
+      });
       return h(InputElement, [element]);
     },
     focus: function focus() {
@@ -96,8 +98,7 @@ var AutoComplete = {
         customizePrefixCls = this.prefixCls,
         optionLabelProp = this.optionLabelProp,
         dataSource = this.dataSource,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -141,7 +142,7 @@ var AutoComplete = {
       }),
       'class': cls,
       ref: 'select',
-      on: $listeners
+      on: getListeners(this)
     };
     return h(
       Select,

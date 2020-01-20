@@ -2,6 +2,7 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
 import { ConfigConsumerProps } from '../config-provider';
+import { getListeners } from '../_util/props-util';
 
 export default {
   name: 'ACardGrid',
@@ -25,7 +26,7 @@ export default {
     var classString = _defineProperty({}, prefixCls + '-grid', true);
     return h(
       'div',
-      _mergeJSXProps([{ on: this.$listeners }, { 'class': classString }]),
+      _mergeJSXProps([{ on: getListeners(this) }, { 'class': classString }]),
       [this.$slots['default']]
     );
   }

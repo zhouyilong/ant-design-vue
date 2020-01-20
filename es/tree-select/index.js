@@ -5,7 +5,7 @@ import VcTreeSelect, { TreeNode, SHOW_ALL, SHOW_PARENT, SHOW_CHILD } from '../vc
 import classNames from 'classnames';
 import { TreeSelectProps } from './interface';
 import warning from '../_util/warning';
-import { initDefaultProps, getOptionProps, getComponentFromProp, filterEmpty, isValidElement } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, getComponentFromProp, filterEmpty, isValidElement, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
 
@@ -160,7 +160,7 @@ var TreeSelect = {
         __propsSymbol__: Symbol()
       }), treeData ? { treeData: treeData } : {}),
       'class': cls,
-      on: _extends({}, this.$listeners, { change: this.onChange }),
+      on: _extends({}, getListeners(this), { change: this.onChange }),
       ref: 'vcTreeSelect',
       scopedSlots: this.$scopedSlots
     };

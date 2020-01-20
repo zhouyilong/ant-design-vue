@@ -1,6 +1,6 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../../../_util/vue-types';
-import { getOptionProps } from '../../../_util/props-util';
+import { getOptionProps, getListeners } from '../../../_util/props-util';
 import cx from 'classnames';
 import DateConstants from './DateConstants';
 import { getTitleString, getTodayTime } from '../util/';
@@ -51,12 +51,12 @@ var DateTBody = {
         dateRender = props.dateRender,
         disabledDate = props.disabledDate,
         hoverValue = props.hoverValue;
-    var _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
-    var _$listeners$select = $listeners.select,
-        select = _$listeners$select === undefined ? noop : _$listeners$select,
-        _$listeners$dayHover = $listeners.dayHover,
-        dayHover = _$listeners$dayHover === undefined ? noop : _$listeners$dayHover;
+
+    var _getListeners = getListeners(this),
+        _getListeners$select = _getListeners.select,
+        select = _getListeners$select === undefined ? noop : _getListeners$select,
+        _getListeners$dayHove = _getListeners.dayHover,
+        dayHover = _getListeners$dayHove === undefined ? noop : _getListeners$dayHove;
 
     var iIndex = void 0;
     var jIndex = void 0;

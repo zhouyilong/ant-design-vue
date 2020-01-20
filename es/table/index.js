@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import T from './Table';
 
-import { getOptionProps, getKey, getClass, getStyle, getEvents, getSlotOptions, camelize, getSlots } from '../_util/props-util';
+import { getOptionProps, getKey, getClass, getStyle, getEvents, getSlotOptions, camelize, getSlots, getListeners } from '../_util/props-util';
 import Base from '../base';
 
 var Table = {
@@ -92,8 +92,7 @@ var Table = {
   },
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners,
-        $slots = this.$slots,
+    var $slots = this.$slots,
         normalize = this.normalize,
         $scopedSlots = this.$scopedSlots;
 
@@ -115,7 +114,7 @@ var Table = {
         footer: footer,
         expandedRowRender: expandedRowRender
       }),
-      on: $listeners
+      on: getListeners(this)
     };
     return h(T, tProps);
   }

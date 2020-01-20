@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
-import { hasProp, initDefaultProps, getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { hasProp, initDefaultProps, getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import classNames from 'classnames';
 import List from './list';
@@ -269,7 +269,7 @@ var Transfer = {
     handleFilter: function handleFilter(direction, e) {
       var value = e.target.value;
       this.setState(_defineProperty({}, direction + 'Filter', value));
-      if (this.$listeners.searchChange) {
+      if (getListeners(this).searchChange) {
         warning(false, '`searchChange` in Transfer is deprecated. Please use `search` instead.');
         this.$emit('searchChange', direction, e);
       }

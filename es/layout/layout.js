@@ -3,7 +3,7 @@ import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
-import { getOptionProps } from '../_util/props-util';
+import { getOptionProps, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 export var BasicProps = {
@@ -33,7 +33,7 @@ function generator(props, name) {
           props: _extends({
             prefixCls: prefixCls
           }, getOptionProps(this)),
-          on: this.$listeners
+          on: getListeners(this)
         };
         return h(
           BasicComponent,
@@ -50,12 +50,11 @@ var Basic = {
   render: function render() {
     var h = arguments[0];
     var prefixCls = this.prefixCls,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
     var divProps = {
       'class': prefixCls,
-      on: $listeners
+      on: getListeners(this)
     };
     return h(
       'div',
@@ -92,13 +91,12 @@ var BasicLayout = {
     var h = arguments[0];
     var prefixCls = this.prefixCls,
         $slots = this.$slots,
-        hasSider = this.hasSider,
-        $listeners = this.$listeners;
+        hasSider = this.hasSider;
 
     var divCls = classNames(prefixCls, _defineProperty({}, prefixCls + '-has-sider', hasSider || this.siders.length > 0));
     var divProps = {
       'class': divCls,
-      on: $listeners
+      on: getListeners
     };
     return h(
       'div',

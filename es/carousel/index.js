@@ -2,7 +2,7 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import debounce from 'lodash/debounce';
-import { initDefaultProps, getComponentFromProp, filterEmpty } from '../_util/props-util';
+import { initDefaultProps, getComponentFromProp, filterEmpty, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
 
@@ -132,8 +132,7 @@ var Carousel = {
     var h = arguments[0];
 
     var props = _extends({}, this.$props);
-    var $slots = this.$slots,
-        $listeners = this.$listeners;
+    var $slots = this.$slots;
 
 
     if (props.effect === 'fade') {
@@ -151,7 +150,7 @@ var Carousel = {
         nextArrow: getComponentFromProp(this, 'nextArrow'),
         prevArrow: getComponentFromProp(this, 'prevArrow')
       }),
-      on: $listeners,
+      on: getListeners(this),
       scopedSlots: this.$scopedSlots
     };
 

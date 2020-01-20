@@ -2,7 +2,7 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import BaseMixin from '../_util/BaseMixin';
-import { getOptionProps, initDefaultProps } from '../_util/props-util';
+import { getOptionProps, initDefaultProps, getListeners } from '../_util/props-util';
 import getTransitionProps from '../_util/getTransitionProps';
 import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
@@ -84,10 +84,10 @@ export default {
         file.thumbUrl = '';
         /*eslint -enable */
         previewFile(file.originFileObj, function (previewDataUrl) {
-          /*eslint-disable */
-          file.thumbUrl = previewDataUrl;
-          /*eslint -enable todo */
-          // this.forceUpdate()
+          // Need append '' to avoid dead loop
+          file.thumbUrl = previewDataUrl || '';
+          /*eslint -enable */
+          _this.$forceUpdate();
         });
       });
     });
@@ -98,7 +98,8 @@ export default {
       this.$emit('remove', file);
     },
     handlePreview: function handlePreview(file, e) {
-      var preview = this.$listeners.preview;
+      var _getListeners = getListeners(this),
+          preview = _getListeners.preview;
 
       if (!preview) {
         return;

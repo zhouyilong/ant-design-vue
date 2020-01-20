@@ -5,7 +5,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
 import ScrollNumber from './ScrollNumber';
 import classNames from 'classnames';
-import { initDefaultProps, filterEmpty, getComponentFromProp } from '../_util/props-util';
+import { initDefaultProps, filterEmpty, getComponentFromProp, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import getTransitionProps from '../_util/getTransitionProps';
 import isNumeric from '../_util/isNumeric';
@@ -187,7 +187,7 @@ export default {
     if (!children.length && status) {
       return h(
         'span',
-        _mergeJSXProps([{ on: this.$listeners }, {
+        _mergeJSXProps([{ on: getListeners(this) }, {
           'class': this.getBadgeClassName(prefixCls),
           style: this.getStyleWithOffset()
         }]),
@@ -203,7 +203,7 @@ export default {
 
     return h(
       'span',
-      _mergeJSXProps([{ on: this.$listeners }, { 'class': this.getBadgeClassName(prefixCls) }]),
+      _mergeJSXProps([{ on: getListeners(this) }, { 'class': this.getBadgeClassName(prefixCls) }]),
       [children, h(
         'transition',
         transitionProps,

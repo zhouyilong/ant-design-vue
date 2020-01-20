@@ -175,10 +175,10 @@ export default {
         event.preventDefault();
       }
     },
-    handleKeyUp: function handleKeyUp(event) {
-      var inputValue = event.target.value;
+    handleKeyUp: function handleKeyUp(e) {
+      if (e.target.composing) return;
+      var value = this.getValidValue(e);
       var stateCurrentInputValue = this.stateCurrentInputValue;
-      var value = void 0;
 
       if (value !== stateCurrentInputValue) {
         this.setState({
@@ -186,11 +186,11 @@ export default {
         });
       }
 
-      if (event.keyCode === KEYCODE.ENTER) {
+      if (e.keyCode === KEYCODE.ENTER) {
         this.handleChange(value);
-      } else if (event.keyCode === KEYCODE.ARROW_UP) {
+      } else if (e.keyCode === KEYCODE.ARROW_UP) {
         this.handleChange(value - 1);
-      } else if (event.keyCode === KEYCODE.ARROW_DOWN) {
+      } else if (e.keyCode === KEYCODE.ARROW_DOWN) {
         this.handleChange(value + 1);
       }
     },
@@ -392,7 +392,7 @@ export default {
             },
             'class': prefixCls + '-simple-pager'
           },
-          [h('input', {
+          [h('input', _mergeJSXProps([{
             attrs: {
               type: 'text',
 
@@ -406,7 +406,11 @@ export default {
               'keyup': this.handleKeyUp,
               'input': this.handleKeyUp
             }
-          }), h(
+          }, {
+            directives: [{
+              name: 'ant-input'
+            }]
+          }])), h(
             'span',
             { 'class': prefixCls + '-slash' },
             ['\uFF0F']

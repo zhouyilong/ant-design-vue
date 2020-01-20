@@ -3,19 +3,29 @@ import _extends from 'babel-runtime/helpers/extends';
 import Dialog from './Dialog';
 import ContainerRender from '../_util/ContainerRender';
 import getDialogPropTypes from './IDialogPropTypes';
-import { getStyle, getClass } from '../_util/props-util';
+import { getStyle, getClass, getListeners } from '../_util/props-util';
 var IDialogPropTypes = getDialogPropTypes();
+var openCount = 0;
 var DialogWrap = {
+  inheritAttrs: false,
   props: _extends({}, IDialogPropTypes, {
     visible: IDialogPropTypes.visible.def(false)
   }),
   data: function data() {
+    openCount = this.visible ? openCount + 1 : openCount;
     this.renderComponent = function () {};
     this.removeContainer = function () {};
     return {};
   },
+
+  watch: {
+    visible: function visible(val, preVal) {
+      openCount = val && !preVal ? openCount + 1 : openCount - 1;
+    }
+  },
   beforeDestroy: function beforeDestroy() {
     if (this.visible) {
+      openCount = openCount ? openCount - 1 : openCount;
       this.renderComponent({
         afterClose: this.removeContainer,
         visible: false,
@@ -33,9 +43,9 @@ var DialogWrap = {
       var extra = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var h = this.$createElement;
       var $attrs = this.$attrs,
-          $listeners = this.$listeners,
           $props = this.$props,
-          $slots = this.$slots;
+          $slots = this.$slots,
+          getContainer = this.getContainer;
 
       var on = extra.on,
           otherProps = _objectWithoutProperties(extra, ['on']);
@@ -44,11 +54,17 @@ var DialogWrap = {
         props: _extends({}, $props, {
           dialogClass: getClass(this),
           dialogStyle: getStyle(this)
-        }, otherProps),
+        }, otherProps, {
+          getOpenCount: getContainer === false ? function () {
+            return 2;
+          } : function () {
+            return openCount;
+          }
+        }),
         attrs: $attrs,
         ref: '_component',
         key: 'dialog',
-        on: _extends({}, $listeners, on)
+        on: _extends({}, getListeners(this), on)
       };
       return h(
         Dialog,

@@ -7,7 +7,7 @@ import BaseMixin from '../_util/BaseMixin';
 import scrollIntoView from 'dom-scroll-into-view';
 import { connect } from '../_util/store';
 import { noop, menuAllProps } from './util';
-import { getComponentFromProp } from '../_util/props-util';
+import { getComponentFromProp, getListeners } from '../_util/props-util';
 
 var props = {
   attribute: PropTypes.object,
@@ -169,7 +169,7 @@ var MenuItem = {
     if (props.mode === 'inline') {
       style.paddingLeft = props.inlineIndent * props.level + 'px';
     }
-    var listeners = _extends({}, this.$listeners);
+    var listeners = _extends({}, getListeners(this));
     menuAllProps.props.forEach(function (key) {
       return delete props[key];
     });

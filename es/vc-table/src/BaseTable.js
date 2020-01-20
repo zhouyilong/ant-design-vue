@@ -5,7 +5,7 @@ import ColGroup from './ColGroup';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import ExpandableRow from './ExpandableRow';
-import { mergeProps } from '../../_util/props-util';
+import { mergeProps, getListeners } from '../../_util/props-util';
 import { connect } from '../../_util/store';
 function noop() {}
 var BaseTable = {
@@ -57,19 +57,21 @@ var BaseTable = {
           prefixCls = _table.prefixCls,
           childrenColumnName = _table.childrenColumnName,
           rowClassName = _table.rowClassName,
-          _table$$listeners = _table.$listeners,
-          _table$$listeners$row = _table$$listeners.rowClick,
-          onRowClick = _table$$listeners$row === undefined ? noop : _table$$listeners$row,
-          _table$$listeners$row2 = _table$$listeners.rowDoubleclick,
-          onRowDoubleClick = _table$$listeners$row2 === undefined ? noop : _table$$listeners$row2,
-          _table$$listeners$row3 = _table$$listeners.rowContextmenu,
-          onRowContextMenu = _table$$listeners$row3 === undefined ? noop : _table$$listeners$row3,
-          _table$$listeners$row4 = _table$$listeners.rowMouseenter,
-          onRowMouseEnter = _table$$listeners$row4 === undefined ? noop : _table$$listeners$row4,
-          _table$$listeners$row5 = _table$$listeners.rowMouseleave,
-          onRowMouseLeave = _table$$listeners$row5 === undefined ? noop : _table$$listeners$row5,
           _table$customRow = _table.customRow,
           customRow = _table$customRow === undefined ? noop : _table$customRow;
+
+      var _getListeners = getListeners(this.table),
+          _getListeners$rowClic = _getListeners.rowClick,
+          onRowClick = _getListeners$rowClic === undefined ? noop : _getListeners$rowClic,
+          _getListeners$rowDoub = _getListeners.rowDoubleclick,
+          onRowDoubleClick = _getListeners$rowDoub === undefined ? noop : _getListeners$rowDoub,
+          _getListeners$rowCont = _getListeners.rowContextmenu,
+          onRowContextMenu = _getListeners$rowCont === undefined ? noop : _getListeners$rowCont,
+          _getListeners$rowMous = _getListeners.rowMouseenter,
+          onRowMouseEnter = _getListeners$rowMous === undefined ? noop : _getListeners$rowMous,
+          _getListeners$rowMous2 = _getListeners.rowMouseleave,
+          onRowMouseLeave = _getListeners$rowMous2 === undefined ? noop : _getListeners$rowMous2;
+
       var getRowKey = this.getRowKey,
           fixed = this.fixed,
           expander = this.expander,

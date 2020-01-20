@@ -75,7 +75,7 @@ export default {
         },
         on: {
           click: onSelect,
-          doubleclick: onItemDoubleClick,
+          dblclick: onItemDoubleClick,
           mousedown: function mousedown(e) {
             return e.preventDefault();
           }

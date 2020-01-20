@@ -7,6 +7,7 @@ import BaseMixin from '../_util/BaseMixin';
 import getTransitionProps from '../_util/getTransitionProps';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
+import { getListeners } from '../_util/props-util';
 
 var easeInOutCubic = function easeInOutCubic(t, b, c, d) {
   var cc = c - b;
@@ -114,8 +115,7 @@ var BackTop = {
   render: function render() {
     var h = arguments[0];
     var customizePrefixCls = this.prefixCls,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -127,7 +127,7 @@ var BackTop = {
       [h('div', { 'class': prefixCls + '-icon' })]
     );
     var divProps = {
-      on: _extends({}, $listeners, {
+      on: _extends({}, getListeners(this), {
         click: this.scrollToTop
       }),
       'class': prefixCls

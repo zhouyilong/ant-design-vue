@@ -3,7 +3,7 @@ import PropTypes from '../_util/vue-types';
 import { Provider, create } from '../_util/store';
 import { default as SubPopupMenu, getActiveKey } from './SubPopupMenu';
 import BaseMixin from '../_util/BaseMixin';
-import hasProp, { getOptionProps, getComponentFromProp, filterEmpty } from '../_util/props-util';
+import hasProp, { getOptionProps, getComponentFromProp, filterEmpty, getListeners } from '../_util/props-util';
 import commonPropsType from './commonPropsType';
 
 var Menu = {
@@ -163,7 +163,7 @@ var Menu = {
         children: filterEmpty(this.$slots['default'] || [])
       }),
       'class': props.prefixCls + '-root',
-      on: _extends({}, this.$listeners, {
+      on: _extends({}, getListeners(this), {
         click: this.onClick,
         openChange: this.onOpenChange,
         deselect: this.onDeselect,

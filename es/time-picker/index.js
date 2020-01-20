@@ -10,7 +10,7 @@ import PropTypes from '../_util/vue-types';
 import warning from '../_util/warning';
 import Icon from '../icon';
 import interopDefault from '../_util/interopDefault';
-import { initDefaultProps, hasProp, getOptionProps, getComponentFromProp, isValidElement } from '../_util/props-util';
+import { initDefaultProps, hasProp, getOptionProps, getComponentFromProp, isValidElement, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
@@ -234,7 +234,7 @@ var TimePicker = {
         }),
         'class': pickerClassName,
         ref: 'timePicker',
-        on: _extends({}, this.$listeners, {
+        on: _extends({}, getListeners(this), {
           change: this.handleChange,
           open: this.handleOpenClose,
           close: this.handleOpenClose

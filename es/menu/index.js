@@ -7,7 +7,7 @@ import PropTypes from '../_util/vue-types';
 import animation from '../_util/openAnimation';
 import warning from '../_util/warning';
 import Item from './MenuItem';
-import { hasProp } from '../_util/props-util';
+import { hasProp, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import commonPropsType from '../vc-menu/commonPropsType';
 import { ConfigConsumerProps } from '../config-provider';
@@ -217,8 +217,7 @@ var Menu = {
 
     var h = arguments[0];
     var layoutSiderContext = this.layoutSiderContext,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
     var collapsedWidth = layoutSiderContext.collapsedWidth;
     var getContextPopupContainer = this.configProvider.getPopupContainer;
     var _$props2 = this.$props,
@@ -240,7 +239,7 @@ var Menu = {
         mode: menuMode,
         prefixCls: prefixCls
       }),
-      on: _extends({}, $listeners, {
+      on: _extends({}, getListeners(this), {
         select: this.handleSelect,
         deselect: this.handleDeselect,
         openChange: this.handleOpenChange,

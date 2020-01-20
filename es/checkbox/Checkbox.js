@@ -5,7 +5,7 @@ import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutPropert
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
 import VcCheckbox from '../vc-checkbox';
-import { getOptionProps, getAttrs } from '../_util/props-util';
+import { getOptionProps, getAttrs, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 function noop() {}
 
@@ -56,17 +56,18 @@ export default {
 
     var h = arguments[0];
     var checkboxGroup = this.checkboxGroupContext,
-        $listeners = this.$listeners,
         $slots = this.$slots;
 
     var props = getOptionProps(this);
     var children = $slots['default'];
 
-    var _$listeners$mouseente = $listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = $listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        restListeners = _objectWithoutProperties($listeners, ['mouseenter', 'mouseleave']);
+    var _getListeners = getListeners(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        input = _getListeners.input,
+        restListeners = _objectWithoutProperties(_getListeners, ['mouseenter', 'mouseleave', 'input']);
 
     var customizePrefixCls = props.prefixCls,
         indeterminate = props.indeterminate,

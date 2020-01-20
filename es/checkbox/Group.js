@@ -40,7 +40,7 @@ export default {
 
   watch: {
     value: function value(val) {
-      this.sValue = val;
+      this.sValue = val || [];
     }
   },
   methods: {

@@ -4,7 +4,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import Wave from '../_util/wave';
 import Icon from '../icon';
 import buttonTypes from './buttonTypes';
-import { filterEmpty } from '../_util/props-util';
+import { filterEmpty, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 var rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/;
@@ -52,8 +52,9 @@ export default {
       var autoInsertSpace = this.configProvider.autoInsertSpaceInButton !== false;
 
       var sizeCls = sizeMap[size] || '';
+      var iconType = sLoading ? 'loading' : icon;
       var children = filterEmpty($slots['default']);
-      return _ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-' + type, type), _defineProperty(_ref, prefixCls + '-' + shape, shape), _defineProperty(_ref, prefixCls + '-' + sizeCls, sizeCls), _defineProperty(_ref, prefixCls + '-icon-only', !children && children !== 0 && icon), _defineProperty(_ref, prefixCls + '-loading', sLoading), _defineProperty(_ref, prefixCls + '-background-ghost', ghost || type === 'ghost'), _defineProperty(_ref, prefixCls + '-two-chinese-chars', hasTwoCNChar && autoInsertSpace), _defineProperty(_ref, prefixCls + '-block', block), _ref;
+      return _ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-' + type, type), _defineProperty(_ref, prefixCls + '-' + shape, shape), _defineProperty(_ref, prefixCls + '-' + sizeCls, sizeCls), _defineProperty(_ref, prefixCls + '-icon-only', children.length === 0 && iconType), _defineProperty(_ref, prefixCls + '-loading', sLoading), _defineProperty(_ref, prefixCls + '-background-ghost', ghost || type === 'ghost'), _defineProperty(_ref, prefixCls + '-two-chinese-chars', hasTwoCNChar && autoInsertSpace), _defineProperty(_ref, prefixCls + '-block', block), _ref;
     }
   },
   watch: {
@@ -143,15 +144,14 @@ export default {
         handleClick = this.handleClick,
         sLoading = this.sLoading,
         $slots = this.$slots,
-        $attrs = this.$attrs,
-        $listeners = this.$listeners;
+        $attrs = this.$attrs;
 
     var buttonProps = {
       attrs: _extends({}, $attrs, {
         disabled: disabled
       }),
       'class': classes,
-      on: _extends({}, $listeners, {
+      on: _extends({}, getListeners(this), {
         click: handleClick
       })
     };

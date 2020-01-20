@@ -3,7 +3,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, initDefaultProps } from '../_util/props-util';
+import { getOptionProps, initDefaultProps, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
 import Line from './line';
@@ -65,11 +65,11 @@ export default {
       if (!showInfo) return null;
 
       var text = void 0;
-      var textFormatter = format || function (percentNumber) {
+      var textFormatter = format || this.$scopedSlots.format || function (percentNumber) {
         return percentNumber + '%';
       };
       var iconType = type === 'circle' || type === 'dashboard' ? '' : '-circle';
-      if (format || progressStatus !== 'exception' && progressStatus !== 'success') {
+      if (format || this.$scopedSlots.format || progressStatus !== 'exception' && progressStatus !== 'success') {
         text = textFormatter(validProgress(percent), validProgress(successPercent));
       } else if (progressStatus === 'exception') {
         text = h(Icon, {
@@ -152,7 +152,7 @@ export default {
 
     var progressProps = {
       props: _extends({}, restProps),
-      on: this.$listeners,
+      on: getListeners(this),
       'class': classString
     };
     return h(

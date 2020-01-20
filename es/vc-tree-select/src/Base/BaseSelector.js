@@ -11,7 +11,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import { createRef } from '../util';
 import PropTypes from '../../../_util/vue-types';
 import classNames from 'classnames';
-import { initDefaultProps, getComponentFromProp } from '../../../_util/props-util';
+import { initDefaultProps, getComponentFromProp, getListeners } from '../../../_util/props-util';
 import BaseMixin from '../../../_util/BaseMixin';
 export var selectorPropTypes = function selectorPropTypes() {
   return {
@@ -141,8 +141,7 @@ export default function (modeName) {
           renderSelection = _$props3.renderSelection,
           renderPlaceholder = _$props3.renderPlaceholder,
           tabIndex = _$props3.tabIndex;
-      var onSelectorKeyDown = this.vcTreeSelect.onSelectorKeyDown,
-          $listeners = this.$listeners;
+      var onSelectorKeyDown = this.vcTreeSelect.onSelectorKeyDown;
 
 
       var myTabIndex = tabIndex;
@@ -155,7 +154,7 @@ export default function (modeName) {
         _mergeJSXProps([{
           style: style,
           on: {
-            'click': $listeners.click || noop
+            'click': getListeners(this).click || noop
           },
 
           'class': classNames(className, prefixCls, (_classNames = {}, _defineProperty(_classNames, prefixCls + '-open', open), _defineProperty(_classNames, prefixCls + '-focused', open || focused), _defineProperty(_classNames, prefixCls + '-disabled', disabled), _defineProperty(_classNames, prefixCls + '-enabled', !disabled), _defineProperty(_classNames, prefixCls + '-allow-clear', allowClear), _classNames))

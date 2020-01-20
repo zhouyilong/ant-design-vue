@@ -6,7 +6,7 @@ import { createRef } from '../../util';
 import generateSelector, { selectorPropTypes } from '../../Base/BaseSelector';
 import SearchInput from '../../SearchInput';
 import Selection from './Selection';
-import { getComponentFromProp } from '../../../../_util/props-util';
+import { getComponentFromProp, getListeners } from '../../../../_util/props-util';
 import getTransitionProps from '../../../../_util/getTransitionProps';
 import BaseMixin from '../../../../_util/BaseMixin';
 var TREE_SELECT_EMPTY_VALUE_KEY = 'RC_TREE_SELECT_EMPTY_VALUE_KEY';
@@ -98,11 +98,10 @@ var MultipleSelector = {
           labelInValue = _$props2.labelInValue,
           maxTagCount = _$props2.maxTagCount;
       var onMultipleSelectorRemove = this.vcTreeSelect.onMultipleSelectorRemove,
-          $listeners = this.$listeners,
           $slots = this.$slots;
 
+      var listeners = getListeners(this);
       // Check if `maxTagCount` is set
-
       var myValueList = selectorValueList;
       if (maxTagCount >= 0) {
         myValueList = selectorValueList.slice(0, maxTagCount);
@@ -118,7 +117,7 @@ var MultipleSelector = {
               label: label,
               value: value
             }),
-            on: _extends({}, $listeners, { remove: onMultipleSelectorRemove })
+            on: _extends({}, listeners, { remove: onMultipleSelectorRemove })
           }, {
             key: value || TREE_SELECT_EMPTY_VALUE_KEY
           }]),
@@ -147,7 +146,7 @@ var MultipleSelector = {
               label: content,
               value: null
             }),
-            on: $listeners
+            on: listeners
           }, {
             key: 'rc-tree-select-internal-max-tag-counter'
           }]),
@@ -166,7 +165,7 @@ var MultipleSelector = {
             props: _extends({}, this.$props, {
               needAlign: true
             }),
-            on: $listeners,
+            on: listeners,
             directives: [{
               name: 'ant-ref',
               value: this.inputRef
@@ -198,9 +197,9 @@ var MultipleSelector = {
 
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners,
-        $slots = this.$slots;
+    var $slots = this.$slots;
 
+    var listeners = getListeners(this);
     return h(
       Selector,
       {
@@ -210,7 +209,7 @@ var MultipleSelector = {
           renderSelection: this.renderSelection,
           renderPlaceholder: this._renderPlaceholder
         }),
-        on: $listeners
+        on: listeners
       },
       [$slots['default']]
     );

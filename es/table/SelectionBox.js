@@ -4,7 +4,7 @@ import Checkbox from '../checkbox';
 import Radio from '../radio';
 import { SelectionBoxProps } from './interface';
 import BaseMixin from '../_util/BaseMixin';
-import { getOptionProps } from '../_util/props-util';
+import { getOptionProps, getListeners } from '../_util/props-util';
 
 export default {
   name: 'SelectionBox',
@@ -58,16 +58,13 @@ export default {
         rowIndex = _getOptionProps.rowIndex,
         rest = _objectWithoutProperties(_getOptionProps, ['type', 'rowIndex']);
 
-    var checked = this.checked,
-        $attrs = this.$attrs,
-        $listeners = this.$listeners;
+    var checked = this.checked;
 
     var checkboxProps = {
       props: _extends({
         checked: checked
       }, rest),
-      attrs: $attrs,
-      on: $listeners
+      on: getListeners(this)
     };
     if (type === 'radio') {
       checkboxProps.props.value = rowIndex;

@@ -1,6 +1,6 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
-import { getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import VcCollapse, { panelProps } from '../vc-collapse';
 import { ConfigConsumerProps } from '../config-provider';
 
@@ -16,8 +16,7 @@ export default {
     var h = arguments[0];
     var customizePrefixCls = this.prefixCls,
         _showArrow = this.showArrow,
-        showArrow = _showArrow === undefined ? true : _showArrow,
-        $listeners = this.$listeners;
+        showArrow = _showArrow === undefined ? true : _showArrow;
 
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('collapse', customizePrefixCls);
@@ -28,7 +27,7 @@ export default {
         prefixCls: prefixCls
       }),
       'class': collapsePanelClassName,
-      on: $listeners
+      on: getListeners(this)
     };
     var header = getComponentFromProp(this, 'header');
     return h(

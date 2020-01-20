@@ -1,3 +1,4 @@
+import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import moment from 'moment';
@@ -68,12 +69,14 @@ var Header = {
   },
 
   methods: {
-    onInputChange: function onInputChange(event) {
-      var str = event.target.value;
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (isIE && !isIE9 && this.str === str) {
-        return;
-      }
+    onInputChange: function onInputChange(e) {
+      var _e$target = e.target,
+          str = _e$target.value,
+          composing = _e$target.composing;
+      var _str = this.str,
+          oldStr = _str === undefined ? '' : _str;
+
+      if (composing || oldStr === str) return;
 
       this.setState({
         str: str
@@ -162,7 +165,7 @@ var Header = {
           str = this.str;
 
       var invalidClass = invalid ? prefixCls + '-input-invalid' : '';
-      return h('input', {
+      return h('input', _mergeJSXProps([{
         'class': prefixCls + '-input ' + invalidClass,
         ref: 'input',
         on: {
@@ -177,7 +180,11 @@ var Header = {
 
           readOnly: !!inputReadOnly
         }
-      });
+      }, {
+        directives: [{
+          name: 'ant-input'
+        }]
+      }]));
     }
   },
 

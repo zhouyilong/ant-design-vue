@@ -1,6 +1,6 @@
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../../_util/vue-types';
-import { initDefaultProps } from '../../_util/props-util';
+import { initDefaultProps, getListeners } from '../../_util/props-util';
 import BaseMixin from '../../_util/BaseMixin';
 import AjaxUpload from './AjaxUploader';
 import IframeUpload from './IframeUploader';
@@ -61,7 +61,6 @@ export default {
 
     this.$nextTick(function () {
       if (_this.supportServerRender) {
-        /* eslint react/no-did-mount-set-state:0 */
         _this.setState({
           Component: _this.getComponent()
         }, function () {
@@ -85,7 +84,7 @@ export default {
 
     var componentProps = {
       props: _extends({}, this.$props),
-      on: this.$listeners,
+      on: getListeners(this),
       ref: 'uploaderRef',
       attrs: this.$attrs
     };

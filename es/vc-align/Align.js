@@ -6,7 +6,7 @@ import addEventListener from '../_util/Dom/addEventListener';
 import { isWindow, buffer, isSamePoint, isSimilarValue, restoreFocus } from './util';
 import { cloneElement } from '../_util/vnode.js';
 import clonedeep from 'lodash/cloneDeep';
-import { getSlot } from '../_util/props-util';
+import { getSlot, getListeners } from '../_util/props-util';
 
 function getElement(func) {
   if (typeof func !== 'function' || !func) return null;
@@ -121,7 +121,7 @@ export default {
 
       if (!disabled && target) {
         var source = this.$el;
-
+        var listeners = getListeners(this);
         var result = void 0;
         var element = getElement(target);
         var point = getPoint(target);
@@ -137,7 +137,7 @@ export default {
         }
         restoreFocus(activeElement, source);
         this.aligned = true;
-        this.$listeners.align && this.$listeners.align(source, result);
+        listeners.align && listeners.align(source, result);
       }
     }
   },

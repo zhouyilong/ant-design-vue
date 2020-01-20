@@ -1,7 +1,7 @@
 import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import animation from '../_util/openAnimation';
-import { getOptionProps, initDefaultProps, getComponentFromProp, isValidElement } from '../_util/props-util';
+import { getOptionProps, initDefaultProps, getComponentFromProp, isValidElement, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import VcCollapse, { collapseProps } from '../vc-collapse';
 import Icon from '../icon';
@@ -40,8 +40,7 @@ export default {
 
     var h = arguments[0];
     var customizePrefixCls = this.prefixCls,
-        bordered = this.bordered,
-        $listeners = this.$listeners;
+        bordered = this.bordered;
 
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('collapse', customizePrefixCls);
@@ -55,7 +54,7 @@ export default {
         }
       }),
       'class': collapseClassName,
-      on: $listeners
+      on: getListeners(this)
     };
     return h(
       VcCollapse,

@@ -2,7 +2,7 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import TabBarRootNode from './TabBarRootNode';
 import TabBarTabsNode from './TabBarTabsNode';
 import SaveRef from './SaveRef';
-import { getAttrs } from '../../_util/props-util';
+import { getAttrs, getListeners } from '../../_util/props-util';
 
 export default {
   name: 'TabBar',
@@ -11,7 +11,7 @@ export default {
     var h = arguments[0];
 
     var props = getAttrs(this);
-    var listeners = this.$listeners;
+    var listeners = getListeners(this);
     return h(SaveRef, {
       attrs: {
         children: function children(saveRef) {

@@ -1,12 +1,12 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
-import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
+import _extends from 'babel-runtime/helpers/extends';
 import classnames from 'classnames';
 import VcDrawer from '../vc-drawer/src';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
 import Icon from '../icon';
-import { getComponentFromProp, getOptionProps } from '../_util/props-util';
+import { getComponentFromProp, getOptionProps, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
 
@@ -21,6 +21,7 @@ var Drawer = {
     maskStyle: PropTypes.object,
     wrapStyle: PropTypes.object,
     bodyStyle: PropTypes.object,
+    drawerStyle: PropTypes.object,
     title: PropTypes.any,
     visible: PropTypes.bool,
     width: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).def(256),
@@ -120,13 +121,14 @@ var Drawer = {
     getRcDrawerStyle: function getRcDrawerStyle() {
       var _$props = this.$props,
           zIndex = _$props.zIndex,
-          placement = _$props.placement;
+          placement = _$props.placement,
+          wrapStyle = _$props.wrapStyle;
       var push = this.$data._push;
 
-      return {
+      return _extends({
         zIndex: zIndex,
         transform: push ? this.getPushTransform(placement) : undefined
-      };
+      }, wrapStyle);
     },
     renderHeader: function renderHeader(prefixCls) {
       var h = this.$createElement;
@@ -174,7 +176,8 @@ var Drawer = {
       this.destroyClose = false;
       var _$props2 = this.$props,
           placement = _$props2.placement,
-          bodyStyle = _$props2.bodyStyle;
+          bodyStyle = _$props2.bodyStyle,
+          drawerStyle = _$props2.drawerStyle;
 
 
       var containerStyle = placement === 'left' || placement === 'right' ? {
@@ -193,7 +196,7 @@ var Drawer = {
         'div',
         {
           'class': prefixCls + '-wrapper-body',
-          style: containerStyle,
+          style: _extends({}, containerStyle, drawerStyle),
           on: {
             'transitionend': this.onDestroyTransitionEnd
           }
@@ -245,7 +248,7 @@ var Drawer = {
       }),
       on: _extends({
         maskClick: this.onMaskClick
-      }, this.$listeners)
+      }, getListeners(this))
     };
     return h(
       VcDrawer,

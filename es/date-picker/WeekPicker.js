@@ -4,7 +4,7 @@ import Calendar from '../vc-calendar';
 import VcDatePicker from '../vc-calendar/src/Picker';
 import Icon from '../icon';
 import { ConfigConsumerProps } from '../config-provider';
-import { hasProp, getOptionProps, initDefaultProps, getComponentFromProp, isValidElement } from '../_util/props-util';
+import { hasProp, getOptionProps, initDefaultProps, getComponentFromProp, isValidElement, getListeners } from '../_util/props-util';
 import BaseMixin from '../_util/BaseMixin';
 import { WeekPickerProps } from './interface';
 import interopDefault from '../_util/interopDefault';
@@ -163,20 +163,19 @@ export default {
         localeCode = this.localeCode,
         disabledDate = this.disabledDate,
         $data = this.$data,
-        $listeners = this.$listeners,
         $scopedSlots = this.$scopedSlots;
 
-
+    var listeners = getListeners(this);
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('calendar', customizePrefixCls);
     this._prefixCls = prefixCls;
 
     var pickerValue = $data._value,
         open = $data._open;
-    var _$listeners$focus = $listeners.focus,
-        focus = _$listeners$focus === undefined ? noop : _$listeners$focus,
-        _$listeners$blur = $listeners.blur,
-        blur = _$listeners$blur === undefined ? noop : _$listeners$blur;
+    var _listeners$focus = listeners.focus,
+        focus = _listeners$focus === undefined ? noop : _listeners$focus,
+        _listeners$blur = listeners.blur,
+        blur = _listeners$blur === undefined ? noop : _listeners$blur;
 
 
     if (pickerValue && localeCode) {
@@ -251,7 +250,7 @@ export default {
         value: pickerValue,
         open: open
       }),
-      on: _extends({}, $listeners, {
+      on: _extends({}, listeners, {
         change: this.handleChange,
         openChange: this.handleOpenChange
       }),

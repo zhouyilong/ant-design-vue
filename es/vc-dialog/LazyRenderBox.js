@@ -1,8 +1,10 @@
 import PropTypes from '../_util/vue-types';
+import { getListeners } from '../_util/props-util';
 
 var ILazyRenderBoxPropTypes = {
   visible: PropTypes.bool,
-  hiddenClassName: PropTypes.string
+  hiddenClassName: PropTypes.string,
+  forceRender: PropTypes.bool
 };
 
 export default {
@@ -12,7 +14,7 @@ export default {
 
     return h(
       'div',
-      { on: this.$listeners },
+      { on: getListeners(this) },
       [this.$slots['default']]
     );
   }

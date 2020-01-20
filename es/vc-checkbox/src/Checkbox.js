@@ -4,7 +4,7 @@ import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutPropert
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../../_util/vue-types';
 import classNames from 'classnames';
-import { getOptionProps, hasProp, initDefaultProps, getAttrs } from '../../_util/props-util';
+import { getOptionProps, hasProp, initDefaultProps, getAttrs, getListeners } from '../../_util/props-util';
 import BaseMixin from '../../_util/BaseMixin';
 
 export default {
@@ -147,7 +147,7 @@ export default {
         ref: 'input'
       }, {
         attrs: globalProps,
-        on: _extends({}, this.$listeners, {
+        on: _extends({}, getListeners(this), {
           change: this.handleChange,
           click: this.onClick
         })

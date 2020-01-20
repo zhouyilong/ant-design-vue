@@ -1,7 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../_util/vue-types';
-import { filterEmpty } from '../_util/props-util';
+import { filterEmpty, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 export default {
@@ -38,11 +38,10 @@ export default {
   methods: {},
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners;
 
     return h(
       'span',
-      _mergeJSXProps([{ 'class': this.classes }, { on: $listeners }]),
+      _mergeJSXProps([{ 'class': this.classes }, { on: getListeners(this) }]),
       [filterEmpty(this.$slots['default'])]
     );
   }

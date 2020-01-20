@@ -1,6 +1,6 @@
 /*!
  * 
- * ant-design-vue v1.4.0
+ * ant-design-vue v1.4.10
  * 
  * Copyright 2017-present, ant-design-vue.
  * All rights reserved.
@@ -266,24 +266,19 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "vue");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _vue_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../base */ "./components/base/index.js");
-
-
+/* harmony import */ var _vue_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./vue-types */ "./components/_util/vue-types/index.js");
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    autoMount: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool.def(true),
-    autoDestroy: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool.def(true),
-    visible: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool,
-    forceRender: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool.def(false),
-    parent: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].any,
-    getComponent: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func.isRequired,
-    getContainer: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func.isRequired,
-    children: _vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func.isRequired
+    autoMount: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool.def(true),
+    autoDestroy: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool.def(true),
+    visible: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,
+    forceRender: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool.def(false),
+    parent: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any,
+    getComponent: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func.isRequired,
+    getContainer: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func.isRequired,
+    children: _vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func.isRequired
   },
 
   mounted: function mounted() {
@@ -329,10 +324,9 @@ __webpack_require__.r(__webpack_exports__);
           this.container.appendChild(el);
         }
         if (!this._component) {
-          var V = _base__WEBPACK_IMPORTED_MODULE_2__["default"].Vue || vue__WEBPACK_IMPORTED_MODULE_0___default.a;
-          this._component = new V({
+          this._component = new this.$root.constructor({
             el: el,
-            parent: self.parent,
+            parent: self,
             data: {
               comProps: props
             },
@@ -1031,12 +1025,15 @@ function makeMap(str, expectsLowerCase) {
 var isTextInputType = makeMap('text,number,password,search,email,tel,url');
 
 function onCompositionStart(e) {
+  e.target.originPlaceholder = e.target.placeholder;
+  e.target.placeholder = '';
   e.target.composing = true;
 }
 
 function onCompositionEnd(e) {
   // prevent triggering an input event for no reason
   if (!e.target.composing) return;
+  e.target.placeholder = e.target.originPlaceholder;
   e.target.composing = false;
   trigger(e.target, 'input');
 }
@@ -1383,7 +1380,10 @@ var cssAnimation = function cssAnimation(node, transitionName, endCallback) {
 
   node.rcAnimTimeout = Object(_requestAnimationTimeout__WEBPACK_IMPORTED_MODULE_3__["requestAnimationTimeout"])(function () {
     node.rcAnimTimeout = null;
+
+    nodeClasses.add(className);
     nodeClasses.add(activeClassName);
+
     if (active) {
       Object(_requestAnimationTimeout__WEBPACK_IMPORTED_MODULE_3__["requestAnimationTimeout"])(active, 0);
     }
@@ -1754,6 +1754,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_animation__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./css-animation */ "./components/_util/css-animation/index.js");
 /* harmony import */ var raf__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! raf */ "./node_modules/raf/index.js");
 /* harmony import */ var raf__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(raf__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "vue");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_2__);
+
 
 
 
@@ -1810,7 +1813,9 @@ function animate(node, show, done) {
 
 var animation = {
   enter: function enter(node, done) {
-    return animate(node, true, done);
+    vue__WEBPACK_IMPORTED_MODULE_2___default.a.nextTick(function () {
+      animate(node, true, done);
+    });
   },
   leave: function leave(node, done) {
     return animate(node, false, done);
@@ -1825,12 +1830,13 @@ var animation = {
 /*!****************************************!*\
   !*** ./components/_util/props-util.js ***!
   \****************************************/
-/*! exports provided: getEvents, getClass, getStyle, getComponentName, isEmptyElement, filterEmpty, mergeProps, hasProp, filterProps, getOptionProps, getComponentFromProp, getSlotOptions, slotHasProp, getPropsData, getKey, getAttrs, getValueByProp, parseStyleText, initDefaultProps, isValidElement, camelize, getSlots, getSlot, getAllProps, getAllChildren, default */
+/*! exports provided: getEvents, getListeners, getClass, getStyle, getComponentName, isEmptyElement, filterEmpty, mergeProps, hasProp, filterProps, getOptionProps, getComponentFromProp, getSlotOptions, slotHasProp, getPropsData, getKey, getAttrs, getValueByProp, parseStyleText, initDefaultProps, isValidElement, camelize, getSlots, getSlot, getAllProps, getAllChildren, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getEvents", function() { return getEvents; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getListeners", function() { return getListeners; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getClass", function() { return getClass; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getStyle", function() { return getStyle; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getComponentName", function() { return getComponentName; });
@@ -2045,7 +2051,9 @@ var getComponentFromProp = function getComponentFromProp(instance, prop) {
     var componentOptions = instance.componentOptions || {};
     (componentOptions.children || []).forEach(function (child) {
       if (child.data && child.data.slot === prop) {
-        delete child.data.attrs.slot;
+        if (child.data.attrs) {
+          delete child.data.attrs.slot;
+        }
         if (child.tag === 'template') {
           slotsProp.push(child.children);
         } else {
@@ -2102,6 +2110,12 @@ function getEvents(child) {
     events = child.data.on;
   }
   return babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, events);
+}
+
+// use getListeners instead this.$listeners
+// https://github.com/vueComponent/ant-design-vue/issues/1705
+function getListeners(context) {
+  return (context.$vnode ? context.$vnode.componentOptions.listeners : context.$listeners) || {};
 }
 function getClass(ele) {
   var data = {};
@@ -2257,7 +2271,7 @@ function wrapWithConnect(WrappedComponent) {
   var methods = WrappedComponent.methods || {};
   var props = {};
   Object.keys(tempProps).forEach(function (k) {
-    props[k] = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, k, { required: false });
+    props[k] = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, tempProps[k], { required: false });
   });
   WrappedComponent.props.__propsSymbol__ = _vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].any;
   WrappedComponent.props.children = _vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].array.def([]);
@@ -2272,10 +2286,8 @@ function wrapWithConnect(WrappedComponent) {
     },
     render: function render() {
       var h = arguments[0];
-      var $listeners = this.$listeners,
-          _$slots = this.$slots,
+      var _$slots = this.$slots,
           $slots = _$slots === undefined ? {} : _$slots,
-          $attrs = this.$attrs,
           $scopedSlots = this.$scopedSlots;
 
       var props = Object(_props_util__WEBPACK_IMPORTED_MODULE_3__["getOptionProps"])(this);
@@ -2285,8 +2297,7 @@ function wrapWithConnect(WrappedComponent) {
           componentWillReceiveProps: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, props),
           children: $slots['default'] || props.children || []
         }),
-        on: $listeners,
-        attrs: $attrs
+        on: Object(_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
       };
       if (Object.keys($scopedSlots).length) {
         wrapProps.scopedSlots = $scopedSlots;
@@ -2495,7 +2506,7 @@ function connect(mapStateToProps) {
       __propsSymbol__: _vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].any
     };
     Object.keys(tempProps).forEach(function (k) {
-      props[k] = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, k, { required: false });
+      props[k] = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, tempProps[k], { required: false });
     });
     var Connect = {
       name: 'Connect_' + getDisplayName(WrappedComponent),
@@ -2558,10 +2569,8 @@ function connect(mapStateToProps) {
         var h = arguments[0];
 
         this.preProps = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, this.$props);
-        var $listeners = this.$listeners,
-            _$slots = this.$slots,
+        var _$slots = this.$slots,
             $slots = _$slots === undefined ? {} : _$slots,
-            $attrs = this.$attrs,
             $scopedSlots = this.$scopedSlots,
             subscribed = this.subscribed,
             store = this.store;
@@ -2572,8 +2581,7 @@ function connect(mapStateToProps) {
           props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, props, subscribed, {
             store: store
           }),
-          on: $listeners,
-          attrs: $attrs,
+          on: Object(_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
           scopedSlots: $scopedSlots
         };
         return h(
@@ -4824,6 +4832,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _util_vnode__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/vnode */ "./components/_util/vnode.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -4848,6 +4858,8 @@ function chaining() {
   };
 }
 /* harmony default export */ __webpack_exports__["default"] = ({
+  name: 'InputElement',
+  inheritAttrs: false,
   props: {
     value: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].any,
     disabled: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].bool
@@ -4866,28 +4878,26 @@ function chaining() {
   render: function render() {
     var _$slots = this.$slots,
         $slots = _$slots === undefined ? {} : _$slots,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners,
-        _$props = this.$props,
-        $props = _$props === undefined ? {} : _$props,
         _$attrs = this.$attrs,
         $attrs = _$attrs === undefined ? {} : _$attrs;
 
-    var value = $props.value === undefined ? '' : $props.value;
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this);
+    var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getOptionProps"])(this);
+    var value = props.value === undefined ? '' : props.value;
     var children = $slots['default'][0];
     var _$slots$default$0$com = $slots['default'][0].componentOptions,
         componentOptions = _$slots$default$0$com === undefined ? {} : _$slots$default$0$com;
     var _componentOptions$lis = componentOptions.listeners,
-        listeners = _componentOptions$lis === undefined ? {} : _componentOptions$lis;
+        events = _componentOptions$lis === undefined ? {} : _componentOptions$lis;
 
-    var newEvent = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, listeners);
+    var newEvent = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, events);
 
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
 
     try {
-      for (var _iterator = Object.entries($listeners)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      for (var _iterator = Object.entries(listeners)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
         var _ref = _step.value;
 
         var _ref2 = babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_ref, 2);
@@ -4895,7 +4905,7 @@ function chaining() {
         var eventName = _ref2[0];
         var event = _ref2[1];
 
-        newEvent[eventName] = chaining(event, listeners[eventName]);
+        newEvent[eventName] = chaining(event, events[eventName]);
       }
     } catch (err) {
       _didIteratorError = true;
@@ -4916,7 +4926,7 @@ function chaining() {
       domProps: {
         value: value
       },
-      props: $props,
+      props: props,
       on: newEvent,
       attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $attrs, { value: value }),
       ref: 'ele'
@@ -5024,7 +5034,9 @@ var AutoComplete = {
       var $slots = this.$slots;
 
       var children = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["filterEmpty"])($slots['default']);
-      var element = children.length ? children[0] : h(_input__WEBPACK_IMPORTED_MODULE_5__["default"]);
+      var element = children.length ? children[0] : h(_input__WEBPACK_IMPORTED_MODULE_5__["default"], {
+        attrs: { lazy: false }
+      });
       return h(_InputElement__WEBPACK_IMPORTED_MODULE_6__["default"], [element]);
     },
     focus: function focus() {
@@ -5047,8 +5059,7 @@ var AutoComplete = {
         customizePrefixCls = this.prefixCls,
         optionLabelProp = this.optionLabelProp,
         dataSource = this.dataSource,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -5092,7 +5103,7 @@ var AutoComplete = {
       }),
       'class': cls,
       ref: 'select',
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getListeners"])(this)
     };
     return h(
       _select__WEBPACK_IMPORTED_MODULE_4__["default"],
@@ -5161,6 +5172,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
 /* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -5336,7 +5349,7 @@ __webpack_require__.r(__webpack_exports__);
     }
     return h(
       'span',
-      { on: this.$listeners, 'class': classString, style: sizeStyle },
+      { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this), 'class': classString, style: sizeStyle },
       [children]
     );
   }
@@ -5417,6 +5430,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_getTransitionProps__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_util/getTransitionProps */ "./components/_util/getTransitionProps.js");
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../base */ "./components/base/index.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -5533,8 +5548,7 @@ var BackTop = {
   render: function render() {
     var h = arguments[0];
     var customizePrefixCls = this.prefixCls,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -5546,7 +5560,7 @@ var BackTop = {
       [h('div', { 'class': prefixCls + '-icon' })]
     );
     var divProps = {
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getListeners"])(this), {
         click: this.scrollToTop
       }),
       'class': prefixCls
@@ -5821,7 +5835,7 @@ var BadgeProps = {
     if (!children.length && status) {
       return h(
         'span',
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: this.$listeners }, {
+        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this) }, {
           'class': this.getBadgeClassName(prefixCls),
           style: this.getStyleWithOffset()
         }]),
@@ -5837,7 +5851,7 @@ var BadgeProps = {
 
     return h(
       'span',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: this.$listeners }, { 'class': this.getBadgeClassName(prefixCls) }]),
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this) }, { 'class': this.getBadgeClassName(prefixCls) }]),
       [children, h(
         'transition',
         transitionProps,
@@ -6535,8 +6549,9 @@ var props = Object(_buttonTypes__WEBPACK_IMPORTED_MODULE_5__["default"])();
       var autoInsertSpace = this.configProvider.autoInsertSpaceInButton !== false;
 
       var sizeCls = sizeMap[size] || '';
+      var iconType = sLoading ? 'loading' : icon;
       var children = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["filterEmpty"])($slots['default']);
-      return _ref = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, '' + prefixCls, true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-' + type, type), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-' + shape, shape), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-' + sizeCls, sizeCls), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-icon-only', !children && children !== 0 && icon), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-loading', sLoading), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-background-ghost', ghost || type === 'ghost'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-two-chinese-chars', hasTwoCNChar && autoInsertSpace), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-block', block), _ref;
+      return _ref = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, '' + prefixCls, true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-' + type, type), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-' + shape, shape), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-' + sizeCls, sizeCls), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-icon-only', children.length === 0 && iconType), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-loading', sLoading), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-background-ghost', ghost || type === 'ghost'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-two-chinese-chars', hasTwoCNChar && autoInsertSpace), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref, prefixCls + '-block', block), _ref;
     }
   },
   watch: {
@@ -6626,15 +6641,14 @@ var props = Object(_buttonTypes__WEBPACK_IMPORTED_MODULE_5__["default"])();
         handleClick = this.handleClick,
         sLoading = this.sLoading,
         $slots = this.$slots,
-        $attrs = this.$attrs,
-        $listeners = this.$listeners;
+        $attrs = this.$attrs;
 
     var buttonProps = {
       attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $attrs, {
         disabled: disabled
       }),
       'class': classes,
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this), {
         click: handleClick
       })
     };
@@ -7228,7 +7242,6 @@ var Calendar = {
       var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getOptionProps"])(this);
       var value = this.sValue,
           mode = this.sMode,
-          $listeners = this.$listeners,
           $scopedSlots = this.$scopedSlots;
 
       if (value && localeCode) {
@@ -7273,7 +7286,7 @@ var Calendar = {
           dateCellRender: dateCellRender,
           disabledDate: disabledDate
         }),
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this), {
           select: this.onSelect
         })
       };
@@ -7531,8 +7544,7 @@ var TabPane = _tabs__WEBPACK_IMPORTED_MODULE_3__["default"].TabPane;
     var prefixCls = getPrefixCls('card', customizePrefixCls);
 
     var $slots = this.$slots,
-        $scopedSlots = this.$scopedSlots,
-        $listeners = this.$listeners;
+        $scopedSlots = this.$scopedSlots;
 
 
     var classString = (_classString = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, '' + prefixCls, true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-loading', loading), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-bordered', bordered), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-hoverable', !!hoverable), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-wider-padding', this.widerPadding), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-padding-transition', this.updateWiderPaddingCalled), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-contain-grid', this.isContainGrid($slots['default'])), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-contain-tabs', tabList && tabList.length), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-' + size, size !== 'default'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-type-' + type, !!type), _classString);
@@ -7708,7 +7720,7 @@ var TabPane = _tabs__WEBPACK_IMPORTED_MODULE_3__["default"].TabPane;
       babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{
         'class': classString,
         ref: 'cardContainerRef'
-      }, { on: Object(omit_js__WEBPACK_IMPORTED_MODULE_2__["default"])($listeners, ['tabChange', 'tab-change']) }]),
+      }, { on: Object(omit_js__WEBPACK_IMPORTED_MODULE_2__["default"])(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this), ['tabChange', 'tab-change']) }]),
       [head, coverDom, children ? body : null, actionDom]
     );
   }
@@ -7731,6 +7743,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -7758,7 +7772,7 @@ __webpack_require__.r(__webpack_exports__);
     var classString = babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()({}, prefixCls + '-grid', true);
     return h(
       'div',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: this.$listeners }, { 'class': classString }]),
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this) }, { 'class': classString }]),
       [this.$slots['default']]
     );
   }
@@ -7836,7 +7850,7 @@ __webpack_require__.r(__webpack_exports__);
     ) : null;
     return h(
       'div',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: this.$listeners }, { 'class': classString }]),
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this) }, { 'class': classString }]),
       [avatarDom, MetaDetail]
     );
   }
@@ -8064,8 +8078,7 @@ var Carousel = {
     var h = arguments[0];
 
     var props = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, this.$props);
-    var $slots = this.$slots,
-        $listeners = this.$listeners;
+    var $slots = this.$slots;
 
 
     if (props.effect === 'fade') {
@@ -8083,7 +8096,7 @@ var Carousel = {
         nextArrow: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'nextArrow'),
         prevArrow: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'prevArrow')
       }),
-      on: $listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
       scopedSlots: this.$scopedSlots
     };
 
@@ -8444,7 +8457,7 @@ var Cascader = {
       }
     },
     handleKeyDown: function handleKeyDown(e) {
-      if (e.keyCode === _util_KeyCode__WEBPACK_IMPORTED_MODULE_8__["default"].BACKSPACE) {
+      if (e.keyCode === _util_KeyCode__WEBPACK_IMPORTED_MODULE_8__["default"].BACKSPACE || e.keyCode === _util_KeyCode__WEBPACK_IMPORTED_MODULE_8__["default"].SPACE) {
         e.stopPropagation();
       }
     },
@@ -8572,7 +8585,6 @@ var Cascader = {
     var $slots = this.$slots,
         sPopupVisible = this.sPopupVisible,
         inputValue = this.inputValue,
-        $listeners = this.$listeners,
         configProvider = this.configProvider,
         localeData = this.localeData;
     var _$data2 = this.$data,
@@ -8593,7 +8605,8 @@ var Cascader = {
         allowClear = props.allowClear,
         _props$showSearch = props.showSearch,
         showSearch = _props$showSearch === undefined ? false : _props$showSearch,
-        otherProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default()(props, ['prefixCls', 'inputPrefixCls', 'placeholder', 'size', 'disabled', 'allowClear', 'showSearch']);
+        notFoundContent = props.notFoundContent,
+        otherProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default()(props, ['prefixCls', 'inputPrefixCls', 'placeholder', 'size', 'disabled', 'allowClear', 'showSearch', 'notFoundContent']);
 
     var getPrefixCls = this.configProvider.getPrefixCls;
     var renderEmpty = this.configProvider.renderEmpty;
@@ -8621,9 +8634,17 @@ var Cascader = {
     var tempInputProps = Object(omit_js__WEBPACK_IMPORTED_MODULE_7__["default"])(otherProps, ['options', 'popupPlacement', 'transitionName', 'displayRender', 'changeOnSelect', 'expandTrigger', 'popupVisible', 'getPopupContainer', 'loadData', 'popupClassName', 'filterOption', 'renderFilteredOption', 'sortFilteredOption', 'notFoundContent', 'defaultValue', 'fieldNames']);
 
     var options = props.options;
-    if (inputValue) {
-      options = this.generateFilteredOptions(prefixCls, renderEmpty);
+    var names = getFilledFieldNames(this.$props);
+    if (options && options.length > 0) {
+      if (inputValue) {
+        options = this.generateFilteredOptions(prefixCls, renderEmpty);
+      }
+    } else {
+      var _ref6;
+
+      options = [(_ref6 = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref6, names.label, notFoundContent || renderEmpty(h, 'Cascader')), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref6, names.value, 'ANT_CASCADER_NOT_FOUND'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_ref6, 'disabled', true), _ref6)];
     }
+
     // Dropdown menu should keep previous status until it is fully closed.
     if (!sPopupVisible) {
       options = this.cachedOptions;
@@ -8638,7 +8659,7 @@ var Cascader = {
     }
     // The default value of `matchInputWidth` is `true`
     var resultListMatchInputWidth = showSearch.matchInputWidth !== false;
-    if (resultListMatchInputWidth && inputValue && this.$refs.input) {
+    if (resultListMatchInputWidth && (inputValue || isNotFound) && this.$refs.input) {
       dropdownMenuColumnStyle.width = this.$refs.input.$el.offsetWidth + 'px';
     }
     // showSearch时，focus、blur在input上触发，反之在ref='picker'上触发
@@ -8710,7 +8731,7 @@ var Cascader = {
         expandIcon: expandIcon,
         loadingIcon: loadingIcon
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getListeners"])(this), {
         popupVisibleChange: this.handlePopupVisibleChange,
         change: this.handleChange
       })
@@ -8849,17 +8870,18 @@ function noop() {}
 
     var h = arguments[0];
     var checkboxGroup = this.checkboxGroupContext,
-        $listeners = this.$listeners,
         $slots = this.$slots;
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getOptionProps"])(this);
     var children = $slots['default'];
 
-    var _$listeners$mouseente = $listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = $listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        restListeners = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3___default()($listeners, ['mouseenter', 'mouseleave']);
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        input = _getListeners.input,
+        restListeners = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3___default()(_getListeners, ['mouseenter', 'mouseleave', 'input']);
 
     var customizePrefixCls = props.prefixCls,
         indeterminate = props.indeterminate,
@@ -8962,7 +8984,7 @@ function noop() {}
 
   watch: {
     value: function value(val) {
-      this.sValue = val;
+      this.sValue = val || [];
     }
   },
   methods: {
@@ -9204,8 +9226,7 @@ __webpack_require__.r(__webpack_exports__);
 
     var h = arguments[0];
     var customizePrefixCls = this.prefixCls,
-        bordered = this.bordered,
-        $listeners = this.$listeners;
+        bordered = this.bordered;
 
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('collapse', customizePrefixCls);
@@ -9219,7 +9240,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       }),
       'class': collapseClassName,
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
     return h(
       _vc_collapse__WEBPACK_IMPORTED_MODULE_5__["default"],
@@ -9265,8 +9286,7 @@ __webpack_require__.r(__webpack_exports__);
     var h = arguments[0];
     var customizePrefixCls = this.prefixCls,
         _showArrow = this.showArrow,
-        showArrow = _showArrow === undefined ? true : _showArrow,
-        $listeners = this.$listeners;
+        showArrow = _showArrow === undefined ? true : _showArrow;
 
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('collapse', customizePrefixCls);
@@ -9277,7 +9297,7 @@ __webpack_require__.r(__webpack_exports__);
         prefixCls: prefixCls
       }),
       'class': collapsePanelClassName,
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this)
     };
     var header = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getComponentFromProp"])(this, 'header');
     return h(
@@ -9411,10 +9431,8 @@ var Comment = {
       });
       return actionList;
     },
-    renderNested: function renderNested(children) {
+    renderNested: function renderNested(prefixCls, children) {
       var h = this.$createElement;
-      var prefixCls = this.$props.prefixCls;
-
 
       return h(
         'div',
@@ -9484,8 +9502,8 @@ var Comment = {
     var children = this.$slots['default'];
     return h(
       'div',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': prefixCls }, { on: this.$listeners }]),
-      [comment, children ? this.renderNested(children) : null]
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': prefixCls }, { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this) }]),
+      [comment, children ? this.renderNested(prefixCls, children) : null]
     );
   }
 };
@@ -9604,7 +9622,7 @@ var ConfigProvider = {
     }
   },
   render: function render() {
-    return this.$slots['default'] ? Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["filterEmpty"])(this.$slots['default']) : null;
+    return this.$slots['default'] ? Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["filterEmpty"])(this.$slots['default'])[0] : null;
   }
 };
 
@@ -10039,18 +10057,19 @@ function fixLocale(value, localeCode) {
         showDate = this.sShowDate,
         hoverValue = this.sHoverValue,
         open = this.sOpen,
-        $listeners = this.$listeners,
         $scopedSlots = this.$scopedSlots;
-    var _$listeners$calendarC = $listeners.calendarChange,
-        calendarChange = _$listeners$calendarC === undefined ? noop : _$listeners$calendarC,
-        _$listeners$ok = $listeners.ok,
-        ok = _$listeners$ok === undefined ? noop : _$listeners$ok,
-        _$listeners$focus = $listeners.focus,
-        focus = _$listeners$focus === undefined ? noop : _$listeners$focus,
-        _$listeners$blur = $listeners.blur,
-        blur = _$listeners$blur === undefined ? noop : _$listeners$blur,
-        _$listeners$panelChan = $listeners.panelChange,
-        panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan;
+
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getListeners"])(this);
+    var _listeners$calendarCh = listeners.calendarChange,
+        calendarChange = _listeners$calendarCh === undefined ? noop : _listeners$calendarCh,
+        _listeners$ok = listeners.ok,
+        ok = _listeners$ok === undefined ? noop : _listeners$ok,
+        _listeners$focus = listeners.focus,
+        focus = _listeners$focus === undefined ? noop : _listeners$focus,
+        _listeners$blur = listeners.blur,
+        blur = _listeners$blur === undefined ? noop : _listeners$blur,
+        _listeners$panelChang = listeners.panelChange,
+        panelChange = _listeners$panelChang === undefined ? noop : _listeners$panelChang;
     var customizePrefixCls = props.prefixCls,
         customizeTagPrefixCls = props.tagPrefixCls,
         popupStyle = props.popupStyle,
@@ -10203,7 +10222,7 @@ function fixLocale(value, localeCode) {
     };
     var vcDatePickerProps = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["mergeProps"])({
       props: props,
-      on: $listeners
+      on: listeners
     }, pickerChangeHandler, {
       props: {
         calendar: calendar,
@@ -10426,20 +10445,19 @@ function noop() {}
         localeCode = this.localeCode,
         disabledDate = this.disabledDate,
         $data = this.$data,
-        $listeners = this.$listeners,
         $scopedSlots = this.$scopedSlots;
 
-
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this);
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('calendar', customizePrefixCls);
     this._prefixCls = prefixCls;
 
     var pickerValue = $data._value,
         open = $data._open;
-    var _$listeners$focus = $listeners.focus,
-        focus = _$listeners$focus === undefined ? noop : _$listeners$focus,
-        _$listeners$blur = $listeners.blur,
-        blur = _$listeners$blur === undefined ? noop : _$listeners$blur;
+    var _listeners$focus = listeners.focus,
+        focus = _listeners$focus === undefined ? noop : _listeners$focus,
+        _listeners$blur = listeners.blur,
+        blur = _listeners$blur === undefined ? noop : _listeners$blur;
 
 
     if (pickerValue && localeCode) {
@@ -10514,7 +10532,7 @@ function noop() {}
         value: pickerValue,
         open: open
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, listeners, {
         change: this.handleChange,
         openChange: this.handleOpenChange
       }),
@@ -10693,8 +10711,7 @@ function createPicker(TheCalendar, props) {
       var _classNames;
 
       var h = arguments[0];
-      var $listeners = this.$listeners,
-          $scopedSlots = this.$scopedSlots;
+      var $scopedSlots = this.$scopedSlots;
       var _$data = this.$data,
           value = _$data.sValue,
           showDate = _$data.showDate,
@@ -10702,14 +10719,15 @@ function createPicker(TheCalendar, props) {
 
       var suffixIcon = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getComponentFromProp"])(this, 'suffixIcon');
       suffixIcon = Array.isArray(suffixIcon) ? suffixIcon[0] : suffixIcon;
-      var _$listeners$panelChan = $listeners.panelChange,
-          panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan,
-          _$listeners$focus = $listeners.focus,
-          focus = _$listeners$focus === undefined ? noop : _$listeners$focus,
-          _$listeners$blur = $listeners.blur,
-          blur = _$listeners$blur === undefined ? noop : _$listeners$blur,
-          _$listeners$ok = $listeners.ok,
-          ok = _$listeners$ok === undefined ? noop : _$listeners$ok;
+      var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getListeners"])(this);
+      var _listeners$panelChang = listeners.panelChange,
+          panelChange = _listeners$panelChang === undefined ? noop : _listeners$panelChang,
+          _listeners$focus = listeners.focus,
+          focus = _listeners$focus === undefined ? noop : _listeners$focus,
+          _listeners$blur = listeners.blur,
+          blur = _listeners$blur === undefined ? noop : _listeners$blur,
+          _listeners$ok = listeners.ok,
+          ok = _listeners$ok === undefined ? noop : _listeners$ok;
 
       var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getOptionProps"])(this);
 
@@ -10821,7 +10839,7 @@ function createPicker(TheCalendar, props) {
           value: value,
           prefixCls: prefixCls + '-picker-container'
         }),
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, lodash_omit__WEBPACK_IMPORTED_MODULE_3___default()($listeners, 'change'), pickerProps.on, {
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, lodash_omit__WEBPACK_IMPORTED_MODULE_3___default()(listeners, 'change'), pickerProps.on, {
           open: open,
           onOpenChange: this.handleOpenChange
         }),
@@ -11289,7 +11307,7 @@ function wrapPicker(Picker, props, pickerType) {
             localeCode: localeCode,
             timePicker: timePicker
           }),
-          on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, this.$listeners, {
+          on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this), {
             openChange: this.handleOpenChange,
             focus: this.handleFocus,
             blur: this.handleBlur,
@@ -11440,10 +11458,10 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-runtime/helpers/defineProperty */ "./node_modules/babel-runtime/helpers/defineProperty.js");
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
-/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
-/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
+/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
+/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _vc_drawer_src__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../vc-drawer/src */ "./components/vc-drawer/src/index.js");
@@ -11476,6 +11494,7 @@ var Drawer = {
     maskStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].object,
     wrapStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].object,
     bodyStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].object,
+    drawerStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].object,
     title: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].any,
     visible: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].bool,
     width: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].number]).def(256),
@@ -11575,13 +11594,14 @@ var Drawer = {
     getRcDrawerStyle: function getRcDrawerStyle() {
       var _$props = this.$props,
           zIndex = _$props.zIndex,
-          placement = _$props.placement;
+          placement = _$props.placement,
+          wrapStyle = _$props.wrapStyle;
       var push = this.$data._push;
 
-      return {
+      return babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({
         zIndex: zIndex,
         transform: push ? this.getPushTransform(placement) : undefined
-      };
+      }, wrapStyle);
     },
     renderHeader: function renderHeader(prefixCls) {
       var h = this.$createElement;
@@ -11629,7 +11649,8 @@ var Drawer = {
       this.destroyClose = false;
       var _$props2 = this.$props,
           placement = _$props2.placement,
-          bodyStyle = _$props2.bodyStyle;
+          bodyStyle = _$props2.bodyStyle,
+          drawerStyle = _$props2.drawerStyle;
 
 
       var containerStyle = placement === 'left' || placement === 'right' ? {
@@ -11648,7 +11669,7 @@ var Drawer = {
         'div',
         {
           'class': prefixCls + '-wrapper-body',
-          style: containerStyle,
+          style: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, containerStyle, drawerStyle),
           on: {
             'transitionend': this.onDestroyTransitionEnd
           }
@@ -11674,7 +11695,7 @@ var Drawer = {
         visible = props.visible,
         placement = props.placement,
         wrapClassName = props.wrapClassName,
-        rest = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_2___default()(props, ['prefixCls', 'width', 'height', 'visible', 'placement', 'wrapClassName']);
+        rest = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default()(props, ['prefixCls', 'width', 'height', 'visible', 'placement', 'wrapClassName']);
 
     var haveMask = rest.mask ? '' : 'no-mask';
     var offsetStyle = {};
@@ -11688,7 +11709,7 @@ var Drawer = {
     var prefixCls = getPrefixCls('drawer', customizePrefixCls);
 
     var vcDrawerProps = {
-      props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, rest, {
+      props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, rest, {
         handler: handler
       }, offsetStyle, {
         prefixCls: prefixCls,
@@ -11698,9 +11719,9 @@ var Drawer = {
         className: classnames__WEBPACK_IMPORTED_MODULE_3___default()((_classnames = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classnames, wrapClassName, !!wrapClassName), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classnames, haveMask, !!haveMask), _classnames)),
         wrapStyle: this.getRcDrawerStyle()
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({
         maskClick: this.onMaskClick
-      }, this.$listeners)
+      }, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this))
     };
     return h(
       _vc_drawer_src__WEBPACK_IMPORTED_MODULE_4__["default"],
@@ -12012,8 +12033,7 @@ var Dropdown = {
 
   render: function render() {
     var h = arguments[0];
-    var $slots = this.$slots,
-        $listeners = this.$listeners;
+    var $slots = this.$slots;
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getOptionProps"])(this);
     var customizePrefixCls = props.prefixCls,
@@ -12027,7 +12047,9 @@ var Dropdown = {
 
     var dropdownTrigger = Object(_util_vnode__WEBPACK_IMPORTED_MODULE_4__["cloneElement"])($slots['default'], {
       'class': prefixCls + '-trigger',
-      disabled: disabled
+      props: {
+        disabled: disabled
+      }
     });
     var triggerActions = disabled ? [] : trigger;
     var alignPoint = void 0;
@@ -12043,7 +12065,7 @@ var Dropdown = {
         transitionName: this.getTransitionName(),
         trigger: triggerActions
       }),
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this)
     };
     return h(
       _vc_dropdown_src_index__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -12245,7 +12267,7 @@ var Empty = {
       }
       return h(
         'div',
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': prefixCls }, { on: this.$listeners }]),
+        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': prefixCls }, { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this) }]),
         [h(
           'div',
           { 'class': prefixCls + '-image' },
@@ -12330,18 +12352,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "vue");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var lodash_isRegExp__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! lodash/isRegExp */ "./node_modules/lodash/isRegExp.js");
-/* harmony import */ var lodash_isRegExp__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(lodash_isRegExp__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _util_warning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_util/warning */ "./components/_util/warning.js");
-/* harmony import */ var _vc_form_src_createDOMForm__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../vc-form/src/createDOMForm */ "./components/vc-form/src/createDOMForm.jsx");
-/* harmony import */ var _vc_form_src_createFormField__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../vc-form/src/createFormField */ "./components/vc-form/src/createFormField.jsx");
-/* harmony import */ var _FormItem__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./FormItem */ "./components/form/FormItem.jsx");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./constants */ "./components/form/constants.jsx");
-/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
-/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../base */ "./components/base/index.js");
+/* harmony import */ var _grid_Col__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../grid/Col */ "./components/grid/Col.jsx");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue */ "vue");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var lodash_isRegExp__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! lodash/isRegExp */ "./node_modules/lodash/isRegExp.js");
+/* harmony import */ var lodash_isRegExp__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(lodash_isRegExp__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _util_warning__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../_util/warning */ "./components/_util/warning.js");
+/* harmony import */ var _vc_form_src_createDOMForm__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../vc-form/src/createDOMForm */ "./components/vc-form/src/createDOMForm.jsx");
+/* harmony import */ var _vc_form_src_createFormField__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../vc-form/src/createFormField */ "./components/vc-form/src/createFormField.jsx");
+/* harmony import */ var _FormItem__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./FormItem */ "./components/form/FormItem.jsx");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./constants */ "./components/form/constants.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
+/* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../base */ "./components/base/index.js");
+
 
 
 
@@ -12405,6 +12429,8 @@ var WrappedFormUtils = {
 
 var FormProps = {
   layout: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].oneOf(['horizontal', 'inline', 'vertical']),
+  labelCol: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].shape(_grid_Col__WEBPACK_IMPORTED_MODULE_4__["ColProps"]).loose,
+  wrapperCol: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].shape(_grid_Col__WEBPACK_IMPORTED_MODULE_4__["ColProps"]).loose,
   form: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].object,
   // onSubmit: React.FormEventHandler<any>;
   prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
@@ -12432,7 +12458,7 @@ var ValidationRule = {
   /** validate the value from a list of possible values */
   'enum': _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].oneOfType([String, _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].arrayOf(String)]),
   /** validate from a regular expression */
-  pattern: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].custom(lodash_isRegExp__WEBPACK_IMPORTED_MODULE_5___default.a),
+  pattern: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].custom(lodash_isRegExp__WEBPACK_IMPORTED_MODULE_6___default.a),
   /** transform a value before validation */
   transform: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].func,
   /** custom validate function (Note: callback must be called) */
@@ -12468,26 +12494,26 @@ var ValidationRule = {
 
 var Form = {
   name: 'AForm',
-  props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["initDefaultProps"])(FormProps, {
+  props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["initDefaultProps"])(FormProps, {
     layout: 'horizontal',
     hideRequiredMark: false
   }),
-  Item: _FormItem__WEBPACK_IMPORTED_MODULE_9__["default"],
-  createFormField: _vc_form_src_createFormField__WEBPACK_IMPORTED_MODULE_8__["default"],
+  Item: _FormItem__WEBPACK_IMPORTED_MODULE_10__["default"],
+  createFormField: _vc_form_src_createFormField__WEBPACK_IMPORTED_MODULE_9__["default"],
   create: function create() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    return Object(_vc_form_src_createDOMForm__WEBPACK_IMPORTED_MODULE_7__["default"])(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({
+    return Object(_vc_form_src_createDOMForm__WEBPACK_IMPORTED_MODULE_8__["default"])(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({
       fieldNameProp: 'id'
     }, options, {
-      fieldMetaProp: _constants__WEBPACK_IMPORTED_MODULE_10__["FIELD_META_PROP"],
-      fieldDataProp: _constants__WEBPACK_IMPORTED_MODULE_10__["FIELD_DATA_PROP"]
+      fieldMetaProp: _constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_META_PROP"],
+      fieldDataProp: _constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_DATA_PROP"]
     }));
   },
   createForm: function createForm(context) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    var V = _base__WEBPACK_IMPORTED_MODULE_13__["default"].Vue || vue__WEBPACK_IMPORTED_MODULE_4___default.a;
+    var V = _base__WEBPACK_IMPORTED_MODULE_14__["default"].Vue || vue__WEBPACK_IMPORTED_MODULE_5___default.a;
     return new V(Form.create(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, options, { templateContext: context }))());
   },
   created: function created() {
@@ -12521,7 +12547,7 @@ var Form = {
 
   inject: {
     configProvider: { 'default': function _default() {
-        return _config_provider__WEBPACK_IMPORTED_MODULE_12__["ConfigConsumerProps"];
+        return _config_provider__WEBPACK_IMPORTED_MODULE_13__["ConfigConsumerProps"];
       } }
   },
   watch: {
@@ -12544,9 +12570,7 @@ var Form = {
 
   methods: {
     onSubmit: function onSubmit(e) {
-      var $listeners = this.$listeners;
-
-      if (!$listeners.submit) {
+      if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this).submit) {
         e.preventDefault();
       } else {
         this.$emit('submit', e);
@@ -12573,12 +12597,12 @@ var Form = {
 
     var formClassName = classnames__WEBPACK_IMPORTED_MODULE_3___default()(prefixCls, (_classNames = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-horizontal', layout === 'horizontal'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-vertical', layout === 'vertical'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-inline', layout === 'inline'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-hide-required-mark', hideRequiredMark), _classNames));
     if (autoFormCreate) {
-      Object(_util_warning__WEBPACK_IMPORTED_MODULE_6__["default"])(false, '`autoFormCreate` is deprecated. please use `form` instead.');
-      var DomForm = this.DomForm || Object(_vc_form_src_createDOMForm__WEBPACK_IMPORTED_MODULE_7__["default"])(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({
+      Object(_util_warning__WEBPACK_IMPORTED_MODULE_7__["default"])(false, '`autoFormCreate` is deprecated. please use `form` instead.');
+      var DomForm = this.DomForm || Object(_vc_form_src_createDOMForm__WEBPACK_IMPORTED_MODULE_8__["default"])(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({
         fieldNameProp: 'id'
       }, options, {
-        fieldMetaProp: _constants__WEBPACK_IMPORTED_MODULE_10__["FIELD_META_PROP"],
-        fieldDataProp: _constants__WEBPACK_IMPORTED_MODULE_10__["FIELD_DATA_PROP"],
+        fieldMetaProp: _constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_META_PROP"],
+        fieldDataProp: _constants__WEBPACK_IMPORTED_MODULE_11__["FIELD_DATA_PROP"],
         templateContext: this.$vnode.context
       }))({
         provide: function provide() {
@@ -12996,8 +13020,12 @@ function comeFromSlot() {
     },
     renderWrapper: function renderWrapper(prefixCls, children) {
       var h = this.$createElement;
+      var _FormProps = this.FormProps;
+      _FormProps = _FormProps === undefined ? {} : _FormProps;
+      var _FormProps$wrapperCol = _FormProps.wrapperCol,
+          wrapperColForm = _FormProps$wrapperCol === undefined ? {} : _FormProps$wrapperCol;
       var _wrapperCol = this.wrapperCol,
-          wrapperCol = _wrapperCol === undefined ? {} : _wrapperCol;
+          wrapperCol = _wrapperCol === undefined ? wrapperColForm : _wrapperCol;
 
       var cls = wrapperCol['class'],
           style = wrapperCol.style,
@@ -13065,8 +13093,12 @@ function comeFromSlot() {
     },
     renderLabel: function renderLabel(prefixCls) {
       var h = this.$createElement;
+      var _FormProps2 = this.FormProps;
+      _FormProps2 = _FormProps2 === undefined ? {} : _FormProps2;
+      var _FormProps2$labelCol = _FormProps2.labelCol,
+          labelColForm = _FormProps2$labelCol === undefined ? {} : _FormProps2$labelCol;
       var _labelCol = this.labelCol,
-          labelCol = _labelCol === undefined ? {} : _labelCol,
+          labelCol = _labelCol === undefined ? labelColForm : _labelCol,
           colon = this.colon,
           id = this.id;
 
@@ -13315,6 +13347,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -13373,8 +13407,6 @@ var ColProps = {
         pull = this.pull,
         customizePrefixCls = this.prefixCls,
         $slots = this.$slots,
-        $attrs = this.$attrs,
-        $listeners = this.$listeners,
         rowContext = this.rowContext;
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -13395,8 +13427,7 @@ var ColProps = {
     });
     var classes = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()((_extends3 = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_extends3, prefixCls + '-' + span, span !== undefined), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_extends3, prefixCls + '-order-' + order, order), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_extends3, prefixCls + '-offset-' + offset, offset), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_extends3, prefixCls + '-push-' + push, push), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_extends3, prefixCls + '-pull-' + pull, pull), _extends3), sizeClassObj);
     var divProps = {
-      on: $listeners,
-      attrs: $attrs,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this),
       'class': classes,
       style: {}
     };
@@ -13852,11 +13883,13 @@ function renderIcon(h, locale, context) {
     }
     computedType = Object(_utils__WEBPACK_IMPORTED_MODULE_10__["withThemeSuffix"])(Object(_utils__WEBPACK_IMPORTED_MODULE_10__["removeTypeTheme"])(Object(_utils__WEBPACK_IMPORTED_MODULE_10__["alias"])(computedType)), dangerousTheme || theme || defaultTheme);
     innerNode = h(_ant_design_icons_vue__WEBPACK_IMPORTED_MODULE_7__["default"], {
-      'class': svgClassString,
-      attrs: { type: computedType,
+      attrs: {
+        focusable: 'false',
+
+        type: computedType,
         primaryColor: twoToneColor
       },
-      style: svgStyle
+      'class': svgClassString, style: svgStyle
     });
   }
   var iconTabIndex = tabIndex;
@@ -13900,8 +13933,6 @@ var Icon = {
     role: _util_vue_types__WEBPACK_IMPORTED_MODULE_8__["default"].string
   },
   render: function render(h, context) {
-    var _extends3;
-
     return h(_locale_provider_LocaleReceiver__WEBPACK_IMPORTED_MODULE_12__["default"], {
       attrs: {
         componentName: 'Icon'
@@ -13910,73 +13941,6 @@ var Icon = {
           return renderIcon(h, locale, context);
         } }
     });
-
-    var classString = classnames__WEBPACK_IMPORTED_MODULE_5___default()(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_14__["getClass"])(context), (_extends3 = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_extends3, 'anticon', true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_extends3, 'anticon-' + type, !!type), _extends3)));
-
-    var svgClassString = classnames__WEBPACK_IMPORTED_MODULE_5___default()(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()({}, 'anticon-spin', !!spin || type === 'loading'));
-
-    var innerNode = void 0;
-
-    // component > children > type
-    if (Component) {
-      var innerSvgProps = {
-        attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, _utils__WEBPACK_IMPORTED_MODULE_10__["svgBaseProps"], {
-          viewBox: viewBox
-        }),
-        'class': svgClassString
-      };
-      if (!viewBox) {
-        delete innerSvgProps.attrs.viewBox;
-      }
-
-      innerNode = h(
-        Component,
-        innerSvgProps,
-        [children]
-      );
-    }
-    if (children) {
-      Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(Boolean(viewBox) || children.length === 1 && children[0].tag === 'use', 'Make sure that you provide correct `viewBox`' + ' prop (default `0 0 1024 1024`) to the icon.');
-      var _innerSvgProps2 = {
-        attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, _utils__WEBPACK_IMPORTED_MODULE_10__["svgBaseProps"]),
-        'class': svgClassString
-      };
-      innerNode = h(
-        'svg',
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default()([_innerSvgProps2, {
-          attrs: { viewBox: viewBox }
-        }]),
-        [children]
-      );
-    }
-
-    if (typeof type === 'string') {
-      var computedType = type;
-      if (theme) {
-        var themeInName = Object(_utils__WEBPACK_IMPORTED_MODULE_10__["getThemeFromTypeName"])(type);
-        Object(_util_warning__WEBPACK_IMPORTED_MODULE_11__["default"])(!themeInName || theme === themeInName, 'The icon name \'' + type + '\' already specify a theme \'' + themeInName + '\',' + (' the \'theme\' prop \'' + theme + '\' will be ignored.'));
-      }
-      computedType = Object(_utils__WEBPACK_IMPORTED_MODULE_10__["withThemeSuffix"])(Object(_utils__WEBPACK_IMPORTED_MODULE_10__["removeTypeTheme"])(Object(_utils__WEBPACK_IMPORTED_MODULE_10__["alias"])(computedType)), dangerousTheme || theme || defaultTheme);
-      innerNode = h(_ant_design_icons_vue__WEBPACK_IMPORTED_MODULE_7__["default"], {
-        attrs: {
-          focusable: 'false',
-
-          type: computedType,
-          primaryColor: twoToneColor
-        },
-        'class': svgClassString });
-    }
-    // functional component not support nativeOn，https://github.com/vuejs/vue/issues/7526
-    var iProps = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, data, {
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, listeners, data.nativeOn),
-      'class': classString,
-      staticClass: ''
-    });
-    return h(
-      'i',
-      iProps,
-      [innerNode]
-    );
   }
 };
 
@@ -14581,7 +14545,7 @@ var InputNumber = {
       }, others),
       'class': inputNumberClass,
       ref: 'inputNumberRef',
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this)
     };
     return h(_vc_input_number_src__WEBPACK_IMPORTED_MODULE_7__["default"], vcInputNumberprops);
   }
@@ -14682,11 +14646,10 @@ __webpack_require__.r(__webpack_exports__);
   methods: {},
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners;
 
     return h(
       'span',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': this.classes }, { on: $listeners }]),
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': this.classes }, { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this) }]),
       [Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["filterEmpty"])(this.$slots['default'])]
     );
   }
@@ -14715,14 +14678,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var omit_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! omit.js */ "./node_modules/omit.js/es/index.js");
 /* harmony import */ var _inputProps__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./inputProps */ "./components/input/inputProps.js");
 /* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _util_env__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../_util/env */ "./components/_util/env.js");
-/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
-/* harmony import */ var _Password__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Password */ "./components/input/Password.js");
-/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
-/* harmony import */ var _util_warning__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../_util/warning */ "./components/_util/warning.js");
-
-
-
+/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
 
 
 
@@ -14743,8 +14700,8 @@ function fixControlledValue(value) {
   return value;
 }
 
-function hasPrefixSuffix(props) {
-  return 'prefix' in props || props.suffix || props.allowClear;
+function hasPrefixSuffix(instance) {
+  return !!(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getComponentFromProp"])(instance, 'prefix') || Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getComponentFromProp"])(instance, 'suffix') || instance.$props.allowClear);
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -14757,13 +14714,15 @@ function hasPrefixSuffix(props) {
   props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, _inputProps__WEBPACK_IMPORTED_MODULE_6__["default"]),
   inject: {
     configProvider: { 'default': function _default() {
-        return _config_provider__WEBPACK_IMPORTED_MODULE_9__["ConfigConsumerProps"];
+        return _config_provider__WEBPACK_IMPORTED_MODULE_8__["ConfigConsumerProps"];
       } }
   },
   data: function data() {
     var _$props = this.$props,
-        value = _$props.value,
-        defaultValue = _$props.defaultValue;
+        _$props$value = _$props.value,
+        value = _$props$value === undefined ? '' : _$props$value,
+        _$props$defaultValue = _$props.defaultValue,
+        defaultValue = _$props$defaultValue === undefined ? '' : _$props$defaultValue;
 
     return {
       stateValue: !Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["hasProp"])(this, 'value') ? defaultValue : value
@@ -14811,8 +14770,7 @@ function hasPrefixSuffix(props) {
       return _ref = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_ref, '' + prefixCls, true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_ref, prefixCls + '-sm', size === 'small'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_ref, prefixCls + '-lg', size === 'large'), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_ref, prefixCls + '-disabled', disabled), _ref;
     },
     setValue: function setValue(value, e) {
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (_util_env__WEBPACK_IMPORTED_MODULE_8__["isIE"] && !_util_env__WEBPACK_IMPORTED_MODULE_8__["isIE9"] && this.stateValue === value) {
+      if (this.stateValue === value) {
         return;
       }
       if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["hasProp"])(this, 'value')) {
@@ -14820,9 +14778,7 @@ function hasPrefixSuffix(props) {
       } else {
         this.$forceUpdate();
       }
-      if (!e.target.composing) {
-        this.$emit('change.value', value);
-      }
+      this.$emit('change.value', value);
       var event = e;
       if (e.type === 'click' && this.$refs.input) {
         // click clear icon
@@ -14842,20 +14798,32 @@ function hasPrefixSuffix(props) {
       this.$emit('input', e);
     },
     handleReset: function handleReset(e) {
+      var _this2 = this;
+
       this.setValue('', e);
+      this.$nextTick(function () {
+        _this2.focus();
+      });
     },
     handleChange: function handleChange(e) {
-      this.setValue(e.target.value, e);
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+
+      if (composing && this.lazy) return;
+      this.setValue(value, e);
     },
     renderClearIcon: function renderClearIcon(prefixCls) {
       var h = this.$createElement;
-      var allowClear = this.$props.allowClear;
+      var _$props3 = this.$props,
+          allowClear = _$props3.allowClear,
+          disabled = _$props3.disabled;
       var stateValue = this.stateValue;
 
-      if (!allowClear || stateValue === undefined || stateValue === null || stateValue === '') {
+      if (!allowClear || disabled || stateValue === undefined || stateValue === null || stateValue === '') {
         return null;
       }
-      return h(_icon__WEBPACK_IMPORTED_MODULE_11__["default"], {
+      return h(_icon__WEBPACK_IMPORTED_MODULE_9__["default"], {
         attrs: {
           type: 'close-circle',
           theme: 'filled',
@@ -14929,7 +14897,7 @@ function hasPrefixSuffix(props) {
       var size = this.$props.size;
 
       var suffix = this.renderSuffix(prefixCls);
-      if (!hasPrefixSuffix(this.$props)) {
+      if (!hasPrefixSuffix(this)) {
         return children;
       }
       var prefix = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getComponentFromProp"])(this, 'prefix');
@@ -14949,19 +14917,19 @@ function hasPrefixSuffix(props) {
     renderInput: function renderInput(prefixCls) {
       var h = this.$createElement;
 
-      var otherProps = Object(omit_js__WEBPACK_IMPORTED_MODULE_5__["default"])(this.$props, ['prefixCls', 'addonBefore', 'addonAfter', 'prefix', 'suffix', 'allowClear', 'value', 'defaultValue']);
+      var otherProps = Object(omit_js__WEBPACK_IMPORTED_MODULE_5__["default"])(this.$props, ['prefixCls', 'addonBefore', 'addonAfter', 'prefix', 'suffix', 'allowClear', 'value', 'defaultValue', 'lazy']);
       var stateValue = this.stateValue,
           getInputClassName = this.getInputClassName,
           handleKeyDown = this.handleKeyDown,
-          handleChange = this.handleChange,
-          $listeners = this.$listeners;
+          handleChange = this.handleChange;
 
       var inputProps = {
+        directives: [{ name: 'ant-input' }],
         domProps: {
           value: fixControlledValue(stateValue)
         },
         attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, otherProps, this.$attrs),
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, $listeners, {
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this), {
           keydown: handleKeyDown,
           input: handleChange,
           change: noop
@@ -14970,9 +14938,6 @@ function hasPrefixSuffix(props) {
         ref: 'input',
         key: 'ant-input'
       };
-      if ($listeners['change.value']) {
-        inputProps.directives = [{ name: 'ant-input' }];
-      }
       return this.renderLabeledIcon(prefixCls, h('input', inputProps));
     }
   },
@@ -14980,14 +14945,13 @@ function hasPrefixSuffix(props) {
     var h = arguments[0];
 
     if (this.$props.type === 'textarea') {
-      var $listeners = this.$listeners;
-
       var textareaProps = {
         props: this.$props,
         attrs: this.$attrs,
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, $listeners, {
-          change: this.handleChange,
-          keydown: this.handleKeyDown
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this), {
+          input: this.handleChange,
+          keydown: this.handleKeyDown,
+          change: noop
         }),
         directives: [{
           name: 'ant-input'
@@ -15005,25 +14969,24 @@ function hasPrefixSuffix(props) {
 
 /***/ }),
 
-/***/ "./components/input/Password.js":
-/*!**************************************!*\
-  !*** ./components/input/Password.js ***!
-  \**************************************/
+/***/ "./components/input/Password.jsx":
+/*!***************************************!*\
+  !*** ./components/input/Password.jsx ***!
+  \***************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-helper-vue-jsx-merge-props */ "./node_modules/babel-helper-vue-jsx-merge-props/index.js");
-/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
-/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/defineProperty */ "./node_modules/babel-runtime/helpers/defineProperty.js");
-/* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
-/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
+/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/defineProperty */ "./node_modules/babel-runtime/helpers/defineProperty.js");
+/* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
+/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
+/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
 /* harmony import */ var _Input__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Input */ "./components/input/Input.jsx");
 /* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
 /* harmony import */ var _inputProps__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./inputProps */ "./components/input/inputProps.js");
@@ -15047,11 +15010,13 @@ var ActionMap = {
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AInputPassword',
+  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_9__["default"]],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'change.value'
   },
-  props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, _inputProps__WEBPACK_IMPORTED_MODULE_7__["default"], {
+  props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, _inputProps__WEBPACK_IMPORTED_MODULE_7__["default"], {
     prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_8__["default"].string.def('ant-input-password'),
     inputPrefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_8__["default"].string.def('ant-input'),
     action: _util_vue_types__WEBPACK_IMPORTED_MODULE_8__["default"].string.def('click'),
@@ -15063,8 +15028,13 @@ var ActionMap = {
     };
   },
 
-  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_9__["default"]],
   methods: {
+    focus: function focus() {
+      this.$refs.input.focus();
+    },
+    blur: function blur() {
+      this.$refs.input.blur();
+    },
     onChange: function onChange() {
       this.setState({
         visible: !this.visible
@@ -15083,7 +15053,7 @@ var ActionMap = {
         props: {
           type: this.visible ? 'eye' : 'eye-invisible'
         },
-        on: (_on = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_on, iconTrigger, this.onChange), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_on, 'mousedown', function mousedown(e) {
+        on: (_on = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_on, iconTrigger, this.onChange), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_on, 'mousedown', function mousedown(e) {
           // Prevent focused state lost
           // https://github.com/ant-design/ant-design/issues/15173
           e.preventDefault();
@@ -15097,25 +15067,33 @@ var ActionMap = {
   render: function render() {
     var h = arguments[0];
 
-    var _$props2 = this.$props,
-        prefixCls = _$props2.prefixCls,
-        inputPrefixCls = _$props2.inputPrefixCls,
-        size = _$props2.size,
-        suffix = _$props2.suffix,
-        visibilityToggle = _$props2.visibilityToggle,
-        restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default()(_$props2, ['prefixCls', 'inputPrefixCls', 'size', 'suffix', 'visibilityToggle']);
+    var _getOptionProps = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getOptionProps"])(this),
+        prefixCls = _getOptionProps.prefixCls,
+        inputPrefixCls = _getOptionProps.inputPrefixCls,
+        size = _getOptionProps.size,
+        suffix = _getOptionProps.suffix,
+        visibilityToggle = _getOptionProps.visibilityToggle,
+        restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_getOptionProps, ['prefixCls', 'inputPrefixCls', 'size', 'suffix', 'visibilityToggle']);
 
     var suffixIcon = visibilityToggle && this.getIcon();
-    var inputClassName = classnames__WEBPACK_IMPORTED_MODULE_4___default()(prefixCls, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()({}, prefixCls + '-' + size, !!size));
-    return h(_Input__WEBPACK_IMPORTED_MODULE_5__["default"], babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([restProps, {
-      attrs: {
-        type: this.visible ? 'text' : 'password',
-        size: size,
-
+    var inputClassName = classnames__WEBPACK_IMPORTED_MODULE_3___default()(prefixCls, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()({}, prefixCls + '-' + size, !!size));
+    var inputProps = {
+      props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, restProps, {
         prefixCls: inputPrefixCls,
-        suffix: suffixIcon
-      },
-      'class': inputClassName }]));
+        size: size,
+        suffix: suffixIcon,
+        prefix: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'prefix'),
+        addonAfter: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'addonAfter'),
+        addonBefore: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'addonBefore')
+      }),
+      attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$attrs, {
+        type: this.visible ? 'text' : 'password'
+      }),
+      'class': inputClassName,
+      ref: 'input',
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this)
+    };
+    return h(_Input__WEBPACK_IMPORTED_MODULE_5__["default"], inputProps);
   }
 });
 
@@ -15279,13 +15257,14 @@ __webpack_require__.r(__webpack_exports__);
       inputClassName = prefixCls;
     }
 
-    var on = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$listeners);
+    var on = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getListeners"])(this));
     delete on.search;
     var inputProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, others, {
         prefixCls: inputPrefixCls,
         size: size,
         suffix: this.renderSuffix(prefixCls),
+        prefix: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getComponentFromProp"])(this, 'prefix'),
         addonAfter: this.renderAddonAfter(prefixCls),
         addonBefore: addonBefore
       }),
@@ -15360,6 +15339,7 @@ function noop() {}
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ATextarea',
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'change.value'
@@ -15374,8 +15354,10 @@ function noop() {}
   },
   data: function data() {
     var _$props = this.$props,
-        value = _$props.value,
-        defaultValue = _$props.defaultValue;
+        _$props$value = _$props.value,
+        value = _$props$value === undefined ? '' : _$props$value,
+        _$props$defaultValue = _$props.defaultValue,
+        defaultValue = _$props$defaultValue === undefined ? '' : _$props$defaultValue;
 
     return {
       stateValue: fixControlledValue(!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["default"])(this, 'value') ? defaultValue : value),
@@ -15459,15 +15441,19 @@ function noop() {}
       this.textareaStyles = textareaStyles;
     },
     handleTextareaChange: function handleTextareaChange(e) {
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+
+      if (composing || this.stateValue === value) return;
       if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["default"])(this, 'value')) {
-        this.stateValue = e.target.value;
+        this.stateValue = value;
         this.resizeTextarea();
       } else {
         this.$forceUpdate();
       }
-      if (!e.target.composing) {
-        this.$emit('change.value', e.target.value);
-      }
+
+      this.$emit('change.value', value);
       this.$emit('change', e);
       this.$emit('input', e);
     },
@@ -15485,27 +15471,24 @@ function noop() {}
         handleTextareaChange = this.handleTextareaChange,
         textareaStyles = this.textareaStyles,
         $attrs = this.$attrs,
-        $listeners = this.$listeners,
         customizePrefixCls = this.prefixCls,
         disabled = this.disabled;
 
-    var otherProps = Object(omit_js__WEBPACK_IMPORTED_MODULE_4__["default"])(this.$props, ['prefixCls', 'autosize', 'type', 'value', 'defaultValue']);
+    var otherProps = Object(omit_js__WEBPACK_IMPORTED_MODULE_4__["default"])(this.$props, ['prefixCls', 'autosize', 'type', 'value', 'defaultValue', 'lazy']);
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('input', customizePrefixCls);
 
     var cls = classnames__WEBPACK_IMPORTED_MODULE_3___default()(prefixCls, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()({}, prefixCls + '-disabled', disabled));
 
     var textareaProps = {
+      directives: [{ name: 'ant-input' }],
       attrs: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, otherProps, $attrs),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this), {
         keydown: handleKeyDown,
         input: handleTextareaChange,
         change: noop
       })
     };
-    if ($listeners['change.value']) {
-      textareaProps.directives = [{ name: 'ant-input' }];
-    }
     return h('textarea', babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([textareaProps, {
       domProps: {
         'value': stateValue
@@ -15677,7 +15660,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Group__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Group */ "./components/input/Group.jsx");
 /* harmony import */ var _Search__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Search */ "./components/input/Search.jsx");
 /* harmony import */ var _TextArea__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TextArea */ "./components/input/TextArea.jsx");
-/* harmony import */ var _Password__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Password */ "./components/input/Password.js");
+/* harmony import */ var _Password__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Password */ "./components/input/Password.jsx");
 /* harmony import */ var _util_antInputDirective__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_util/antInputDirective */ "./components/_util/antInputDirective.js");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../base */ "./components/base/index.js");
 
@@ -15752,9 +15735,13 @@ __webpack_require__.r(__webpack_exports__);
   // onBlur?: React.FormEventHandler<any>;
   prefix: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any,
   suffix: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any,
-  spellCheck: Boolean,
+  // spellCheck: Boolean,
   autoFocus: Boolean,
-  allowClear: Boolean
+  allowClear: Boolean,
+  lazy: {
+    'default': true,
+    type: Boolean
+  }
 });
 
 /***/ }),
@@ -16059,7 +16046,7 @@ var generateId = function () {
     };
     var siderCls = classnames__WEBPACK_IMPORTED_MODULE_1___default()(prefixCls, prefixCls + '-' + theme, (_classNames = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-collapsed', !!this.sCollapsed), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-has-trigger', collapsible && trigger !== null && !zeroWidthTrigger), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-below', !!this.below), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames, prefixCls + '-zero-width', parseFloat(siderWidth) === 0), _classNames));
     var divProps = {
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
       'class': siderCls,
       style: divStyle
     };
@@ -16164,7 +16151,7 @@ function generator(props, name) {
           props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({
             prefixCls: prefixCls
           }, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getOptionProps"])(this)),
-          on: this.$listeners
+          on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this)
         };
         return h(
           BasicComponent,
@@ -16181,12 +16168,11 @@ var Basic = {
   render: function render() {
     var h = arguments[0];
     var prefixCls = this.prefixCls,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
     var divProps = {
       'class': prefixCls,
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this)
     };
     return h(
       'div',
@@ -16223,13 +16209,12 @@ var BasicLayout = {
     var h = arguments[0];
     var prefixCls = this.prefixCls,
         $slots = this.$slots,
-        hasSider = this.hasSider,
-        $listeners = this.$listeners;
+        hasSider = this.hasSider;
 
     var divCls = classnames__WEBPACK_IMPORTED_MODULE_4___default()(prefixCls, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()({}, prefixCls + '-has-sider', hasSider || this.siders.length > 0));
     var divProps = {
       'class': divCls,
-      on: $listeners
+      on: _util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"]
     };
     return h(
       'div',
@@ -16407,9 +16392,9 @@ function getGrid(grid, t) {
     var h = arguments[0];
     var grid = this.listContext.grid;
     var customizePrefixCls = this.prefixCls,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this);
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('list', customizePrefixCls);
 
@@ -16483,12 +16468,12 @@ function getGrid(grid, t) {
       },
       [h(
         'div',
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default()([{ on: $listeners }, { 'class': classString }]),
+        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default()([{ on: listeners }, { 'class': classString }]),
         [extra && extraContent, !extra && metaContent, !extra && content, !extra && actionsContent]
       )]
     ) : h(
       'div',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default()([{ on: $listeners }, { 'class': classString }]),
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default()([{ on: listeners }, { 'class': classString }]),
       [extra && extraContent, !extra && metaContent, !extra && content, !extra && actionsContent]
     );
 
@@ -16696,7 +16681,6 @@ var List = {
         dataSource = this.dataSource,
         size = this.size,
         loading = this.loading,
-        $listeners = this.$listeners,
         $slots = this.$slots,
         paginationCurrent = this.paginationCurrent;
 
@@ -16789,7 +16773,7 @@ var List = {
 
     return h(
       'div',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': classString }, { on: $listeners }]),
+      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': classString }, { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getListeners"])(this) }]),
       [(paginationPosition === 'top' || paginationPosition === 'both') && paginationContent, header && h(
         'div',
         { 'class': prefixCls + '-header' },
@@ -17158,8 +17142,7 @@ function noop() {}
         rootPrefixCls = props.rootPrefixCls;
     var getInlineCollapsed = this.getInlineCollapsed,
         $slots = this.$slots,
-        attrs = this.$attrs,
-        $listeners = this.$listeners;
+        attrs = this.$attrs;
 
     var inlineCollapsed = getInlineCollapsed();
     var titleNode = void 0;
@@ -17172,7 +17155,7 @@ function noop() {}
         title: inlineCollapsed ? null : title
       }),
       attrs: attrs,
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
     var toolTipProps = {
       props: {
@@ -17442,8 +17425,7 @@ var Menu = {
 
     var h = arguments[0];
     var layoutSiderContext = this.layoutSiderContext,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
     var collapsedWidth = layoutSiderContext.collapsedWidth;
     var getContextPopupContainer = this.configProvider.getPopupContainer;
     var _$props2 = this.$props,
@@ -17465,7 +17447,7 @@ var Menu = {
         mode: menuMode,
         prefixCls: prefixCls
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getListeners"])(this), {
         select: this.handleSelect,
         deselect: this.handleDeselect,
         openChange: this.handleOpenChange,
@@ -18088,7 +18070,8 @@ var modalProps = function modalProps() {
     maskStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_4__["default"].object,
     mask: _util_vue_types__WEBPACK_IMPORTED_MODULE_4__["default"].bool,
     keyboard: _util_vue_types__WEBPACK_IMPORTED_MODULE_4__["default"].bool,
-    wrapProps: _util_vue_types__WEBPACK_IMPORTED_MODULE_4__["default"].object
+    wrapProps: _util_vue_types__WEBPACK_IMPORTED_MODULE_4__["default"].object,
+    focusTriggerAfterClose: _util_vue_types__WEBPACK_IMPORTED_MODULE_4__["default"].bool
   };
   return Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["initDefaultProps"])(props, defaultProps);
 };
@@ -18097,6 +18080,7 @@ var destroyFns = [];
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'AModal',
+  inheritAttrs: false,
   model: {
     prop: 'visible',
     event: 'change'
@@ -18181,8 +18165,8 @@ var destroyFns = [];
         visible = this.visible,
         wrapClassName = this.wrapClassName,
         centered = this.centered,
-        $listeners = this.$listeners,
-        $slots = this.$slots;
+        $slots = this.$slots,
+        $attrs = this.$attrs;
 
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -18213,11 +18197,12 @@ var destroyFns = [];
         mousePosition: mousePosition,
         closeIcon: closeIcon
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getListeners"])(this), {
         close: this.handleCancel
       }),
       'class': Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getClass"])(this),
-      style: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getStyle"])(this)
+      style: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getStyle"])(this),
+      attrs: $attrs
     };
     return h(
       _vc_dialog__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -18246,6 +18231,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ConfirmDialog__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ConfirmDialog */ "./components/modal/ConfirmDialog.jsx");
 /* harmony import */ var _Modal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Modal */ "./components/modal/Modal.jsx");
 /* harmony import */ var _base__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../base */ "./components/base/index.js");
+/* harmony import */ var omit_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! omit.js */ "./node_modules/omit.js/es/index.js");
+
 
 
 
@@ -18257,7 +18244,7 @@ function confirm(config) {
   var el = document.createElement('div');
   div.appendChild(el);
   document.body.appendChild(div);
-  var currentConfig = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, config, { close: close, visible: true });
+  var currentConfig = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_5__["default"])(config, ['parentContext']), { close: close, visible: true });
 
   var confirmDialogInstance = null;
   var confirmDialogProps = { props: {} };
@@ -18299,6 +18286,7 @@ function confirm(config) {
     var V = _base__WEBPACK_IMPORTED_MODULE_4__["default"].Vue || vue__WEBPACK_IMPORTED_MODULE_1___default.a;
     return new V({
       el: el,
+      parent: config.parentContext,
       data: function data() {
         return { confirmDialogProps: confirmDialogProps };
       },
@@ -18802,7 +18790,7 @@ __webpack_require__.r(__webpack_exports__);
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, selectOptionsProps, {
         size: 'small'
       }),
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this)
     };
     return h(
       _select__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -18973,7 +18961,7 @@ var PaginationConfig = function PaginationConfig() {
         'class': {
           mini: isSmall
         },
-        on: this.$listeners
+        on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this)
       };
 
       return h(_vc_pagination__WEBPACK_IMPORTED_MODULE_7__["default"], paginationProps);
@@ -19357,7 +19345,7 @@ var Popover = {
         prefixCls: prefixCls
       }),
       ref: 'tooltip',
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this)
     };
     return h(
       _tooltip__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -19682,11 +19670,11 @@ var ProgressProps = {
       if (!showInfo) return null;
 
       var text = void 0;
-      var textFormatter = format || function (percentNumber) {
+      var textFormatter = format || this.$scopedSlots.format || function (percentNumber) {
         return percentNumber + '%';
       };
       var iconType = type === 'circle' || type === 'dashboard' ? '' : '-circle';
-      if (format || progressStatus !== 'exception' && progressStatus !== 'success') {
+      if (format || this.$scopedSlots.format || progressStatus !== 'exception' && progressStatus !== 'success') {
         text = textFormatter(Object(_utils__WEBPACK_IMPORTED_MODULE_10__["validProgress"])(percent), Object(_utils__WEBPACK_IMPORTED_MODULE_10__["validProgress"])(successPercent));
       } else if (progressStatus === 'exception') {
         text = h(_icon__WEBPACK_IMPORTED_MODULE_7__["default"], {
@@ -19769,7 +19757,7 @@ var ProgressProps = {
 
     var progressProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, restProps),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this),
       'class': classString
     };
     return h(
@@ -19889,6 +19877,7 @@ function noop() {}
     var value = this.value,
         defaultValue = this.defaultValue;
 
+    this.updatingValue = false;
     return {
       stateValue: value === undefined ? defaultValue : value
     };
@@ -19923,6 +19912,7 @@ function noop() {}
   },
   watch: {
     value: function value(val) {
+      this.updatingValue = false;
       this.stateValue = val;
     }
   },
@@ -19937,11 +19927,13 @@ function noop() {}
         this.stateValue = value;
       }
       // nextTick for https://github.com/vueComponent/ant-design-vue/issues/1280
+      if (!this.updatingValue && value !== lastValue) {
+        this.updatingValue = true;
+        this.$emit('input', value);
+        this.$emit('change', ev);
+      }
       this.$nextTick(function () {
-        if (value !== lastValue) {
-          _this.$emit('input', value);
-          _this.$emit('change', ev);
-        }
+        _this.updatingValue = false;
       });
     }
   },
@@ -19949,11 +19941,12 @@ function noop() {}
     var _this2 = this;
 
     var h = arguments[0];
-    var _$listeners = this.$listeners,
-        _$listeners$mouseente = _$listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = _$listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav;
+
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele;
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getOptionProps"])(this);
     var customizePrefixCls = props.prefixCls,
@@ -20098,17 +20091,17 @@ function noop() {}
 
     var h = arguments[0];
     var $slots = this.$slots,
-        $listeners = this.$listeners,
         radioGroup = this.radioGroupContext;
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getOptionProps"])(this);
     var children = $slots['default'];
 
-    var _$listeners$mouseente = $listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = $listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        restListeners = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3___default()($listeners, ['mouseenter', 'mouseleave']);
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        restListeners = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3___default()(_getListeners, ['mouseenter', 'mouseleave']);
 
     var customizePrefixCls = props.prefixCls,
         restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3___default()(props, ['prefixCls']);
@@ -20160,10 +20153,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _Radio__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Radio */ "./components/radio/Radio.jsx");
-/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
-
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
 
 
 
@@ -20176,13 +20167,13 @@ __webpack_require__.r(__webpack_exports__);
   inject: {
     radioGroupContext: { 'default': undefined },
     configProvider: { 'default': function _default() {
-        return _config_provider__WEBPACK_IMPORTED_MODULE_5__["ConfigConsumerProps"];
+        return _config_provider__WEBPACK_IMPORTED_MODULE_4__["ConfigConsumerProps"];
       } }
   },
   render: function render() {
     var h = arguments[0];
 
-    var _getOptionProps = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getOptionProps"])(this),
+    var _getOptionProps = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getOptionProps"])(this),
         customizePrefixCls = _getOptionProps.prefixCls,
         otherProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_getOptionProps, ['prefixCls']);
 
@@ -20193,7 +20184,7 @@ __webpack_require__.r(__webpack_exports__);
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, otherProps, {
         prefixCls: prefixCls
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, this.$listeners)
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
     if (this.radioGroupContext) {
       radioProps.on.change = this.radioGroupContext.onRadioChange;
@@ -20376,7 +20367,7 @@ var Rate = {
         characterRender: this.characterRender,
         prefixCls: prefixCls
       }, Object(omit_js__WEBPACK_IMPORTED_MODULE_2__["default"])(restProps, ['tooltips'])),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
       ref: 'refRate'
     };
     return h(_vc_rate__WEBPACK_IMPORTED_MODULE_6__["default"], rateProps);
@@ -20538,7 +20529,7 @@ var AbstractSelectProps = function AbstractSelectProps() {
   };
 };
 var Value = _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].shape({
-  key: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string
+  key: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].number])
 }).loose;
 
 var SelectValue = _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].number, _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].arrayOf(_util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].oneOfType([Value, _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].number])), Value]);
@@ -20738,7 +20729,7 @@ var Select = {
         dropdownRender: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getComponentFromProp"])(this, 'dropdownRender', {}, false),
         getPopupContainer: getPopupContainer || getContextPopupContainer
       }),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getListeners"])(this),
       'class': cls,
       ref: 'vcSelect'
     };
@@ -21347,6 +21338,7 @@ var Slider = {
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('slider', customizePrefixCls);
     var tooltipPrefixCls = getPrefixCls('tooltip', customizeTooltipPrefixCls);
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this);
     if (range) {
       var vcRangeProps = {
         props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, restProps, {
@@ -21357,7 +21349,7 @@ var Slider = {
           }
         }),
         ref: 'sliderRef',
-        on: this.$listeners
+        on: listeners
       };
       return h(_vc_slider_src_Range__WEBPACK_IMPORTED_MODULE_7__["default"], vcRangeProps);
     }
@@ -21370,7 +21362,7 @@ var Slider = {
         }
       }),
       ref: 'sliderRef',
-      on: this.$listeners
+      on: listeners
     };
     return h(_vc_slider_src_Slider__WEBPACK_IMPORTED_MODULE_6__["default"], vcSliderProps);
   }
@@ -21602,7 +21594,9 @@ function setDefaultIndicator(content) {
 
       return h(
         'div',
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: this.$listeners }, { 'class': [prefixCls + '-nested-loading', wrapperClassName] }]),
+        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this) }, {
+          'class': [prefixCls + '-nested-loading', wrapperClassName]
+        }]),
         [sSpinning && h(
           'div',
           { key: 'loading' },
@@ -21795,7 +21789,7 @@ function getTime(value) {
         valueRender: this.valueRenderHtml,
         formatter: this.formatCountdown
       }),
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this)
     }]));
   }
 });
@@ -22171,7 +22165,7 @@ var Steps = {
         iconPrefix: iconPrefix,
         prefixCls: prefixCls
       }, props),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this),
       scopedSlots: this.$scopedSlots
     };
     return h(
@@ -22326,7 +22320,7 @@ var Switch = {
         unCheckedChildren: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'unCheckedChildren'),
         disabled: disabled || loading
       }),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
       'class': classes,
       ref: 'refSwitchNode'
     };
@@ -22533,16 +22527,13 @@ __webpack_require__.r(__webpack_exports__);
         rowIndex = _getOptionProps.rowIndex,
         rest = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default()(_getOptionProps, ['type', 'rowIndex']);
 
-    var checked = this.checked,
-        $attrs = this.$attrs,
-        $listeners = this.$listeners;
+    var checked = this.checked;
 
     var checkboxProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({
         checked: checked
       }, rest),
-      attrs: $attrs,
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this)
     };
     if (type === 'radio') {
       checkboxProps.props.value = rowIndex;
@@ -23937,7 +23928,7 @@ var emptyObject = {};
           expandIconAsCell: expandIconAsCell,
           emptyText: !(loading.props && loading.props.spinning) && mergedLocale.emptyText
         }),
-        on: this.$listeners,
+        on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_16__["getListeners"])(this),
         'class': classString
       };
       return h(_vc_table__WEBPACK_IMPORTED_MODULE_5__["default"], vcTableProps);
@@ -24017,6 +24008,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _createStore__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./createStore */ "./components/table/createStore.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -24078,7 +24071,7 @@ function createTableRow() {
 
       return h(
         Component,
-        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': className }, { on: this.$listeners }]),
+        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{ 'class': className }, { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this) }]),
         [this.$slots['default']]
       );
     }
@@ -24600,8 +24593,7 @@ var Table = {
   },
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners,
-        $slots = this.$slots,
+    var $slots = this.$slots,
         normalize = this.normalize,
         $scopedSlots = this.$scopedSlots;
 
@@ -24623,7 +24615,7 @@ var Table = {
         footer: footer,
         expandedRowRender: expandedRowRender
       }),
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
     return h(_Table__WEBPACK_IMPORTED_MODULE_2__["default"], tProps);
   }
@@ -25345,13 +25337,14 @@ __webpack_require__.r(__webpack_exports__);
     ) : null;
 
     var renderTabBarSlot = renderTabBar || this.$scopedSlots.renderTabBar;
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this);
     var tabBarProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$props, {
         prefixCls: prefixCls,
         tabBarExtraContent: tabBarExtraContent,
         renderTabBar: renderTabBarSlot
       }),
-      on: this.$listeners
+      on: listeners
     };
     var contentCls = (_contentCls = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_contentCls, prefixCls + '-' + tabPosition + '-content', true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_contentCls, prefixCls + '-card-content', type.indexOf('card') >= 0), _contentCls);
     var tabsProps = {
@@ -25368,7 +25361,7 @@ __webpack_require__.r(__webpack_exports__);
         children: childrenWithClose.length > 0 ? childrenWithClose : children,
         __propsSymbol__: Symbol()
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, listeners, {
         change: this.handleChange
       }),
       'class': cls
@@ -25588,7 +25581,7 @@ __webpack_require__.r(__webpack_exports__);
           name: 'show',
           value: visible
         }]
-      }, { on: Object(omit_js__WEBPACK_IMPORTED_MODULE_5__["default"])(this.$listeners, ['close']) }, {
+      }, { on: Object(omit_js__WEBPACK_IMPORTED_MODULE_5__["default"])(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this), ['close']) }, {
         'class': this.getTagClassName(prefixCls),
         style: this.getTagStyle()
       }]),
@@ -25932,7 +25925,7 @@ var TimePicker = {
         }),
         'class': pickerClassName,
         ref: 'timePicker',
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners, {
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this), {
           change: this.handleChange,
           open: this.handleOpenClose,
           close: this.handleOpenClose
@@ -26131,7 +26124,7 @@ var TimelineProps = {
     var timelineProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, restProps),
       'class': classString,
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this)
     };
     return h(
       'ul',
@@ -26204,7 +26197,7 @@ var TimeLineItemProps = {
     var dotClassName = classnames__WEBPACK_IMPORTED_MODULE_1___default()((_classNames2 = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames2, prefixCls + '-item-head', true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames2, prefixCls + '-item-head-custom', dot), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_classNames2, prefixCls + '-item-head-' + color, true), _classNames2));
     var liProps = {
       'class': itemClassName,
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
     return h(
       'li',
@@ -26392,7 +26385,7 @@ var props = Object(_abstractTooltipProps__WEBPACK_IMPORTED_MODULE_8__["default"]
       var h = this.$createElement;
 
       var isAntBtn = ele.componentOptions && ele.componentOptions.Ctor.options.__ANT_BUTTON;
-      if (isAntBtn && (ele.componentOptions.propsData.disabled || ele.componentOptions.propsData.disabled === '') || ele.tag === 'button' && ele.data && ele.data.attrs.disabled !== false) {
+      if (isAntBtn && (ele.componentOptions.propsData.disabled || ele.componentOptions.propsData.disabled === '') || ele.tag === 'button' && ele.data && ele.data.attrs && ele.data.attrs.disabled !== undefined) {
         // Pick some layout related style properties up to span
         // Prevent layout bugs like https://github.com/ant-design/ant-design/issues/5254
         var _splitObject = splitObject(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getStyle"])(ele), ['position', 'left', 'right', 'top', 'bottom', 'float', 'display', 'zIndex']),
@@ -26462,8 +26455,7 @@ var props = Object(_abstractTooltipProps__WEBPACK_IMPORTED_MODULE_8__["default"]
     var h = arguments[0];
     var $props = this.$props,
         $data = this.$data,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
     var customizePrefixCls = $props.prefixCls,
         openClassName = $props.openClassName,
         getPopupContainer = $props.getPopupContainer;
@@ -26493,7 +26485,7 @@ var props = Object(_abstractTooltipProps__WEBPACK_IMPORTED_MODULE_8__["default"]
         visible: sVisible
       }),
       ref: 'tooltip',
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this), {
         visibleChange: this.onVisibleChange,
         popupAlign: this.onPopupAlign
       })
@@ -27013,7 +27005,7 @@ var Transfer = {
     handleFilter: function handleFilter(direction, e) {
       var value = e.target.value;
       this.setState(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()({}, direction + 'Filter', value));
-      if (this.$listeners.searchChange) {
+      if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this).searchChange) {
         Object(_util_warning__WEBPACK_IMPORTED_MODULE_12__["default"])(false, '`searchChange` in Transfer is deprecated. Please use `search` instead.');
         this.$emit('searchChange', direction, e);
       }
@@ -28100,7 +28092,7 @@ var TreeSelect = {
         __propsSymbol__: Symbol()
       }), treeData ? { treeData: treeData } : {}),
       'class': cls,
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$listeners, { change: this.onChange }),
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this), { change: this.onChange }),
       ref: 'vcTreeSelect',
       scopedSlots: this.$scopedSlots
     };
@@ -28160,8 +28152,8 @@ var TreeSelectProps = function TreeSelectProps() {
     loadData: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
     maxTagCount: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].number,
     maxTagPlaceholder: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].any,
-    value: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array]),
-    defaultValue: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array]),
+    value: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].number]),
+    defaultValue: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].oneOfType([_util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array, _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].number]),
     multiple: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool,
     notFoundContent: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].any,
     // onSelect: (value: any) => void,
@@ -28243,13 +28235,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! lodash/debounce */ "./node_modules/lodash/debounce.js");
 /* harmony import */ var lodash_debounce__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(lodash_debounce__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var _vc_tree_src_util__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../vc-tree/src/util */ "./components/vc-tree/src/util.js");
-/* harmony import */ var _Tree__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./Tree */ "./components/tree/Tree.jsx");
-/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./util */ "./components/tree/util.js");
-/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
-/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
-/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
+/* harmony import */ var _util_warning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_util/warning */ "./components/_util/warning.js");
+/* harmony import */ var _vc_tree_src_util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../vc-tree/src/util */ "./components/vc-tree/src/util.js");
+/* harmony import */ var _Tree__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Tree */ "./components/tree/Tree.jsx");
+/* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./util */ "./components/tree/util.js");
+/* harmony import */ var _icon__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../icon */ "./components/icon/index.js");
+/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+/* harmony import */ var _config_provider__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../config-provider */ "./components/config-provider/index.jsx");
 
 
 
@@ -28264,7 +28257,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-// export type ExpandAction = false | 'click' | 'doubleClick'; export interface
+
+// export type ExpandAction = false | 'click' | 'dblclick'; export interface
 // DirectoryTreeProps extends TreeProps {   expandAction?: ExpandAction; }
 // export interface DirectoryTreeState {   expandedKeys?: string[];
 // selectedKeys?: string[]; }
@@ -28274,24 +28268,24 @@ function getIcon(props, h) {
       expanded = props.expanded;
 
   if (isLeaf) {
-    return h(_icon__WEBPACK_IMPORTED_MODULE_9__["default"], {
+    return h(_icon__WEBPACK_IMPORTED_MODULE_10__["default"], {
       attrs: { type: 'file' }
     });
   }
-  return h(_icon__WEBPACK_IMPORTED_MODULE_9__["default"], {
+  return h(_icon__WEBPACK_IMPORTED_MODULE_10__["default"], {
     attrs: { type: expanded ? 'folder-open' : 'folder' }
   });
 }
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ADirectoryTree',
-  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_10__["default"]],
+  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_11__["default"]],
   model: {
     prop: 'checkedKeys',
     event: 'check'
   },
-  props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["initDefaultProps"])(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_Tree__WEBPACK_IMPORTED_MODULE_7__["TreeProps"])(), {
-    expandAction: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOf([false, 'click', 'doubleclick'])
+  props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["initDefaultProps"])(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_Tree__WEBPACK_IMPORTED_MODULE_8__["TreeProps"])(), {
+    expandAction: _util_vue_types__WEBPACK_IMPORTED_MODULE_5__["default"].oneOf([false, 'click', 'doubleclick', 'dblclick'])
   }), {
     showIcon: true,
     expandAction: 'click'
@@ -28303,18 +28297,18 @@ function getIcon(props, h) {
   inject: {
     configProvider: {
       'default': function _default() {
-        return _config_provider__WEBPACK_IMPORTED_MODULE_12__["ConfigConsumerProps"];
+        return _config_provider__WEBPACK_IMPORTED_MODULE_13__["ConfigConsumerProps"];
       }
     }
   },
   data: function data() {
-    var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getOptionProps"])(this);
+    var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getOptionProps"])(this);
     var defaultExpandAll = props.defaultExpandAll,
         defaultExpandParent = props.defaultExpandParent,
         expandedKeys = props.expandedKeys,
         defaultExpandedKeys = props.defaultExpandedKeys;
 
-    var _convertTreeToEntitie = Object(_vc_tree_src_util__WEBPACK_IMPORTED_MODULE_6__["convertTreeToEntities"])(this.$slots['default']),
+    var _convertTreeToEntitie = Object(_vc_tree_src_util__WEBPACK_IMPORTED_MODULE_7__["convertTreeToEntities"])(this.$slots['default']),
         keyEntities = _convertTreeToEntitie.keyEntities;
 
     var state = {};
@@ -28323,9 +28317,9 @@ function getIcon(props, h) {
 
     // Expanded keys
     if (defaultExpandAll) {
-      state._expandedKeys = Object(_util__WEBPACK_IMPORTED_MODULE_8__["getFullKeyList"])(this.$slots['default']);
+      state._expandedKeys = Object(_util__WEBPACK_IMPORTED_MODULE_9__["getFullKeyList"])(this.$slots['default']);
     } else if (defaultExpandParent) {
-      state._expandedKeys = Object(_vc_tree_src_util__WEBPACK_IMPORTED_MODULE_6__["conductExpandParent"])(expandedKeys || defaultExpandedKeys, keyEntities);
+      state._expandedKeys = Object(_vc_tree_src_util__WEBPACK_IMPORTED_MODULE_7__["conductExpandParent"])(expandedKeys || defaultExpandedKeys, keyEntities);
     } else {
       state._expandedKeys = expandedKeys || defaultExpandedKeys;
     }
@@ -28368,11 +28362,12 @@ function getIcon(props, h) {
 
       // Expand the tree
 
-      if (expandAction === 'doubleclick') {
+      if (expandAction === 'dblclick' || expandAction === 'doubleclick') {
         this.onDebounceExpand(event, node);
       }
 
       this.$emit('doubleclick', event, node);
+      this.$emit('dblclick', event, node);
     },
     onSelect: function onSelect(keys, event) {
       var multiple = this.$props.multiple;
@@ -28400,7 +28395,7 @@ function getIcon(props, h) {
         this.cachedSelectedKeys = newSelectedKeys;
       } else if (multiple && shiftPick) {
         // Shift click
-        newSelectedKeys = Array.from(new Set([].concat(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(this.cachedSelectedKeys || []), babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(Object(_util__WEBPACK_IMPORTED_MODULE_8__["calcRangeKeys"])(children, expandedKeys, eventKey, this.lastSelectedKey)))));
+        newSelectedKeys = Array.from(new Set([].concat(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(this.cachedSelectedKeys || []), babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_1___default()(Object(_util__WEBPACK_IMPORTED_MODULE_9__["calcRangeKeys"])(children, expandedKeys, eventKey, this.lastSelectedKey)))));
       } else {
         // Single click
         newSelectedKeys = [eventKey];
@@ -28432,7 +28427,7 @@ function getIcon(props, h) {
       }
     },
     setUncontrolledState: function setUncontrolledState(state) {
-      var newState = Object(omit_js__WEBPACK_IMPORTED_MODULE_3__["default"])(state, Object.keys(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getOptionProps"])(this)).map(function (p) {
+      var newState = Object(omit_js__WEBPACK_IMPORTED_MODULE_3__["default"])(state, Object.keys(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getOptionProps"])(this)).map(function (p) {
         return '_' + p;
       }));
       if (Object.keys(newState).length) {
@@ -28444,7 +28439,7 @@ function getIcon(props, h) {
   render: function render() {
     var h = arguments[0];
 
-    var _getOptionProps = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_11__["getOptionProps"])(this),
+    var _getOptionProps = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getOptionProps"])(this),
         customizePrefixCls = _getOptionProps.prefixCls,
         props = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(_getOptionProps, ['prefixCls']);
 
@@ -28454,6 +28449,8 @@ function getIcon(props, h) {
         expandedKeys = _$data._expandedKeys,
         selectedKeys = _$data._selectedKeys;
 
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this);
+    Object(_util_warning__WEBPACK_IMPORTED_MODULE_6__["default"])(!listeners.doubleclick, '`doubleclick` is deprecated. please use `dblclick` instead.');
     var treeProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({
         icon: getIcon
@@ -28464,15 +28461,15 @@ function getIcon(props, h) {
       }),
       ref: 'tree',
       'class': prefixCls + '-directory',
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_3__["default"])(this.$listeners, ['update:selectedKeys']), {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_3__["default"])(listeners, ['update:selectedKeys']), {
         select: this.onSelect,
         click: this.onClick,
-        doubleclick: this.onDoubleClick,
+        dblclick: this.onDoubleClick,
         expand: this.onExpand
       })
     };
     return h(
-      _Tree__WEBPACK_IMPORTED_MODULE_7__["default"],
+      _Tree__WEBPACK_IMPORTED_MODULE_8__["default"],
       treeProps,
       [this.$slots['default']]
     );
@@ -28491,13 +28488,13 @@ function getIcon(props, h) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TreeProps", function() { return TreeProps; });
-/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
-/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
-/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
+/* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
+/* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/defineProperty */ "./node_modules/babel-runtime/helpers/defineProperty.js");
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _vc_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../vc-tree */ "./components/vc-tree/index.js");
 /* harmony import */ var _vc_tree__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_vc_tree__WEBPACK_IMPORTED_MODULE_4__);
@@ -28589,7 +28586,12 @@ function TreeProps() {
     filterTreeNode: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].func,
     openAnimation: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].any,
     treeNodes: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].array,
-    treeData: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].array
+    treeData: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].array,
+    /**
+     * @default{title,key,children}
+     * 替换treeNode中 title,key,children字段为treeData中对应的字段
+     */
+    replaceFields: _util_vue_types__WEBPACK_IMPORTED_MODULE_6__["default"].object
   };
 }
 
@@ -28667,22 +28669,25 @@ function TreeProps() {
       var $slots = this.$slots,
           $scopedSlots = this.$scopedSlots;
 
+      var defaultFields = { children: 'children', title: 'title', key: 'key' };
+      var replaceFields = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, defaultFields, this.$props.replaceFields);
       return treeData.map(function (item) {
-        var children = item.children,
-            _item$on = item.on,
+        var key = item[replaceFields.key];
+        var children = item[replaceFields.children];
+
+        var _item$on = item.on,
             on = _item$on === undefined ? {} : _item$on,
             _item$slots = item.slots,
             slots = _item$slots === undefined ? {} : _item$slots,
             _item$scopedSlots = item.scopedSlots,
             scopedSlots = _item$scopedSlots === undefined ? {} : _item$scopedSlots,
-            key = item.key,
             cls = item['class'],
             style = item.style,
-            restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default()(item, ['children', 'on', 'slots', 'scopedSlots', 'key', 'class', 'style']);
+            restProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(item, ['on', 'slots', 'scopedSlots', 'class', 'style']);
 
-        var treeNodeProps = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, restProps, {
-          icon: $slots[slots.icon] || $scopedSlots[scopedSlots.icon] && $scopedSlots[scopedSlots.icon] || restProps.icon,
-          title: $slots[slots.title] || $scopedSlots[scopedSlots.title] && $scopedSlots[scopedSlots.title](item) || restProps.title,
+        var treeNodeProps = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, restProps, {
+          icon: $slots[slots.icon] || $scopedSlots[scopedSlots.icon] && $scopedSlots[scopedSlots.icon](item) || restProps.icon,
+          title: $slots[slots.title] || $scopedSlots[scopedSlots.title] && $scopedSlots[scopedSlots.title](item) || restProps[replaceFields.title],
           dataRef: item,
           on: on,
           key: key,
@@ -28690,7 +28695,7 @@ function TreeProps() {
           style: style
         });
         if (children) {
-          return babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, treeNodeProps, { children: _this.updateTreeData(children) });
+          return babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, treeNodeProps, { children: _this.updateTreeData(children) });
         }
         return treeNodeProps;
       });
@@ -28715,7 +28720,7 @@ function TreeProps() {
       treeData = this.updateTreeData(treeData);
     }
     var vcTreeProps = {
-      props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
+      props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, props, {
         prefixCls: prefixCls,
         checkable: checkable ? h('span', { 'class': prefixCls + '-checkbox-inner' }) : checkable,
         children: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["filterEmpty"])(this.$slots['default'] || []),
@@ -28724,7 +28729,7 @@ function TreeProps() {
           return _this2.renderSwitcherIcon(prefixCls, _switcherIcon, nodeProps);
         }
       }),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this),
       ref: 'tree',
       'class': !showIcon && prefixCls + '-icon-hide'
     };
@@ -28926,7 +28931,7 @@ __webpack_require__.r(__webpack_exports__);
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
         type: 'drag'
       }),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_1__["getListeners"])(this),
       style: { height: this.height }
     };
     return h(
@@ -29205,8 +29210,9 @@ __webpack_require__.r(__webpack_exports__);
           remove: this.handleManualRemove
         }
       };
-      if (this.$listeners.preview) {
-        uploadListProps.on.preview = this.$listeners.preview;
+      var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this);
+      if (listeners.preview) {
+        uploadListProps.on.preview = listeners.preview;
       }
       return h(_UploadList__WEBPACK_IMPORTED_MODULE_12__["default"], uploadListProps);
     }
@@ -29232,7 +29238,6 @@ __webpack_require__.r(__webpack_exports__);
         beforeUpload: this.reBeforeUpload
       }),
       on: {
-        // ...this.$listeners,
         start: this.onStart,
         error: this.onError,
         progress: this.onProgress,
@@ -29419,10 +29424,10 @@ var isImageUrl = function isImageUrl(file) {
         file.thumbUrl = '';
         /*eslint -enable */
         previewFile(file.originFileObj, function (previewDataUrl) {
-          /*eslint-disable */
-          file.thumbUrl = previewDataUrl;
-          /*eslint -enable todo */
-          // this.forceUpdate()
+          // Need append '' to avoid dead loop
+          file.thumbUrl = previewDataUrl || '';
+          /*eslint -enable */
+          _this.$forceUpdate();
         });
       });
     });
@@ -29433,7 +29438,8 @@ var isImageUrl = function isImageUrl(file) {
       this.$emit('remove', file);
     },
     handlePreview: function handlePreview(file, e) {
-      var preview = this.$listeners.preview;
+      var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
+          preview = _getListeners.preview;
 
       if (!preview) {
         return;
@@ -30068,7 +30074,7 @@ function getPoint(point) {
 
       if (!disabled && target) {
         var source = this.$el;
-
+        var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this);
         var result = void 0;
         var element = getElement(target);
         var point = getPoint(target);
@@ -30084,7 +30090,7 @@ function getPoint(point) {
         }
         Object(_util__WEBPACK_IMPORTED_MODULE_5__["restoreFocus"])(activeElement, source);
         this.aligned = true;
-        this.$listeners.align && this.$listeners.align(source, result);
+        listeners.align && listeners.align(source, result);
       }
     }
   },
@@ -30742,8 +30748,7 @@ var FullCalendar = {
         headerRender = props.headerRender,
         disabledDate = props.disabledDate;
     var value = this.sValue,
-        type = this.sType,
-        $listeners = this.$listeners;
+        type = this.sType;
 
 
     var header = null;
@@ -30758,7 +30763,7 @@ var FullCalendar = {
             type: type,
             value: value
           }),
-          on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+          on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this), {
             typeChange: this.setType,
             valueChange: this.setValue
           }),
@@ -31924,13 +31929,12 @@ var RangeCalendar = {
         sSelectedValue = this.sSelectedValue,
         sMode = this.sMode,
         showTimePicker = this.showTimePicker,
-        sValue = this.sValue,
-        $listeners = this.$listeners;
+        sValue = this.sValue;
 
     var className = (_className = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_className, prefixCls, 1), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_className, prefixCls + '-hidden', !props.visible), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_className, prefixCls + '-range', 1), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_className, prefixCls + '-show-time-picker', showTimePicker), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_className, prefixCls + '-week-number', props.showWeekNumber), _className);
     var baseProps = {
       props: props,
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this)
     };
     var newProps = {
       props: {
@@ -32173,7 +32177,6 @@ var CalendarFooter = {
     var h = arguments[0];
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getOptionProps"])(this);
-    var $listeners = this.$listeners;
     var value = props.value,
         prefixCls = props.prefixCls,
         showOk = props.showOk,
@@ -32191,7 +32194,7 @@ var CalendarFooter = {
         props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, props, {
           value: value
         }),
-        on: $listeners
+        on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this)
       };
       var nowEl = null;
       if (showToday) {
@@ -32269,6 +32272,7 @@ function showIf(condition, el) {
 }
 
 var CalendarHeader = {
+  name: 'CalendarHeader',
   mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_1__["default"]],
   props: {
     prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
@@ -32298,7 +32302,7 @@ var CalendarHeader = {
   methods: {
     onMonthSelect: function onMonthSelect(value) {
       this.__emit('panelChange', value, 'date');
-      if (this.$listeners.monthSelect) {
+      if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this).monthSelect) {
         this.__emit('monthSelect', value);
       } else {
         this.__emit('valueChange', value);
@@ -32313,6 +32317,13 @@ var CalendarHeader = {
     onDecadeSelect: function onDecadeSelect(value) {
       this.__emit('panelChange', value, 'year');
       this.__emit('valueChange', value);
+    },
+    changeYear: function changeYear(direction) {
+      if (direction > 0) {
+        this.nextYear();
+      } else {
+        this.previousYear();
+      }
     },
     monthYearElement: function monthYearElement(showTimePicker) {
       var _this = this;
@@ -32413,13 +32424,14 @@ var CalendarHeader = {
       panel = h(_month_MonthPanel__WEBPACK_IMPORTED_MODULE_3__["default"], {
         attrs: {
           locale: locale,
-          defaultValue: value,
+          value: value,
           rootPrefixCls: prefixCls,
 
           disabledDate: disabledMonth,
           cellRender: props.monthCellRender,
           contentRender: props.monthCellContentRender,
-          renderFooter: renderFooter
+          renderFooter: renderFooter,
+          changeYear: this.changeYear
         },
         on: {
           'select': this.onMonthSelect,
@@ -32769,12 +32781,15 @@ var DateInput = {
       });
       this.__emit('clear', null);
     },
-    onInputChange: function onInputChange(event) {
-      var str = event.target.value;
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (_util_env__WEBPACK_IMPORTED_MODULE_7__["isIE"] && !_util_env__WEBPACK_IMPORTED_MODULE_7__["isIE9"] && this.str === str) {
-        return;
-      }
+    onInputChange: function onInputChange(e) {
+      var _e$target = e.target,
+          str = _e$target.value,
+          composing = _e$target.composing;
+      var _str = this.str,
+          oldStr = _str === undefined ? '' : _str;
+
+      if (composing || oldStr === str) return;
+
       var _$props = this.$props,
           disabledDate = _$props.disabledDate,
           format = _$props.format,
@@ -32878,6 +32893,8 @@ var DateInput = {
           directives: [{
             name: 'ant-ref',
             value: this.saveDateInput
+          }, {
+            name: 'ant-input'
           }]
         }, {
           'class': prefixCls + '-input ' + invalidClass,
@@ -32983,12 +33000,12 @@ var DateTBody = {
         dateRender = props.dateRender,
         disabledDate = props.disabledDate,
         hoverValue = props.hoverValue;
-    var _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
-    var _$listeners$select = $listeners.select,
-        select = _$listeners$select === undefined ? noop : _$listeners$select,
-        _$listeners$dayHover = $listeners.dayHover,
-        dayHover = _$listeners$dayHover === undefined ? noop : _$listeners$dayHover;
+
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this),
+        _getListeners$select = _getListeners.select,
+        select = _getListeners$select === undefined ? noop : _getListeners$select,
+        _getListeners$dayHove = _getListeners.dayHover,
+        dayHover = _getListeners$dayHove === undefined ? noop : _getListeners$dayHove;
 
     var iIndex = void 0;
     var jIndex = void 0;
@@ -33934,14 +33951,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function goYear(direction) {
-  var next = this.sValue.clone();
-  next.add(direction, 'year');
-  this.setAndChangeValue(next);
+  this.changeYear(direction);
 }
 
 function noop() {}
 
 var MonthPanel = {
+  name: 'MonthPanel',
   mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_1__["default"]],
   props: {
     value: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any,
@@ -33953,7 +33969,8 @@ var MonthPanel = {
     // onChange: PropTypes.func,
     disabledDate: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
     // onSelect: PropTypes.func,
-    renderFooter: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func
+    renderFooter: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
+    changeYear: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func.def(noop)
   },
 
   data: function data() {
@@ -33976,16 +33993,12 @@ var MonthPanel = {
     }
   },
   methods: {
-    setAndChangeValue: function setAndChangeValue(value) {
-      this.setValue(value);
-      this.__emit('change', value);
-    },
     setAndSelectValue: function setAndSelectValue(value) {
       this.setValue(value);
       this.__emit('select', value);
     },
     setValue: function setValue(value) {
-      if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["hasProp"])(this, 'value')) {
+      if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["hasProp"])(this, 'value')) {
         this.setState({
           sValue: value
         });
@@ -34001,9 +34014,7 @@ var MonthPanel = {
         locale = this.locale,
         rootPrefixCls = this.rootPrefixCls,
         disabledDate = this.disabledDate,
-        renderFooter = this.renderFooter,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+        renderFooter = this.renderFooter;
 
     var year = sValue.year();
     var prefixCls = rootPrefixCls + '-month-panel';
@@ -34033,7 +34044,7 @@ var MonthPanel = {
               title: locale.yearSelect
             },
             on: {
-              'click': $listeners.yearPanelShow || noop
+              'click': Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this).yearPanelShow || noop
             }
           },
           [h(
@@ -34365,9 +34376,7 @@ var CalendarPart = {
     var _on;
 
     var h = arguments[0];
-    var props = this.$props,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+    var props = this.$props;
     var prefixCls = props.prefixCls,
         value = props.value,
         hoverValue = props.hoverValue,
@@ -34390,18 +34399,20 @@ var CalendarPart = {
         showWeekNumber = props.showWeekNumber;
 
     var clearIcon = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getComponentFromProp"])(this, 'clearIcon');
-    var _$listeners$inputChan = $listeners.inputChange,
-        inputChange = _$listeners$inputChan === undefined ? noop : _$listeners$inputChan,
-        _$listeners$inputSele = $listeners.inputSelect,
-        inputSelect = _$listeners$inputSele === undefined ? noop : _$listeners$inputSele,
-        _$listeners$valueChan = $listeners.valueChange,
-        valueChange = _$listeners$valueChan === undefined ? noop : _$listeners$valueChan,
-        _$listeners$panelChan = $listeners.panelChange,
-        panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan,
-        _$listeners$select = $listeners.select,
-        select = _$listeners$select === undefined ? noop : _$listeners$select,
-        _$listeners$dayHover = $listeners.dayHover,
-        dayHover = _$listeners$dayHover === undefined ? noop : _$listeners$dayHover;
+
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
+        _getListeners$inputCh = _getListeners.inputChange,
+        inputChange = _getListeners$inputCh === undefined ? noop : _getListeners$inputCh,
+        _getListeners$inputSe = _getListeners.inputSelect,
+        inputSelect = _getListeners$inputSe === undefined ? noop : _getListeners$inputSe,
+        _getListeners$valueCh = _getListeners.valueChange,
+        valueChange = _getListeners$valueCh === undefined ? noop : _getListeners$valueCh,
+        _getListeners$panelCh = _getListeners.panelChange,
+        panelChange = _getListeners$panelCh === undefined ? noop : _getListeners$panelCh,
+        _getListeners$select = _getListeners.select,
+        select = _getListeners$select === undefined ? noop : _getListeners$select,
+        _getListeners$dayHove = _getListeners.dayHover,
+        dayHover = _getListeners$dayHove === undefined ? noop : _getListeners$dayHove;
 
     var shouldShowTimePicker = showTimePicker && timePicker;
     var disabledTimeConfig = shouldShowTimePicker && disabledTime ? Object(_util_index__WEBPACK_IMPORTED_MODULE_9__["getTimeConfig"])(selectedValue, disabledTime) : null;
@@ -34680,6 +34691,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -34698,6 +34711,7 @@ function chooseYear(year) {
   var value = this.sValue.clone();
   value.year(year);
   value.month(this.sValue.month());
+  this.sValue = value;
   this.__emit('select', value);
 }
 
@@ -34749,11 +34763,9 @@ function chooseYear(year) {
     var h = arguments[0];
     var value = this.sValue,
         locale = this.locale,
-        renderFooter = this.renderFooter,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+        renderFooter = this.renderFooter;
 
-    var decadePanelShow = $listeners.decadePanelShow || noop;
+    var decadePanelShow = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this).decadePanelShow || noop;
     var years = this.years();
     var currentYear = value.year();
     var startYear = parseInt(currentYear / 10, 10) * 10;
@@ -35205,13 +35217,13 @@ var BUILT_IN_PLACEMENTS = {
   render: function render() {
     var h = arguments[0];
     var $props = this.$props,
-        $slots = this.$slots,
         sActiveValue = this.sActiveValue,
         handleMenuSelect = this.handleMenuSelect,
         sPopupVisible = this.sPopupVisible,
         handlePopupVisibleChange = this.handlePopupVisibleChange,
-        handleKeyDown = this.handleKeyDown,
-        $listeners = this.$listeners;
+        handleKeyDown = this.handleKeyDown;
+
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this);
 
     var prefixCls = $props.prefixCls,
         transitionName = $props.transitionName,
@@ -35239,7 +35251,7 @@ var BUILT_IN_PLACEMENTS = {
           loadingIcon: loadingIcon,
           expandIcon: expandIcon
         }),
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, listeners, {
           select: handleMenuSelect,
           itemDoubleClick: this.handleItemDoubleClick
         })
@@ -35259,7 +35271,7 @@ var BUILT_IN_PLACEMENTS = {
         prefixCls: prefixCls + '-menus',
         popupClassName: popupClassName + emptyMenuClassName
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, listeners, {
         popupVisibleChange: handlePopupVisibleChange
       }),
       ref: 'trigger'
@@ -35377,7 +35389,7 @@ __webpack_require__.r(__webpack_exports__);
         },
         on: {
           click: onSelect,
-          doubleclick: onItemDoubleClick,
+          dblclick: onItemDoubleClick,
           mousedown: function mousedown(e) {
             return e.preventDefault();
           }
@@ -35717,7 +35729,7 @@ __webpack_require__.r(__webpack_exports__);
         ref: 'input'
       }, {
         attrs: globalProps,
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, this.$listeners, {
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this), {
           change: this.handleChange,
           click: this.onClick
         })
@@ -36274,7 +36286,6 @@ var IDialogPropTypes = Object(_IDialogPropTypes__WEBPACK_IMPORTED_MODULE_10__["d
 
 var uuid = 0;
 
-/* eslint react/no-is-mounted:0 */
 function noop() {}
 function getScroll(w, top) {
   var ret = w['page' + (top ? 'Y' : 'X') + 'Offset'];
@@ -36310,6 +36321,8 @@ function offset(el) {
   return pos;
 }
 
+var cacheOverflow = {};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_7__["default"]],
   props: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["initDefaultProps"])(IDialogPropTypes, {
@@ -36322,11 +36335,17 @@ function offset(el) {
     prefixCls: 'rc-dialog',
     getOpenCount: function getOpenCount() {
       return null;
-    }
+    },
+    focusTriggerAfterClose: true
   }),
   data: function data() {
     return {
       destroyPopup: false
+    };
+  },
+  provide: function provide() {
+    return {
+      dialogContext: this
     };
   },
 
@@ -36343,16 +36362,6 @@ function offset(el) {
       });
     }
   },
-
-  // private inTransition: boolean;
-  // private titleId: string;
-  // private openTime: number;
-  // private lastOutSideFocusNode: HTMLElement | null;
-  // private wrap: HTMLElement;
-  // private dialog: any;
-  // private sentinel: HTMLElement;
-  // private bodyIsOverflowing: boolean;
-  // private scrollbarWidth: number;
 
   beforeMount: function beforeMount() {
     this.inTransition = false;
@@ -36374,20 +36383,27 @@ function offset(el) {
         getOpenCount = this.getOpenCount;
 
     if ((visible || this.inTransition) && !getOpenCount()) {
-      this.removeScrollingEffect();
+      this.switchScrollingEffect();
     }
     clearTimeout(this.timeoutId);
   },
 
   methods: {
+    // 对外暴露的 api 不要更改名称或删除
+    getDialogWrap: function getDialogWrap() {
+      return this.$refs.wrap;
+    },
     updatedCallback: function updatedCallback(visible) {
       var mousePosition = this.mousePosition;
+      var mask = this.mask,
+          focusTriggerAfterClose = this.focusTriggerAfterClose;
+
       if (this.visible) {
         // first show
         if (!visible) {
           this.openTime = Date.now();
           // this.lastOutSideFocusNode = document.activeElement
-          this.addScrollingEffect();
+          this.switchScrollingEffect();
           // this.$refs.wrap.focus()
           this.tryFocus();
           var dialogNode = this.$refs.dialog.$el;
@@ -36400,7 +36416,7 @@ function offset(el) {
         }
       } else if (visible) {
         this.inTransition = true;
-        if (this.mask && this.lastOutSideFocusNode) {
+        if (mask && this.lastOutSideFocusNode && focusTriggerAfterClose) {
           try {
             this.lastOutSideFocusNode.focus();
           } catch (e) {
@@ -36429,7 +36445,7 @@ function offset(el) {
         this.destroyPopup = true;
       }
       this.inTransition = false;
-      this.removeScrollingEffect();
+      this.switchScrollingEffect();
       if (afterClose) {
         afterClose();
       }
@@ -36487,7 +36503,8 @@ function offset(el) {
           tempFooter = this.footer,
           bodyStyle = this.bodyStyle,
           visible = this.visible,
-          bodyProps = this.bodyProps;
+          bodyProps = this.bodyProps,
+          forceRender = this.forceRender;
 
       var dest = {};
       if (width !== undefined) {
@@ -36554,12 +36571,13 @@ function offset(el) {
           }],
 
           key: 'dialog-element',
-          attrs: { role: 'document'
+          attrs: { role: 'document',
+
+            forceRender: forceRender
           },
           ref: 'dialog',
           style: style,
-          'class': cls,
-          on: {
+          'class': cls, on: {
             'mousedown': this.onDialogMouseDown
           }
         },
@@ -36652,27 +36670,49 @@ function offset(el) {
     //     document.body.style.paddingRight = `${this.scrollbarWidth}px`;
     //   }
     // },
-    addScrollingEffect: function addScrollingEffect() {
+    switchScrollingEffect: function switchScrollingEffect() {
       var getOpenCount = this.getOpenCount;
 
       var openCount = getOpenCount();
-      if (openCount !== 1) {
-        return;
+      if (openCount === 1) {
+        if (cacheOverflow.hasOwnProperty('overflowX')) {
+          return;
+        }
+        cacheOverflow = {
+          overflowX: document.body.style.overflowX,
+          overflowY: document.body.style.overflowY,
+          overflow: document.body.style.overflow
+        };
+        Object(_util_switchScrollingEffect__WEBPACK_IMPORTED_MODULE_9__["default"])();
+        // Must be set after switchScrollingEffect
+        document.body.style.overflow = 'hidden';
+      } else if (!openCount) {
+        // IE browser doesn't merge overflow style, need to set it separately
+        // https://github.com/ant-design/ant-design/issues/19393
+        if (cacheOverflow.overflow !== undefined) {
+          document.body.style.overflow = cacheOverflow.overflow;
+        }
+        if (cacheOverflow.overflowX !== undefined) {
+          document.body.style.overflowX = cacheOverflow.overflowX;
+        }
+        if (cacheOverflow.overflowY !== undefined) {
+          document.body.style.overflowY = cacheOverflow.overflowY;
+        }
+        cacheOverflow = {};
+        Object(_util_switchScrollingEffect__WEBPACK_IMPORTED_MODULE_9__["default"])(true);
       }
-      Object(_util_switchScrollingEffect__WEBPACK_IMPORTED_MODULE_9__["default"])();
-      document.body.style.overflow = 'hidden';
     },
-    removeScrollingEffect: function removeScrollingEffect() {
-      var getOpenCount = this.getOpenCount;
 
-      var openCount = getOpenCount();
-      if (openCount !== 0) {
-        return;
-      }
-      document.body.style.overflow = '';
-      Object(_util_switchScrollingEffect__WEBPACK_IMPORTED_MODULE_9__["default"])(true);
-      // this.resetAdjustments();
-    },
+    // removeScrollingEffect() {
+    //   const { getOpenCount } = this;
+    //   const openCount = getOpenCount();
+    //   if (openCount !== 0) {
+    //     return;
+    //   }
+    //   document.body.style.overflow = '';
+    //   switchScrollingEffect(true);
+    //   // this.resetAdjustments();
+    // },
     close: function close(e) {
       this.__emit('close', e);
     }
@@ -36692,27 +36732,31 @@ function offset(el) {
     if (visible) {
       style.display = null;
     }
-    return h('div', [this.getMaskElement(), h(
+    return h(
       'div',
-      babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{
-        attrs: {
-          tabIndex: -1,
+      { 'class': prefixCls + '-root' },
+      [this.getMaskElement(), h(
+        'div',
+        babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{
+          attrs: {
+            tabIndex: -1,
 
-          role: 'dialog',
-          'aria-labelledby': title ? this.titleId : null
-        },
-        on: {
-          'keydown': this.onKeydown,
-          'click': maskClosable ? this.onMaskClick : noop,
-          'mouseup': maskClosable ? this.onMaskMouseUp : noop
-        },
+            role: 'dialog',
+            'aria-labelledby': title ? this.titleId : null
+          },
+          on: {
+            'keydown': this.onKeydown,
+            'click': maskClosable ? this.onMaskClick : noop,
+            'mouseup': maskClosable ? this.onMaskMouseUp : noop
+          },
 
-        'class': prefixCls + '-wrap ' + (wrapClassName || ''),
-        ref: 'wrap',
-        style: style
-      }, wrapProps]),
-      [this.getDialogElement()]
-    )]);
+          'class': prefixCls + '-wrap ' + (wrapClassName || ''),
+          ref: 'wrap',
+          style: style
+        }, wrapProps]),
+        [this.getDialogElement()]
+      )]
+    );
   }
 });
 
@@ -36742,17 +36786,27 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var IDialogPropTypes = Object(_IDialogPropTypes__WEBPACK_IMPORTED_MODULE_4__["default"])();
+var openCount = 0;
 var DialogWrap = {
+  inheritAttrs: false,
   props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, IDialogPropTypes, {
     visible: IDialogPropTypes.visible.def(false)
   }),
   data: function data() {
+    openCount = this.visible ? openCount + 1 : openCount;
     this.renderComponent = function () {};
     this.removeContainer = function () {};
     return {};
   },
+
+  watch: {
+    visible: function visible(val, preVal) {
+      openCount = val && !preVal ? openCount + 1 : openCount - 1;
+    }
+  },
   beforeDestroy: function beforeDestroy() {
     if (this.visible) {
+      openCount = openCount ? openCount - 1 : openCount;
       this.renderComponent({
         afterClose: this.removeContainer,
         visible: false,
@@ -36770,9 +36824,9 @@ var DialogWrap = {
       var extra = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
       var h = this.$createElement;
       var $attrs = this.$attrs,
-          $listeners = this.$listeners,
           $props = this.$props,
-          $slots = this.$slots;
+          $slots = this.$slots,
+          getContainer = this.getContainer;
 
       var on = extra.on,
           otherProps = babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_0___default()(extra, ['on']);
@@ -36781,11 +36835,17 @@ var DialogWrap = {
         props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $props, {
           dialogClass: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getClass"])(this),
           dialogStyle: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getStyle"])(this)
-        }, otherProps),
+        }, otherProps, {
+          getOpenCount: getContainer === false ? function () {
+            return 2;
+          } : function () {
+            return openCount;
+          }
+        }),
         attrs: $attrs,
         ref: '_component',
         key: 'dialog',
-        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, $listeners, on)
+        on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this), on)
       };
       return h(
         _Dialog__WEBPACK_IMPORTED_MODULE_2__["default"],
@@ -36882,7 +36942,10 @@ function IDialogPropTypes() {
     dialogClass: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].object.def({}),
     closeIcon: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any,
     forceRender: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,
-    getOpenCount: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func
+    getOpenCount: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
+    // https://github.com/ant-design/ant-design/issues/19771
+    // https://github.com/react-component/dialog/issues/95
+    focusTriggerAfterClose: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool
   };
 }
 
@@ -36900,11 +36963,14 @@ function IDialogPropTypes() {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 var ILazyRenderBoxPropTypes = {
   visible: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,
-  hiddenClassName: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string
+  hiddenClassName: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
+  forceRender: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -36914,7 +36980,7 @@ var ILazyRenderBoxPropTypes = {
 
     return h(
       'div',
-      { on: this.$listeners },
+      { on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_1__["getListeners"])(this) },
       [this.$slots['default']]
     );
   }
@@ -36932,7 +36998,7 @@ var ILazyRenderBoxPropTypes = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DialogWrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DialogWrap */ "./components/vc-dialog/DialogWrap.jsx");
-// based on vc-dialog 7.5.5
+// based on vc-dialog 7.5.14
 
 /* harmony default export */ __webpack_exports__["default"] = (_DialogWrap__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
@@ -37329,7 +37395,9 @@ var Drawer = {
           }
         }
       }
-      var change = this.$listeners.change;
+
+      var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
+          change = _getListeners.change;
 
       if (change && this.isOpenChange && this.sFirstEnter) {
         change(open);
@@ -37734,15 +37802,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
 /* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
-/* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../_util/vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var _vc_trigger__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../vc-trigger */ "./components/vc-trigger/index.js");
-/* harmony import */ var _placements__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./placements */ "./components/vc-dropdown/src/placements.js");
-/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../_util/BaseMixin */ "./components/_util/BaseMixin.js");
-/* harmony import */ var _util_vnode__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../_util/vnode */ "./components/_util/vnode.js");
-
+/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../_util/vue-types */ "./components/_util/vue-types/index.js");
+/* harmony import */ var _vc_trigger__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../vc-trigger */ "./components/vc-trigger/index.js");
+/* harmony import */ var _placements__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./placements */ "./components/vc-dropdown/src/placements.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../_util/props-util */ "./components/_util/props-util.js");
+/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var _util_vnode__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../_util/vnode */ "./components/_util/vnode.js");
 
 
 
@@ -37753,31 +37818,31 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_7__["default"]],
+  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_6__["default"]],
   props: {
-    minOverlayWidthMatchTrigger: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].bool.def(true),
-    prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].string.def('rc-dropdown'),
-    transitionName: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].string,
-    overlayClassName: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].string.def(''),
-    openClassName: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].string,
-    animation: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].any,
-    align: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].object,
-    overlayStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].object.def({}),
-    placement: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].string.def('bottomLeft'),
-    overlay: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].any,
-    trigger: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].array.def(['hover']),
-    alignPoint: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].bool,
-    showAction: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].array.def([]),
-    hideAction: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].array.def([]),
-    getPopupContainer: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].func,
-    visible: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].bool,
-    defaultVisible: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].bool.def(false),
-    mouseEnterDelay: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].number.def(0.15),
-    mouseLeaveDelay: _util_vue_types__WEBPACK_IMPORTED_MODULE_3__["default"].number.def(0.1)
+    minOverlayWidthMatchTrigger: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].bool.def(true),
+    prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string.def('rc-dropdown'),
+    transitionName: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
+    overlayClassName: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string.def(''),
+    openClassName: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
+    animation: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].any,
+    align: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].object,
+    overlayStyle: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].object.def({}),
+    placement: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string.def('bottomLeft'),
+    overlay: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].any,
+    trigger: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].array.def(['hover']),
+    alignPoint: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].bool,
+    showAction: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].array.def([]),
+    hideAction: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].array.def([]),
+    getPopupContainer: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].func,
+    visible: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].bool,
+    defaultVisible: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].bool.def(false),
+    mouseEnterDelay: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].number.def(0.15),
+    mouseLeaveDelay: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].number.def(0.1)
   },
   data: function data() {
     var sVisible = this.defaultVisible;
-    if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["hasProp"])(this, 'visible')) {
+    if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["hasProp"])(this, 'visible')) {
       sVisible = this.visible;
     }
     return {
@@ -37797,7 +37862,7 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     onClick: function onClick(e) {
       // do no call onVisibleChange, if you need click to hide, use onClick and control visible
-      if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["hasProp"])(this, 'visible')) {
+      if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["hasProp"])(this, 'visible')) {
         this.setState({
           sVisible: false
         });
@@ -37808,7 +37873,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     onVisibleChange: function onVisibleChange(visible) {
-      if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["hasProp"])(this, 'visible')) {
+      if (!Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["hasProp"])(this, 'visible')) {
         this.setState({
           sVisible: visible
         });
@@ -37816,7 +37881,7 @@ __webpack_require__.r(__webpack_exports__);
       this.__emit('visibleChange', visible);
     },
     getMinOverlayWidthMatchTrigger: function getMinOverlayWidthMatchTrigger() {
-      var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getOptionProps"])(this);
+      var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getOptionProps"])(this);
       var minOverlayWidthMatchTrigger = props.minOverlayWidthMatchTrigger,
           alignPoint = props.alignPoint;
 
@@ -37843,7 +37908,7 @@ __webpack_require__.r(__webpack_exports__);
           prefixCls = this.prefixCls,
           $slots = this.$slots;
 
-      this.childOriginEvents = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getEvents"])($slots.overlay[0]);
+      this.childOriginEvents = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getEvents"])($slots.overlay[0]);
       var overlayElement = this.getOverlayElement();
       var extraOverlayProps = {
         props: {
@@ -37859,7 +37924,7 @@ __webpack_require__.r(__webpack_exports__);
       if (typeof overlayElement.type === 'string') {
         delete extraOverlayProps.props.prefixCls;
       }
-      return Object(_util_vnode__WEBPACK_IMPORTED_MODULE_8__["cloneElement"])($slots.overlay[0], extraOverlayProps);
+      return Object(_util_vnode__WEBPACK_IMPORTED_MODULE_7__["cloneElement"])($slots.overlay[0], extraOverlayProps);
     },
     getMenuElementOrLambda: function getMenuElementOrLambda() {
       var overlay = this.overlay || this.$slots.overlay || this.$scopedSlots.overlay;
@@ -37897,7 +37962,7 @@ __webpack_require__.r(__webpack_exports__);
       var children = this.$slots['default'] && this.$slots['default'][0];
       var sVisible = this.sVisible;
 
-      return sVisible && children ? Object(_util_vnode__WEBPACK_IMPORTED_MODULE_8__["cloneElement"])(children, { 'class': this.getOpenClassName() }) : children;
+      return sVisible && children ? Object(_util_vnode__WEBPACK_IMPORTED_MODULE_7__["cloneElement"])(children, { 'class': this.getOpenClassName() }) : children;
     }
   },
 
@@ -37928,7 +37993,7 @@ __webpack_require__.r(__webpack_exports__);
         prefixCls: prefixCls,
         popupClassName: overlayClassName,
         popupStyle: overlayStyle,
-        builtinPlacements: _placements__WEBPACK_IMPORTED_MODULE_5__["default"],
+        builtinPlacements: _placements__WEBPACK_IMPORTED_MODULE_4__["default"],
         action: trigger,
         showAction: showAction,
         hideAction: triggerHideAction || [],
@@ -37947,7 +38012,7 @@ __webpack_require__.r(__webpack_exports__);
     };
     var child = this.$slots['default'] && this.$slots['default'][0];
     return h(
-      _vc_trigger__WEBPACK_IMPORTED_MODULE_4__["default"],
+      _vc_trigger__WEBPACK_IMPORTED_MODULE_3__["default"],
       triggerProps,
       [this.renderChildren(), h(
         'template',
@@ -38056,7 +38121,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! babel-runtime/helpers/toConsumableArray */ "./node_modules/babel-runtime/helpers/toConsumableArray.js");
 /* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var async_validator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! async-validator */ "./node_modules/async-validator/dist-web/index.js");
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var lodash_get__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! lodash/get */ "./node_modules/lodash/get.js");
 /* harmony import */ var lodash_get__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(lodash_get__WEBPACK_IMPORTED_MODULE_7__);
@@ -38719,8 +38784,7 @@ function createBaseForm() {
 
       render: function render() {
         var h = arguments[0];
-        var $listeners = this.$listeners,
-            $slots = this.$slots;
+        var $slots = this.$slots;
 
         var formProps = babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()({}, formPropName, this.getForm());
 
@@ -38730,7 +38794,7 @@ function createBaseForm() {
 
         var wrappedComponentProps = {
           props: mapProps.call(this, babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, formProps, restProps)),
-          on: $listeners,
+          on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_14__["getListeners"])(this),
           ref: 'WrappedComponent',
           directives: [{
             name: 'ant-ref',
@@ -39339,7 +39403,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_2__);
 
 
@@ -39511,6 +39575,8 @@ function startsWith(str, prefix) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _vc_m_feedback__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../vc-m-feedback */ "./components/vc-m-feedback/index.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -39530,7 +39596,7 @@ var InputHandler = {
         disabled: disabled,
         activeClassName: prefixCls + '-handler-active'
       },
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this)
     };
     return h(
       _vc_m_feedback__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -39639,7 +39705,9 @@ var inputNumberProps = {
   pattern: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
   decimalSeparator: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
   autoComplete: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
-  title: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string
+  title: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
+  name: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string,
+  id: _util_vue_types__WEBPACK_IMPORTED_MODULE_2__["default"].string
 };
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -40271,15 +40339,16 @@ var inputNumberProps = {
     }
     var isUpDisabled = !!upDisabledClass || disabled || readOnly;
     var isDownDisabled = !!downDisabledClass || disabled || readOnly;
-    var _$listeners = this.$listeners,
-        _$listeners$mouseente = _$listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = _$listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        _$listeners$mouseover = _$listeners.mouseover,
-        mouseover = _$listeners$mouseover === undefined ? noop : _$listeners$mouseover,
-        _$listeners$mouseout = _$listeners.mouseout,
-        mouseout = _$listeners$mouseout === undefined ? noop : _$listeners$mouseout;
+
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        _getListeners$mouseov = _getListeners.mouseover,
+        mouseover = _getListeners$mouseov === undefined ? noop : _getListeners$mouseov,
+        _getListeners$mouseou = _getListeners.mouseout,
+        mouseout = _getListeners$mouseou === undefined ? noop : _getListeners$mouseou;
 
     var contentProps = {
       on: { mouseenter: mouseenter, mouseleave: mouseleave, mouseover: mouseover, mouseout: mouseout },
@@ -41215,7 +41284,7 @@ var DOMWrap = {
 
     var Tag = this.$props.tag;
     var tagProps = {
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_10__["getListeners"])(this)
     };
     return h(
       Tag,
@@ -41450,7 +41519,7 @@ var Menu = {
         children: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["filterEmpty"])(this.$slots['default'] || [])
       }),
       'class': props.prefixCls + '-root',
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this), {
         click: this.onClick,
         openChange: this.onOpenChange,
         deselect: this.onDeselect,
@@ -41666,7 +41735,7 @@ var MenuItem = {
     if (props.mode === 'inline') {
       style.paddingLeft = props.inlineIndent * props.level + 'px';
     }
-    var listeners = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$listeners);
+    var listeners = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_9__["getListeners"])(this));
     _util__WEBPACK_IMPORTED_MODULE_8__["menuAllProps"].props.forEach(function (key) {
       return delete props[key];
     });
@@ -41752,7 +41821,7 @@ var MenuItemGroup = {
     var titleClassName = rootPrefixCls + '-item-group-title';
     var listClassName = rootPrefixCls + '-item-group-list';
     // menuAllProps.props.forEach(key => delete props[key])
-    var listeners = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners);
+    var listeners = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this));
     delete listeners.click;
 
     return h(
@@ -42151,10 +42220,11 @@ var SubMenu = {
       var h = this.$createElement;
 
       var props = this.$props;
-      var _$listeners = this.$listeners,
-          select = _$listeners.select,
-          deselect = _$listeners.deselect,
-          openChange = _$listeners.openChange;
+
+      var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this),
+          select = _getListeners.select,
+          deselect = _getListeners.deselect,
+          openChange = _getListeners.openChange;
 
       var subPopupMenuProps = {
         props: {
@@ -42246,9 +42316,7 @@ var SubMenu = {
 
     var props = this.$props;
     var rootPrefixCls = this.rootPrefixCls,
-        parentMenu = this.parentMenu,
-        _$listeners2 = this.$listeners,
-        $listeners = _$listeners2 === undefined ? {} : _$listeners2;
+        parentMenu = this.parentMenu;
 
     var isOpen = props.isOpen;
     var prefixCls = this.getPrefixCls();
@@ -42326,7 +42394,7 @@ var SubMenu = {
     var popupAlign = props.popupOffset ? { offset: props.popupOffset } : {};
     var popupClassName = props.mode === 'inline' ? '' : props.popupClassName;
     var liProps = {
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_4__["default"])($listeners, ['click']), mouseEvents),
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_3___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_4__["default"])(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this), ['click']), mouseEvents),
       'class': className
     };
 
@@ -42714,8 +42782,10 @@ var SubPopupMenu = {
         }, extraProps),
         on: {
           click: function click(e) {
-            (childListeners.click || _util__WEBPACK_IMPORTED_MODULE_9__["noop"])(e);
-            _this.onClick(e);
+            if ('keyPath' in e) {
+              (childListeners.click || _util__WEBPACK_IMPORTED_MODULE_9__["noop"])(e);
+              _this.onClick(e);
+            }
           },
           itemHover: this.onItemHover,
           openChange: this.onOpenChange,
@@ -42778,7 +42848,7 @@ var SubPopupMenu = {
       },
       'class': className,
       // Otherwise, the propagated click event will trigger another onClick
-      on: Object(omit_js__WEBPACK_IMPORTED_MODULE_3__["default"])(this.$listeners || {}, ['click'])
+      on: Object(omit_js__WEBPACK_IMPORTED_MODULE_3__["default"])(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this), ['click'])
     };
     // if (props.id) {
     //   domProps.id = props.id
@@ -42955,7 +43025,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-runtime/helpers/typeof */ "./node_modules/babel-runtime/helpers/typeof.js");
 /* harmony import */ var babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 
-var isMobile = __webpack_require__(/*! ismobilejs */ "./node_modules/ismobilejs/dist/isMobile.min.js");
+var isMobile = __webpack_require__(/*! ismobilejs */ "./node_modules/ismobilejs/esm/index.js");
 
 function noop() {}
 
@@ -43129,8 +43199,7 @@ function noop() {}
         clearCloseTimer = this.clearCloseTimer,
         startCloseTimer = this.startCloseTimer,
         $slots = this.$slots,
-        close = this.close,
-        $listeners = this.$listeners;
+        close = this.close;
 
     var componentClass = prefixCls + '-notice';
     var className = (_className = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_className, '' + componentClass, 1), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_className, componentClass + '-closable', closable), _className);
@@ -43144,7 +43213,7 @@ function noop() {}
         on: {
           'mouseenter': clearCloseTimer,
           'mouseleave': startCloseTimer,
-          'click': $listeners.click || noop
+          'click': Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this).click || noop
         }
       },
       [h(
@@ -43439,28 +43508,31 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var _KeyCode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./KeyCode */ "./components/vc-pagination/KeyCode.js");
-/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-helper-vue-jsx-merge-props */ "./node_modules/babel-helper-vue-jsx-merge-props/index.js");
+/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
+/* harmony import */ var _KeyCode__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./KeyCode */ "./components/vc-pagination/KeyCode.js");
+/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+
 
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_3__["default"]],
   props: {
-    disabled: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,
-    changeSize: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
-    quickGo: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
-    selectComponentClass: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any,
-    current: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].number,
-    pageSizeOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].array.def(['10', '20', '30', '40']),
-    pageSize: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].number,
-    buildOptionText: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
-    locale: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].object,
-    rootPrefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    selectPrefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    goButton: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any
+    disabled: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool,
+    changeSize: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
+    quickGo: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
+    selectComponentClass: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].any,
+    current: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].number,
+    pageSizeOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array.def(['10', '20', '30', '40']),
+    pageSize: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].number,
+    buildOptionText: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
+    locale: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object,
+    rootPrefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    selectPrefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    goButton: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].any
   },
   data: function data() {
     return {
@@ -43479,8 +43551,13 @@ __webpack_require__.r(__webpack_exports__);
       return opt.value + ' ' + this.locale.items_per_page;
     },
     handleChange: function handleChange(e) {
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+
+      if (composing || this.goInputText === value) return;
       this.setState({
-        goInputText: e.target.value
+        goInputText: value
       });
     },
     handleBlur: function handleBlur() {
@@ -43498,11 +43575,12 @@ __webpack_require__.r(__webpack_exports__);
       if (goInputText === '') {
         return;
       }
-      if (e.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_1__["default"].ENTER || e.type === 'click') {
+      if (e.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_2__["default"].ENTER || e.type === 'click') {
+        // https://github.com/vueComponent/ant-design-vue/issues/1316
+        this.quickGo(this.getValidValue());
         this.setState({
           goInputText: ''
         });
-        this.quickGo(this.getValidValue());
       }
     }
   },
@@ -43595,7 +43673,7 @@ __webpack_require__.r(__webpack_exports__);
       goInput = h(
         'div',
         { 'class': prefixCls + '-quick-jumper' },
-        [locale.jump_to, h('input', {
+        [locale.jump_to, h('input', babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{
           attrs: {
             disabled: disabled,
             type: 'text'
@@ -43604,11 +43682,15 @@ __webpack_require__.r(__webpack_exports__);
             'value': goInputText
           },
           on: {
-            'change': this.handleChange,
+            'input': this.handleChange,
             'keyup': this.go,
             'blur': this.handleBlur
           }
-        }), locale.page, gotoButton]
+        }, {
+          directives: [{
+            name: 'ant-input'
+          }]
+        }])), locale.page, gotoButton]
       );
     }
 
@@ -43902,10 +43984,10 @@ function calculatePage(p, state, props) {
         event.preventDefault();
       }
     },
-    handleKeyUp: function handleKeyUp(event) {
-      var inputValue = event.target.value;
+    handleKeyUp: function handleKeyUp(e) {
+      if (e.target.composing) return;
+      var value = this.getValidValue(e);
       var stateCurrentInputValue = this.stateCurrentInputValue;
-      var value = void 0;
 
       if (value !== stateCurrentInputValue) {
         this.setState({
@@ -43913,11 +43995,11 @@ function calculatePage(p, state, props) {
         });
       }
 
-      if (event.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_9__["default"].ENTER) {
+      if (e.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_9__["default"].ENTER) {
         this.handleChange(value);
-      } else if (event.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_9__["default"].ARROW_UP) {
+      } else if (e.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_9__["default"].ARROW_UP) {
         this.handleChange(value - 1);
-      } else if (event.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_9__["default"].ARROW_DOWN) {
+      } else if (e.keyCode === _KeyCode__WEBPACK_IMPORTED_MODULE_9__["default"].ARROW_DOWN) {
         this.handleChange(value + 1);
       }
     },
@@ -44119,7 +44201,7 @@ function calculatePage(p, state, props) {
             },
             'class': prefixCls + '-simple-pager'
           },
-          [h('input', {
+          [h('input', babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default()([{
             attrs: {
               type: 'text',
 
@@ -44133,7 +44215,11 @@ function calculatePage(p, state, props) {
               'keyup': this.handleKeyUp,
               'input': this.handleKeyUp
             }
-          }), h(
+          }, {
+            directives: [{
+              name: 'ant-input'
+            }]
+          }])), h(
             'span',
             { 'class': prefixCls + '-slash' },
             ['\uFF0F']
@@ -45533,10 +45619,11 @@ __webpack_require__.r(__webpack_exports__);
           visible = props.visible;
 
       var menuItemSelectedIcon = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getComponentFromProp"])(this, 'menuItemSelectedIcon');
-      var _$listeners = this.$listeners,
-          menuDeselect = _$listeners.menuDeselect,
-          menuSelect = _$listeners.menuSelect,
-          popupScroll = _$listeners.popupScroll;
+
+      var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
+          menuDeselect = _getListeners.menuDeselect,
+          menuSelect = _getListeners.menuSelect,
+          popupScroll = _getListeners.popupScroll;
 
       if (menuItems && menuItems.length) {
         var selectedKeys = Object(_util__WEBPACK_IMPORTED_MODULE_5__["getSelectKeys"])(menuItems, value);
@@ -45628,9 +45715,10 @@ __webpack_require__.r(__webpack_exports__);
     var h = arguments[0];
 
     var renderMenu = this.renderMenu();
-    var _$listeners2 = this.$listeners,
-        popupFocus = _$listeners2.popupFocus,
-        popupScroll = _$listeners2.popupScroll;
+
+    var _getListeners2 = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
+        popupFocus = _getListeners2.popupFocus,
+        popupScroll = _getListeners2.popupScroll;
 
     return renderMenu ? h(
       'div',
@@ -45798,7 +45886,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var component_classes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! component-classes */ "./node_modules/component-classes/index.js");
 /* harmony import */ var component_classes__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(component_classes__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _vc_menu__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../vc-menu */ "./components/vc-menu/index.js");
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vue */ "vue");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_9__);
@@ -45935,7 +46023,8 @@ var Select = {
       _skipBuildOptionsInfo: true,
       _ariaId: Object(_util__WEBPACK_IMPORTED_MODULE_19__["generateUUID"])()
     };
-    return babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, state, this.getDerivedStateFromProps(props, state));
+    return babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, state, {
+      _mirrorInputValue: state._inputValue }, this.getDerivedStateFromProps(props, state));
   },
   mounted: function mounted() {
     var _this = this;
@@ -45955,6 +46044,10 @@ var Select = {
   watch: {
     __propsSymbol__: function __propsSymbol__() {
       babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()(this.$data, this.getDerivedStateFromProps(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getOptionProps"])(this), this.$data));
+    },
+
+    '$data._inputValue': function $data_inputValue(val) {
+      this.$data._mirrorInputValue = val;
     }
   },
   updated: function updated() {
@@ -46095,10 +46188,22 @@ var Select = {
       }
       return value;
     },
-    onInputChange: function onInputChange(event) {
+    onInputChange: function onInputChange(e) {
+      var _e$target = e.target,
+          val = _e$target.value,
+          composing = _e$target.composing;
+
+      var _$data$_inputValue = this.$data._inputValue,
+          _inputValue = _$data$_inputValue === undefined ? '' : _$data$_inputValue;
+
+      if (composing || _inputValue === val) {
+        this.setState({
+          _mirrorInputValue: val
+        });
+        return;
+      }
       var tokenSeparators = this.$props.tokenSeparators;
 
-      var val = event.target.value;
       if (Object(_util__WEBPACK_IMPORTED_MODULE_19__["isMultipleOrTags"])(this.$props) && tokenSeparators.length && Object(_util__WEBPACK_IMPORTED_MODULE_19__["includesSeparators"])(val, tokenSeparators)) {
         var nextValue = this.getValueByInput(val);
         if (nextValue !== undefined) {
@@ -46403,14 +46508,14 @@ var Select = {
           state = this.$data;
 
       var hidden = false;
-      if (state._inputValue) {
+      if (state._mirrorInputValue) {
         hidden = true;
       }
       var value = state._value;
       if (value.length) {
         hidden = true;
       }
-      if (Object(_util__WEBPACK_IMPORTED_MODULE_19__["isCombobox"])(props) && value.length === 1 && state._value && !state._value[0]) {
+      if (!state._mirrorInputValue && Object(_util__WEBPACK_IMPORTED_MODULE_19__["isCombobox"])(props) && value.length === 1 && state._value && !state._value[0]) {
         hidden = false;
       }
       var placeholder = props.placeholder;
@@ -46525,7 +46630,9 @@ var Select = {
       var h = this.$createElement;
 
       var props = this.$props;
-      var inputValue = this.$data._inputValue;
+      var _$data = this.$data,
+          inputValue = _$data._inputValue,
+          _mirrorInputValue = _$data._mirrorInputValue;
 
       var attrs = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getAttrs"])(this);
       var defaultInput = h('input', {
@@ -46560,10 +46667,12 @@ var Select = {
           directives: [{
             name: 'ant-ref',
             value: this.saveInputRef
+          }, {
+            name: 'ant-input'
           }],
           on: {
             input: this.onInputChange,
-            keydown: chaining(this.onInputKeydown, inputEvents.keydown, this.$listeners.inputKeydown),
+            keydown: chaining(this.onInputKeydown, inputEvents.keydown, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this).inputKeydown),
             focus: chaining(this.inputFocus, inputEvents.focus),
             blur: chaining(this.inputBlur, inputEvents.blur)
           }
@@ -46578,7 +46687,7 @@ var Select = {
             // ref='inputMirrorRef'
             'class': props.prefixCls + '-search__field__mirror'
           }]),
-          [inputValue, '\xA0']
+          [_mirrorInputValue, '\xA0']
         )]
       );
     },
@@ -46718,9 +46827,9 @@ var Select = {
     },
     _filterOption: function _filterOption(input, child) {
       var defaultFilter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : _util__WEBPACK_IMPORTED_MODULE_19__["defaultFilterFn"];
-      var _$data = this.$data,
-          value = _$data._value,
-          backfillValue = _$data._backfillValue;
+      var _$data2 = this.$data,
+          value = _$data2._value,
+          backfillValue = _$data2._backfillValue;
 
       var lastValue = value[value.length - 1];
       if (!input || lastValue && lastValue === backfillValue) {
@@ -47052,10 +47161,10 @@ var Select = {
 
       var h = this.$createElement;
       var props = this.$props;
-      var _$data2 = this.$data,
-          value = _$data2._value,
-          inputValue = _$data2._inputValue,
-          open = _$data2._open;
+      var _$data3 = this.$data,
+          value = _$data3._value,
+          inputValue = _$data3._inputValue,
+          open = _$data3._open;
       var choiceTransitionName = props.choiceTransitionName,
           prefixCls = props.prefixCls,
           maxTagTextLength = props.maxTagTextLength,
@@ -47285,9 +47394,9 @@ var Select = {
       var _$props4 = this.$props,
           prefixCls = _$props4.prefixCls,
           allowClear = _$props4.allowClear;
-      var _$data3 = this.$data,
-          value = _$data3._value,
-          inputValue = _$data3._inputValue;
+      var _$data4 = this.$data,
+          value = _$data4._value,
+          inputValue = _$data4._inputValue;
 
       var clearIcon = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getComponentFromProp"])(this, 'clearIcon');
       var clear = h(
@@ -47376,10 +47485,10 @@ var Select = {
         loading = props.loading;
 
     var ctrlNode = this.renderTopControlNode();
-    var _$data4 = this.$data,
-        open = _$data4._open,
-        inputValue = _$data4._inputValue,
-        value = _$data4._value;
+    var _$data5 = this.$data,
+        open = _$data5._open,
+        inputValue = _$data5._inputValue,
+        value = _$data5._value;
 
     if (open) {
       var filterOptions = this.renderFilterOptions();
@@ -47389,13 +47498,14 @@ var Select = {
     var realOpen = this.getRealOpenState();
     var empty = this._empty;
     var options = this._options || [];
-    var $listeners = this.$listeners;
-    var _$listeners$mouseente = $listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = $listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav,
-        _$listeners$popupScro = $listeners.popupScroll,
-        popupScroll = _$listeners$popupScro === undefined ? noop : _$listeners$popupScro;
+
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_12__["getListeners"])(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele,
+        _getListeners$popupSc = _getListeners.popupScroll,
+        popupScroll = _getListeners$popupSc === undefined ? noop : _getListeners$popupSc;
 
     var selectionProps = {
       props: {},
@@ -47532,6 +47642,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DropdownMenu__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./DropdownMenu */ "./components/vc-select/DropdownMenu.jsx");
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./util */ "./components/vc-select/util.js");
 /* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -47640,10 +47752,11 @@ var BUILT_IN_PLACEMENTS = {
           getDropdownPrefixCls = this.getDropdownPrefixCls,
           backfillValue = this.backfillValue,
           menuItemSelectedIcon = this.menuItemSelectedIcon;
-      var _$listeners = this.$listeners,
-          menuSelect = _$listeners.menuSelect,
-          menuDeselect = _$listeners.menuDeselect,
-          popupScroll = _$listeners.popupScroll;
+
+      var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
+          menuSelect = _getListeners.menuSelect,
+          menuDeselect = _getListeners.menuDeselect,
+          popupScroll = _getListeners.popupScroll;
 
       var props = this.$props;
 
@@ -47696,8 +47809,7 @@ var BUILT_IN_PLACEMENTS = {
 
     var h = arguments[0];
     var $props = this.$props,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
     var multiple = $props.multiple,
         visible = $props.visible,
         inputValue = $props.inputValue,
@@ -47711,10 +47823,12 @@ var BUILT_IN_PLACEMENTS = {
         getPopupContainer = $props.getPopupContainer,
         showAction = $props.showAction,
         empty = $props.empty;
-    var mouseenter = $listeners.mouseenter,
-        mouseleave = $listeners.mouseleave,
-        popupFocus = $listeners.popupFocus,
-        dropdownVisibleChange = $listeners.dropdownVisibleChange;
+
+    var _getListeners2 = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
+        mouseenter = _getListeners2.mouseenter,
+        mouseleave = _getListeners2.mouseleave,
+        popupFocus = _getListeners2.popupFocus,
+        dropdownVisibleChange = _getListeners2.dropdownVisibleChange;
 
     var dropdownPrefixCls = this.getDropdownPrefixCls();
     var popupClassName = (_popupClassName = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_popupClassName, dropdownClassName, !!dropdownClassName), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_popupClassName, dropdownPrefixCls + '--' + (multiple ? 'multiple' : 'single'), 1), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_popupClassName, dropdownPrefixCls + '--empty', empty), _popupClassName);
@@ -48740,7 +48854,7 @@ function noop() {}
       var slidesToLoad = state.lazyLoadedList.filter(function (value) {
         return _this4.lazyLoadedList.indexOf(value) < 0;
       });
-      if (this.$listeners.lazyLoad && slidesToLoad.length > 0) {
+      if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this).lazyLoad && slidesToLoad.length > 0) {
         this.$emit('lazyLoad', slidesToLoad);
       }
       this.setState(state, function () {
@@ -49503,7 +49617,7 @@ vue__WEBPACK_IMPORTED_MODULE_2___default.a.use(vue_ref__WEBPACK_IMPORTED_MODULE_
         children: newChildren,
         __propsSymbol__: Symbol()
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners),
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this),
       directives: [{
         name: 'ant-ref',
         value: this.innerSliderRefHandler
@@ -50639,7 +50753,7 @@ __webpack_require__.r(__webpack_exports__);
         tabIndex: disabled ? null : tabIndex || 0
       }, ariaProps),
       'class': className,
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this), {
         blur: this.handleBlur,
         keydown: this.handleKeyDown,
         mousedown: this.handleMousedown
@@ -52327,7 +52441,7 @@ function isString(str) {
     var classString = (_classString = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-item', true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-item-' + status, true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classString, prefixCls + '-item-custom', Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getComponentFromProp"])(this, 'icon')), _classString);
     var stepProps = {
       'class': classString,
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
     var stepItemStyle = {};
     if (itemWidth) {
@@ -52503,7 +52617,7 @@ __webpack_require__.r(__webpack_exports__);
     var stepsProps = {
       'class': classString,
       ref: 'vcStepsRef',
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this)
     };
     return h(
       'div',
@@ -52723,7 +52837,7 @@ __webpack_require__.r(__webpack_exports__);
     var switchClassName = (_switchClassName = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_switchClassName, prefixCls, true), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_switchClassName, prefixCls + '-checked', checked), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(_switchClassName, prefixCls + '-disabled', disabled), _switchClassName);
     var spanProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, restProps),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this), {
         keydown: this.handleKeyDown,
         click: this.handleClick,
         mouseup: this.handleMouseUp
@@ -52842,8 +52956,7 @@ var Table = {
   },
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners,
-        $slots = this.$slots,
+    var $slots = this.$slots,
         normalize = this.normalize;
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getOptionProps"])(this);
@@ -52852,7 +52965,7 @@ var Table = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, props, {
         columns: columns
       }),
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_4__["getListeners"])(this)
     };
     return h(_src_Table__WEBPACK_IMPORTED_MODULE_1__["default"], tProps);
   }
@@ -52942,19 +53055,21 @@ var BaseTable = {
           prefixCls = _table.prefixCls,
           childrenColumnName = _table.childrenColumnName,
           rowClassName = _table.rowClassName,
-          _table$$listeners = _table.$listeners,
-          _table$$listeners$row = _table$$listeners.rowClick,
-          onRowClick = _table$$listeners$row === undefined ? noop : _table$$listeners$row,
-          _table$$listeners$row2 = _table$$listeners.rowDoubleclick,
-          onRowDoubleClick = _table$$listeners$row2 === undefined ? noop : _table$$listeners$row2,
-          _table$$listeners$row3 = _table$$listeners.rowContextmenu,
-          onRowContextMenu = _table$$listeners$row3 === undefined ? noop : _table$$listeners$row3,
-          _table$$listeners$row4 = _table$$listeners.rowMouseenter,
-          onRowMouseEnter = _table$$listeners$row4 === undefined ? noop : _table$$listeners$row4,
-          _table$$listeners$row5 = _table$$listeners.rowMouseleave,
-          onRowMouseLeave = _table$$listeners$row5 === undefined ? noop : _table$$listeners$row5,
           _table$customRow = _table.customRow,
           customRow = _table$customRow === undefined ? noop : _table$customRow;
+
+      var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this.table),
+          _getListeners$rowClic = _getListeners.rowClick,
+          onRowClick = _getListeners$rowClic === undefined ? noop : _getListeners$rowClic,
+          _getListeners$rowDoub = _getListeners.rowDoubleclick,
+          onRowDoubleClick = _getListeners$rowDoub === undefined ? noop : _getListeners$rowDoub,
+          _getListeners$rowCont = _getListeners.rowContextmenu,
+          onRowContextMenu = _getListeners$rowCont === undefined ? noop : _getListeners$rowCont,
+          _getListeners$rowMous = _getListeners.rowMouseenter,
+          onRowMouseEnter = _getListeners$rowMous === undefined ? noop : _getListeners$rowMous,
+          _getListeners$rowMous2 = _getListeners.rowMouseleave,
+          onRowMouseLeave = _getListeners$rowMous2 === undefined ? noop : _getListeners$rowMous2;
+
       var getRowKey = this.getRowKey,
           fixed = this.fixed,
           expander = this.expander,
@@ -54042,8 +54157,7 @@ var ExpandableTable = {
   render: function render() {
     var data = this.data,
         childrenColumnName = this.childrenColumnName,
-        $scopedSlots = this.$scopedSlots,
-        $listeners = this.$listeners;
+        $scopedSlots = this.$scopedSlots;
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getOptionProps"])(this);
     var needIndentSpaced = data.some(function (record) {
@@ -54052,7 +54166,7 @@ var ExpandableTable = {
 
     return $scopedSlots['default'] && $scopedSlots['default']({
       props: props,
-      on: $listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
       needIndentSpaced: needIndentSpaced,
       renderRows: this.renderRows,
       handleExpandChange: this.handleExpandChange,
@@ -54342,7 +54456,7 @@ __webpack_require__.r(__webpack_exports__);
     var _this2 = this;
 
     ['rowClick', 'rowDoubleclick', 'rowContextmenu', 'rowMouseenter', 'rowMouseleave'].forEach(function (name) {
-      Object(_utils__WEBPACK_IMPORTED_MODULE_6__["warningOnce"])(_this2.$listeners[name] === undefined, name + ' is deprecated, please use customRow instead.');
+      Object(_utils__WEBPACK_IMPORTED_MODULE_6__["warningOnce"])(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getListeners"])(_this2)[name] === undefined, name + ' is deprecated, please use customRow instead.');
     });
 
     Object(_utils__WEBPACK_IMPORTED_MODULE_6__["warningOnce"])(this.getBodyWrapper === undefined, 'getBodyWrapper is deprecated, please use custom components instead.');
@@ -54701,8 +54815,7 @@ __webpack_require__.r(__webpack_exports__);
     var h = arguments[0];
 
     var props = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getOptionProps"])(this);
-    var $listeners = this.$listeners,
-        columnManager = this.columnManager,
+    var columnManager = this.columnManager,
         getRowKey = this.getRowKey;
 
     var prefixCls = props.prefixCls;
@@ -54723,7 +54836,7 @@ __webpack_require__.r(__webpack_exports__);
         columnManager: columnManager,
         getRowKey: getRowKey
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, $listeners),
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_13__["getListeners"])(this),
       scopedSlots: {
         'default': function _default(expander) {
           _this5.expander = expander;
@@ -54841,7 +54954,7 @@ function isInvalidRenderCellText(text) {
     var rowSpan = void 0;
 
     if (customRender) {
-      text = customRender(text, record, index);
+      text = customRender(text, record, index, column);
       if (isInvalidRenderCellText(text)) {
         tdProps.attrs = text.attrs || {};
         tdProps.props = text.props || {};
@@ -55475,7 +55588,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "warningOnce", function() { return warningOnce; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "remove", function() { return remove; });
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_0__);
 
 
@@ -55821,6 +55934,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _TabBarRootNode__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./TabBarRootNode */ "./components/vc-tabs/src/TabBarRootNode.jsx");
 /* harmony import */ var _ScrollableTabBarNode__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./ScrollableTabBarNode */ "./components/vc-tabs/src/ScrollableTabBarNode.jsx");
 /* harmony import */ var _SaveRef__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./SaveRef */ "./components/vc-tabs/src/SaveRef.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -55837,7 +55952,7 @@ __webpack_require__.r(__webpack_exports__);
     var h = arguments[0];
 
     var props = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, this.$props);
-    var listeners = this.$listeners;
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this);
     var renderTabBarNode = this.$scopedSlots['default'];
 
     return h(_SaveRef__WEBPACK_IMPORTED_MODULE_6__["default"], {
@@ -55980,7 +56095,6 @@ function noop() {}
         return;
       }
       // wait next, prev show hide
-      /* eslint react/no-did-update-set-state:0 */
       if (this.isNextPrevShown(this.$data) !== this.isNextPrevShown(this.setNextPrev())) {
         this.$forceUpdate();
         this.$nextTick(function () {
@@ -56164,8 +56278,8 @@ function noop() {}
 
       this.setOffset(offset + navWrapNodeWH);
     },
-    nextClick: function nextClick() {
-      // this.__emit('nextClick', e)
+    nextClick: function nextClick(e) {
+      this.__emit('nextClick', e);
       var navWrapNode = this.$props.getRef('navWrap');
       var navWrapNodeWH = this.getOffsetWH(navWrapNode);
       var offset = this.offset;
@@ -56440,7 +56554,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/defineProperty */ "./node_modules/babel-runtime/helpers/defineProperty.js");
 /* harmony import */ var babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../_util/BaseMixin */ "./components/_util/BaseMixin.js");
@@ -56995,7 +57109,7 @@ function activeKeyIsValid(props, key) {
     } else {
       contents.push(tabBar, sentinelStart, tabContent, sentinelEnd);
     }
-    var listeners = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_2__["default"])(this.$listeners, ['change']), {
+    var listeners = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(omit_js__WEBPACK_IMPORTED_MODULE_2__["default"])(Object(_util_props_util__WEBPACK_IMPORTED_MODULE_7__["getListeners"])(this), ['change']), {
       scroll: this.onScroll
     });
     return h(
@@ -57471,12 +57585,15 @@ var Combobox = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
-/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moment */ "moment");
-/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
-/* harmony import */ var _util_env__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/env */ "./components/_util/env.js");
+/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! babel-helper-vue-jsx-merge-props */ "./node_modules/babel-helper-vue-jsx-merge-props/index.js");
+/* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
+/* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! moment */ "moment");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+/* harmony import */ var _util_env__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../_util/env */ "./components/_util/env.js");
+
 
 
 
@@ -57484,30 +57601,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var Header = {
-  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  mixins: [_util_BaseMixin__WEBPACK_IMPORTED_MODULE_2__["default"]],
   props: {
-    format: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    disabledDate: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
-    placeholder: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    clearText: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    value: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].object,
-    inputReadOnly: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool.def(false),
-    hourOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].array,
-    minuteOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].array,
-    secondOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].array,
-    disabledHours: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
-    disabledMinutes: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
-    disabledSeconds: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].func,
+    format: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    prefixCls: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    disabledDate: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
+    placeholder: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    clearText: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    value: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object,
+    inputReadOnly: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool.def(false),
+    hourOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array,
+    minuteOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array,
+    secondOptions: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].array,
+    disabledHours: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
+    disabledMinutes: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
+    disabledSeconds: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].func,
     // onChange: PropTypes.func,
     // onClear: PropTypes.func,
     // onEsc: PropTypes.func,
-    allowEmpty: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,
-    defaultOpenValue: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].object,
-    currentSelectPanel: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].string,
-    focusOnOpen: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].bool,
+    allowEmpty: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool,
+    defaultOpenValue: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].object,
+    currentSelectPanel: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].string,
+    focusOnOpen: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].bool,
     // onKeyDown: PropTypes.func,
-    clearIcon: _util_vue_types__WEBPACK_IMPORTED_MODULE_0__["default"].any
+    clearIcon: _util_vue_types__WEBPACK_IMPORTED_MODULE_1__["default"].any
   },
   data: function data() {
     var value = this.value,
@@ -57547,12 +57664,14 @@ var Header = {
   },
 
   methods: {
-    onInputChange: function onInputChange(event) {
-      var str = event.target.value;
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (_util_env__WEBPACK_IMPORTED_MODULE_4__["isIE"] && !_util_env__WEBPACK_IMPORTED_MODULE_4__["isIE9"] && this.str === str) {
-        return;
-      }
+    onInputChange: function onInputChange(e) {
+      var _e$target = e.target,
+          str = _e$target.value,
+          composing = _e$target.composing;
+      var _str = this.str,
+          oldStr = _str === undefined ? '' : _str;
+
+      if (composing || oldStr === str) return;
 
       this.setState({
         str: str
@@ -57570,7 +57689,7 @@ var Header = {
 
       if (str) {
         var value = this.getProtoValue().clone();
-        var parsed = moment__WEBPACK_IMPORTED_MODULE_2___default()(str, format, true);
+        var parsed = moment__WEBPACK_IMPORTED_MODULE_3___default()(str, format, true);
         if (!parsed.isValid()) {
           this.setState({
             invalid: true
@@ -57641,7 +57760,7 @@ var Header = {
           str = this.str;
 
       var invalidClass = invalid ? prefixCls + '-input-invalid' : '';
-      return h('input', {
+      return h('input', babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{
         'class': prefixCls + '-input ' + invalidClass,
         ref: 'input',
         on: {
@@ -57656,7 +57775,11 @@ var Header = {
 
           readOnly: !!inputReadOnly
         }
-      });
+      }, {
+        directives: [{
+          name: 'ant-input'
+        }]
+      }]));
     }
   },
 
@@ -57845,18 +57968,17 @@ var Panel = {
         secondStep = this.secondStep,
         inputReadOnly = this.inputReadOnly,
         sValue = this.sValue,
-        currentSelectPanel = this.currentSelectPanel,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+        currentSelectPanel = this.currentSelectPanel;
 
     var clearIcon = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getComponentFromProp"])(this, 'clearIcon');
-    var _$listeners$esc = $listeners.esc,
-        esc = _$listeners$esc === undefined ? noop : _$listeners$esc,
-        _$listeners$clear = $listeners.clear,
-        clear = _$listeners$clear === undefined ? noop : _$listeners$clear,
-        _$listeners$keydown = $listeners.keydown,
-        keydown = _$listeners$keydown === undefined ? noop : _$listeners$keydown;
 
+    var _getListeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this),
+        _getListeners$esc = _getListeners.esc,
+        esc = _getListeners$esc === undefined ? noop : _getListeners$esc,
+        _getListeners$clear = _getListeners.clear,
+        clear = _getListeners$clear === undefined ? noop : _getListeners$clear,
+        _getListeners$keydown = _getListeners.keydown,
+        keydown = _getListeners$keydown === undefined ? noop : _getListeners$keydown;
 
     var disabledHourOptions = this.disabledHours2();
     var disabledMinuteOptions = disabledMinutes(sValue ? sValue.hour() : null);
@@ -58184,7 +58306,6 @@ function noop() {}
     popupClassName: '',
     popupStyle: {},
     align: {},
-    id: '',
     allowEmpty: true,
     showHour: true,
     showMinute: true,
@@ -58734,6 +58855,7 @@ function noop() {}
     if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["hasProp"])(this, 'visible')) {
       extraProps.popupVisible = this.$props.visible;
     }
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this);
     var triggerProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({
         popupClassName: overlayClassName,
@@ -58752,9 +58874,9 @@ function noop() {}
         popupStyle: overlayStyle,
         mouseEnterDelay: mouseEnterDelay
       }, extraProps),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners, {
-        popupVisibleChange: this.$listeners.visibleChange || noop,
-        popupAlign: this.$listeners.popupAlign || noop
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, listeners, {
+        popupVisibleChange: listeners.visibleChange || noop,
+        popupAlign: listeners.popupAlign || noop
       }),
       ref: 'trigger'
     };
@@ -58933,7 +59055,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _vc_tree__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../vc-tree */ "./components/vc-tree/index.js");
@@ -59074,7 +59196,7 @@ var BasePopup = {
       _keyList: [],
       _expandedKeyList: expandedKeyList,
       // Cache `expandedKeyList` when tree is in filter. This is used in `getDerivedStateFromProps`
-      _cachedExpandedKeyList: [], // eslint-disable-line react/no-unused-state
+      _cachedExpandedKeyList: [],
       _loadedKeys: [],
       _prevProps: {}
     };
@@ -59418,8 +59540,7 @@ function noop() {}
           renderSelection = _$props3.renderSelection,
           renderPlaceholder = _$props3.renderPlaceholder,
           tabIndex = _$props3.tabIndex;
-      var onSelectorKeyDown = this.vcTreeSelect.onSelectorKeyDown,
-          $listeners = this.$listeners;
+      var onSelectorKeyDown = this.vcTreeSelect.onSelectorKeyDown;
 
 
       var myTabIndex = tabIndex;
@@ -59432,7 +59553,7 @@ function noop() {}
         babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default()([{
           style: style,
           on: {
-            'click': $listeners.click || noop
+            'click': Object(_util_props_util__WEBPACK_IMPORTED_MODULE_6__["getListeners"])(this).click || noop
           },
 
           'class': classnames__WEBPACK_IMPORTED_MODULE_5___default()(className, prefixCls, (_classNames = {}, babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classNames, prefixCls + '-open', open), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classNames, prefixCls + '-focused', open || focused), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classNames, prefixCls + '-disabled', disabled), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classNames, prefixCls + '-enabled', !disabled), babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_1___default()(_classNames, prefixCls + '-allow-clear', allowClear), _classNames))
@@ -59505,6 +59626,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Base_BasePopup__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Base/BasePopup */ "./components/vc-tree-select/src/Base/BasePopup.jsx");
 /* harmony import */ var _SearchInput__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../SearchInput */ "./components/vc-tree-select/src/SearchInput.jsx");
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util */ "./components/vc-tree-select/src/util.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -59571,7 +59694,7 @@ var SinglePopup = {
         { 'class': dropdownPrefixCls + '-search' },
         [h(_SearchInput__WEBPACK_IMPORTED_MODULE_3__["default"], {
           props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$props, { renderPlaceholder: this._renderPlaceholder }),
-          on: this.$listeners,
+          on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this),
           directives: [{
             name: 'ant-ref',
             value: this.inputRef
@@ -59585,7 +59708,7 @@ var SinglePopup = {
 
     return h(_Base_BasePopup__WEBPACK_IMPORTED_MODULE_2__["default"], {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$props, { renderSearch: this._renderSearch, __propsSymbol__: Symbol() }),
-      on: this.$listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this)
     });
   }
 };
@@ -59637,7 +59760,17 @@ var SearchInput = {
         return {};
       } }
   },
+  data: function data() {
+    return {
+      mirrorSearchValue: this.searchValue
+    };
+  },
 
+  watch: {
+    searchValue: function searchValue(val) {
+      this.mirrorSearchValue = val;
+    }
+  },
   created: function created() {
     this.inputRef = Object(_util__WEBPACK_IMPORTED_MODULE_3__["createRef"])();
     this.mirrorInputRef = Object(_util__WEBPACK_IMPORTED_MODULE_3__["createRef"])();
@@ -59712,6 +59845,19 @@ var SearchInput = {
       if (this.inputRef.current) {
         this.inputRef.current.blur();
       }
+    },
+    handleInputChange: function handleInputChange(e) {
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+      var _searchValue = this.searchValue,
+          searchValue = _searchValue === undefined ? '' : _searchValue;
+
+      if (composing || searchValue === value) {
+        this.mirrorSearchValue = value;
+        return;
+      }
+      this.vcTreeSelect.onSearchInputChange(e);
     }
   },
 
@@ -59724,9 +59870,9 @@ var SearchInput = {
         renderPlaceholder = _$props3.renderPlaceholder,
         open = _$props3.open,
         ariaId = _$props3.ariaId;
-    var _vcTreeSelect = this.vcTreeSelect,
-        onSearchInputChange = _vcTreeSelect.onSearchInputChange,
-        onSearchInputKeyDown = _vcTreeSelect.onSearchInputKeyDown;
+    var onSearchInputKeyDown = this.vcTreeSelect.onSearchInputKeyDown,
+        handleInputChange = this.handleInputChange,
+        mirrorSearchValue = this.mirrorSearchValue;
 
     return h(
       'span',
@@ -59739,10 +59885,12 @@ var SearchInput = {
         directives: [{
           name: 'ant-ref',
           value: this.inputRef
+        }, {
+          name: 'ant-input'
         }]
       }, {
         on: {
-          'input': onSearchInputChange,
+          'input': handleInputChange,
           'keydown': onSearchInputKeyDown
         },
         domProps: {
@@ -59766,7 +59914,7 @@ var SearchInput = {
         }, {
           'class': prefixCls + '-search__field__mirror'
         }]),
-        [searchValue, '\xA0']
+        [mirrorSearchValue, '\xA0']
       ), renderPlaceholder ? renderPlaceholder() : null]
     );
   }
@@ -59795,7 +59943,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var shallowequal__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(shallowequal__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var raf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! raf */ "./node_modules/raf/index.js");
 /* harmony import */ var raf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(raf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _util_KeyCode__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../_util/KeyCode */ "./components/_util/KeyCode.js");
@@ -60614,8 +60762,8 @@ var Select = {
       }
       this.setOpenState(open, true);
     },
-    onSearchInputChange: function onSearchInputChange(_ref15) {
-      var value = _ref15.target.value;
+    onSearchInputChange: function onSearchInputChange(event) {
+      var value = event.target.value;
       var _$data5 = this.$data,
           treeNodes = _$data5._treeNodes,
           valueEntities = _$data5._valueEntities;
@@ -60773,9 +60921,9 @@ var Select = {
       // Trigger
       var extra = babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({
         // [Legacy] Always return as array contains label & value
-        preValue: prevSelectorValueList.map(function (_ref16) {
-          var label = _ref16.label,
-              value = _ref16.value;
+        preValue: prevSelectorValueList.map(function (_ref15) {
+          var label = _ref15.label,
+              value = _ref15.value;
           return { label: label, value: value };
         })
       }, extraInfo);
@@ -60798,7 +60946,7 @@ var Select = {
       }
 
       // Only do the logic when `onChange` function provided
-      if (this.$listeners.change) {
+      if (Object(_util_props_util__WEBPACK_IMPORTED_MODULE_17__["getListeners"])(this).change) {
         var connectValueList = void 0;
 
         // Get value by mode
@@ -60812,16 +60960,16 @@ var Select = {
         var returnValue = void 0;
 
         if (this.isLabelInValue()) {
-          returnValue = connectValueList.map(function (_ref17) {
-            var label = _ref17.label,
-                value = _ref17.value;
+          returnValue = connectValueList.map(function (_ref16) {
+            var label = _ref16.label,
+                value = _ref16.value;
             return { label: label, value: value };
           });
         } else {
           labelList = [];
-          returnValue = connectValueList.map(function (_ref18) {
-            var label = _ref18.label,
-                value = _ref18.value;
+          returnValue = connectValueList.map(function (_ref17) {
+            var label = _ref17.label,
+                value = _ref17.value;
 
             labelList.push(label);
             return value;
@@ -60880,7 +61028,7 @@ var Select = {
         dropdownPrefixCls: prefixCls + '-dropdown',
         ariaId: this.ariaId
       }),
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$listeners, {
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_17__["getListeners"])(this), {
         choiceAnimationLeave: this.onChoiceAnimationLeave
       }),
       scopedSlots: this.$scopedSlots
@@ -61198,7 +61346,6 @@ var Selection = {
         maxTagTextLength = _$props.maxTagTextLength,
         label = _$props.label,
         value = _$props.value;
-    var $listeners = this.$listeners;
 
     var content = label || value;
     if (maxTagTextLength && typeof content === 'string' && content.length > maxTagTextLength) {
@@ -61216,7 +61363,7 @@ var Selection = {
           title: Object(_util__WEBPACK_IMPORTED_MODULE_2__["toTitle"])(label)
         },
         'class': prefixCls + '-selection__choice' }]),
-      [$listeners.remove && h(
+      [Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this).remove && h(
         'span',
         { 'class': prefixCls + '-selection__choice__remove', on: {
             'click': this.onRemove
@@ -61359,11 +61506,10 @@ var MultipleSelector = {
           labelInValue = _$props2.labelInValue,
           maxTagCount = _$props2.maxTagCount;
       var onMultipleSelectorRemove = this.vcTreeSelect.onMultipleSelectorRemove,
-          $listeners = this.$listeners,
           $slots = this.$slots;
 
+      var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this);
       // Check if `maxTagCount` is set
-
       var myValueList = selectorValueList;
       if (maxTagCount >= 0) {
         myValueList = selectorValueList.slice(0, maxTagCount);
@@ -61379,7 +61525,7 @@ var MultipleSelector = {
               label: label,
               value: value
             }),
-            on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, $listeners, { remove: onMultipleSelectorRemove })
+            on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, listeners, { remove: onMultipleSelectorRemove })
           }, {
             key: value || TREE_SELECT_EMPTY_VALUE_KEY
           }]),
@@ -61408,7 +61554,7 @@ var MultipleSelector = {
               label: content,
               value: null
             }),
-            on: $listeners
+            on: listeners
           }, {
             key: 'rc-tree-select-internal-max-tag-counter'
           }]),
@@ -61427,7 +61573,7 @@ var MultipleSelector = {
             props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default()({}, this.$props, {
               needAlign: true
             }),
-            on: $listeners,
+            on: listeners,
             directives: [{
               name: 'ant-ref',
               value: this.inputRef
@@ -61459,9 +61605,9 @@ var MultipleSelector = {
 
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners,
-        $slots = this.$slots;
+    var $slots = this.$slots;
 
+    var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this);
     return h(
       Selector,
       {
@@ -61471,7 +61617,7 @@ var MultipleSelector = {
           renderSelection: this.renderSelection,
           renderPlaceholder: this._renderPlaceholder
         }),
-        on: $listeners
+        on: listeners
       },
       [$slots['default']]
     );
@@ -61561,7 +61707,7 @@ var SingleSelector = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getOptionProps"])(this), {
         renderSelection: this.renderSelection
       }),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this),
       directives: [{
         name: 'ant-ref',
         value: this.selectorRef
@@ -61657,7 +61803,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! babel-runtime/helpers/extends */ "./node_modules/babel-runtime/helpers/extends.js");
 /* harmony import */ var babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var omit_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! omit.js */ "./node_modules/omit.js/es/index.js");
 /* harmony import */ var _vc_tree_src_util__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../vc-tree/src/util */ "./components/vc-tree/src/util.js");
@@ -62166,7 +62312,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! classnames */ "./node_modules/classnames/index.js");
 /* harmony import */ var classnames__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(classnames__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../_util/props-util */ "./components/_util/props-util.js");
 /* harmony import */ var _util_vnode__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../_util/vnode */ "./components/_util/vnode.js");
@@ -62541,7 +62687,7 @@ var Tree = {
       this.__emit('click', e, treeNode);
     },
     onNodeDoubleClick: function onNodeDoubleClick(e, treeNode) {
-      this.__emit('doubleclick', e, treeNode);
+      this.__emit('dblclick', e, treeNode);
     },
     onNodeSelect: function onNodeSelect(e, treeNode) {
       var selectedKeys = this.$data._selectedKeys;
@@ -63476,7 +63622,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! babel-runtime/helpers/objectWithoutProperties */ "./node_modules/babel-runtime/helpers/objectWithoutProperties.js");
 /* harmony import */ var babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(babel_runtime_helpers_objectWithoutProperties__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! warning */ "./node_modules/warning/browser.js");
+/* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! warning */ "./node_modules/warning/warning.js");
 /* harmony import */ var warning__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(warning__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var omit_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! omit.js */ "./node_modules/omit.js/es/index.js");
 /* harmony import */ var _TreeNode__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./TreeNode */ "./components/vc-tree/src/TreeNode.jsx");
@@ -64082,6 +64228,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _LazyRenderBox__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./LazyRenderBox */ "./components/vc-trigger/LazyRenderBox.jsx");
 /* harmony import */ var _util_css_animation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../_util/css-animation */ "./components/_util/css-animation/index.js");
 /* harmony import */ var _util_BaseMixin__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../_util/BaseMixin */ "./components/_util/BaseMixin.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -64116,6 +64264,7 @@ __webpack_require__.r(__webpack_exports__);
     })
   },
   data: function data() {
+    this.domEl = null;
     return {
       // Used for stretch
       stretchChecked: false,
@@ -64130,6 +64279,12 @@ __webpack_require__.r(__webpack_exports__);
       _this.rootNode = _this.getPopupDomNode();
       _this.setStretchSize();
     });
+  },
+  beforeUpdate: function beforeUpdate() {
+    if (this.domEl && this.domEl.rcEndListener) {
+      this.domEl.rcEndListener();
+      this.domEl = null;
+    }
   },
   updated: function updated() {
     var _this2 = this;
@@ -64156,7 +64311,8 @@ __webpack_require__.r(__webpack_exports__);
         this.currentAlignClassName = currentAlignClassName;
         popupDomNode.className = this.getClassName(currentAlignClassName);
       }
-      this.$listeners.align && this.$listeners.align(popupDomNode, align);
+      var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this);
+      listeners.align && listeners.align(popupDomNode, align);
     },
 
 
@@ -64242,7 +64398,6 @@ __webpack_require__.r(__webpack_exports__);
       var h = this.$createElement;
       var props = this.$props,
           $slots = this.$slots,
-          $listeners = this.$listeners,
           getTransitionName = this.getTransitionName;
       var _$data2 = this.$data,
           stretchChecked = _$data2.stretchChecked,
@@ -64256,7 +64411,6 @@ __webpack_require__.r(__webpack_exports__);
           getClassNameFromAlign = props.getClassNameFromAlign,
           destroyPopupOnHide = props.destroyPopupOnHide,
           stretch = props.stretch;
-      // const { mouseenter, mouseleave } = $listeners
 
       var className = this.getClassName(this.currentAlignClassName || getClassNameFromAlign(align));
       // const hiddenClassName = `${prefixCls}-hidden`
@@ -64294,7 +64448,7 @@ __webpack_require__.r(__webpack_exports__);
           // hiddenClassName,
         },
         'class': className,
-        on: $listeners,
+        on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_8__["getListeners"])(this),
         ref: 'popupInstance',
         style: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_1___default()({}, sizeStyle, popupStyle, this.getZIndexStyle())
       };
@@ -64309,17 +64463,21 @@ __webpack_require__.r(__webpack_exports__);
       var transitionEvent = {
         beforeEnter: function beforeEnter() {
           // el.style.display = el.__vOriginalDisplay
-          // this.$refs.alignInstance.forceAlign()
+          // this.$refs.alignInstance.forceAlign();
         },
         enter: function enter(el, done) {
-          // align updated后执行动画
+          // render 后 vue 会移除通过animate动态添加的 class导致动画闪动，延迟两帧添加动画class，可以进一步定位或者重写 transition 组件
           _this3.$nextTick(function () {
             if (_this3.$refs.alignInstance) {
               _this3.$refs.alignInstance.$nextTick(function () {
+                _this3.domEl = el;
                 Object(_util_css_animation__WEBPACK_IMPORTED_MODULE_6__["default"])(el, transitionName + '-enter', done);
               });
             }
           });
+        },
+        beforeLeave: function beforeLeave() {
+          _this3.domEl = null;
         },
         leave: function leave(el, done) {
           Object(_util_css_animation__WEBPACK_IMPORTED_MODULE_6__["default"])(el, transitionName + '-leave', done);
@@ -64463,6 +64621,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(babel_helper_vue_jsx_merge_props__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _util_vue_types__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_util/vue-types */ "./components/_util/vue-types/index.js");
 /* harmony import */ var _LazyRenderBox__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LazyRenderBox */ "./components/vc-trigger/LazyRenderBox.jsx");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -64479,10 +64639,9 @@ __webpack_require__.r(__webpack_exports__);
         prefixCls = _$props.prefixCls,
         visible = _$props.visible,
         hiddenClassName = _$props.hiddenClassName;
-    var $listeners = this.$listeners;
 
     var divProps = {
-      on: $listeners
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_3__["getListeners"])(this)
     };
 
     return h(
@@ -64602,6 +64761,9 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
       } },
     savePopupRef: { 'default': function _default() {
         return _utils__WEBPACK_IMPORTED_MODULE_10__["noop"];
+      } },
+    dialogContext: { 'default': function _default() {
+        return null;
       } }
   },
   data: function data() {
@@ -64643,6 +64805,9 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
         _this2.fireEvents(h, e);
       };
     });
+  },
+  deactivated: function deactivated() {
+    this.setPopupVisible(false);
   },
   mounted: function mounted() {
     var _this3 = this;
@@ -64871,8 +65036,7 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
       mouseProps.touchstart = this.onPopupMouseDown;
       var handleGetPopupClassFromAlign = self.handleGetPopupClassFromAlign,
           getRootDomNode = self.getRootDomNode,
-          getContainer = self.getContainer,
-          $listeners = self.$listeners;
+          getContainer = self.getContainer;
       var _self$$props = self.$props,
           prefixCls = _self$$props.prefixCls,
           destroyPopupOnHide = _self$$props.destroyPopupOnHide,
@@ -64914,7 +65078,7 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
           popupStyle: popupStyle
         },
         on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({
-          align: $listeners.popupAlign || _utils__WEBPACK_IMPORTED_MODULE_10__["noop"]
+          align: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this).popupAlign || _utils__WEBPACK_IMPORTED_MODULE_10__["noop"]
         }, mouseProps),
         directives: [{
           name: 'ant-ref',
@@ -64928,7 +65092,8 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
       );
     },
     getContainer: function getContainer() {
-      var props = this.$props;
+      var props = this.$props,
+          dialogContext = this.dialogContext;
 
       var popupContainer = document.createElement('div');
       // Make sure default popup container will never cause scrollbar appearing
@@ -64937,7 +65102,7 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
       popupContainer.style.top = '0';
       popupContainer.style.left = '0';
       popupContainer.style.width = '100%';
-      var mountNode = props.getPopupContainer ? props.getPopupContainer(this.$el) : props.getDocument().body;
+      var mountNode = props.getPopupContainer ? props.getPopupContainer(this.$el, dialogContext) : props.getDocument().body;
       mountNode.appendChild(popupContainer);
       this.popupContainer = popupContainer;
       return popupContainer;
@@ -64952,7 +65117,8 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
             sPopupVisible: sPopupVisible
           });
         }
-        this.$listeners.popupVisibleChange && this.$listeners.popupVisibleChange(sPopupVisible);
+        var listeners = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this);
+        listeners.popupVisibleChange && listeners.popupVisibleChange(sPopupVisible);
       }
       // Always record the point position since mouseEnterDelay will delay the show
       if (sPopupVisible && alignPoint && event) {
@@ -65015,7 +65181,7 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
     },
     createTwoChains: function createTwoChains(event) {
       var fn = function fn() {};
-      var events = this.$listeners;
+      var events = Object(_util_props_util__WEBPACK_IMPORTED_MODULE_5__["getListeners"])(this);
       if (this.childOriginEvents[event] && events[event]) {
         return this['fire' + event];
       }
@@ -65150,7 +65316,7 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
       };
     }
 
-    var trigger = Object(_util_vnode__WEBPACK_IMPORTED_MODULE_12__["cloneElement"])(child, newChildProps);
+    this.trigger = Object(_util_vnode__WEBPACK_IMPORTED_MODULE_12__["cloneElement"])(child, newChildProps);
 
     return h(_util_ContainerRender__WEBPACK_IMPORTED_MODULE_13__["default"], {
       attrs: {
@@ -65164,7 +65330,7 @@ var ALL_HANDLERS = ['click', 'mousedown', 'touchstart', 'mouseenter', 'mouseleav
           var renderComponent = _ref.renderComponent;
 
           _this7.renderComponent = renderComponent;
-          return trigger;
+          return _this7.trigger;
         }
       }
     });
@@ -65271,6 +65437,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _uid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./uid */ "./components/vc-upload/src/uid.js");
 /* harmony import */ var _attr_accept__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./attr-accept */ "./components/vc-upload/src/attr-accept.js");
 /* harmony import */ var _traverseFileTree__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./traverseFileTree */ "./components/vc-upload/src/traverseFileTree.js");
+/* harmony import */ var _util_props_util__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../_util/props-util */ "./components/_util/props-util.js");
+
 
 
 
@@ -65493,7 +65661,7 @@ var AjaxUploader = {
       dragover: this.onFileDrop
     };
     var tagProps = {
-      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$listeners, events),
+      on: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, Object(_util_props_util__WEBPACK_IMPORTED_MODULE_10__["getListeners"])(this), events),
       attrs: {
         role: 'button',
         tabIndex: disabled ? null : '0'
@@ -65889,7 +66057,6 @@ var uploadProps = {
 
     this.$nextTick(function () {
       if (_this.supportServerRender) {
-        /* eslint react/no-did-mount-set-state:0 */
         _this.setState({
           Component: _this.getComponent()
         }, function () {
@@ -65913,7 +66080,7 @@ var uploadProps = {
 
     var componentProps = {
       props: babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0___default()({}, this.$props),
-      on: this.$listeners,
+      on: Object(_util_props_util__WEBPACK_IMPORTED_MODULE_2__["getListeners"])(this),
       ref: 'uploaderRef',
       attrs: this.$attrs
     };
@@ -75864,17 +76031,126 @@ module.exports = function isNegativeZero(number) {
 
 /***/ }),
 
-/***/ "./node_modules/ismobilejs/dist/isMobile.min.js":
-/*!******************************************************!*\
-  !*** ./node_modules/ismobilejs/dist/isMobile.min.js ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./node_modules/ismobilejs/esm/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/ismobilejs/esm/index.js ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!function(e){var n=/iPhone/i,t=/iPod/i,r=/iPad/i,a=/\bAndroid(?:.+)Mobile\b/i,p=/Android/i,b=/\bAndroid(?:.+)SD4930UR\b/i,l=/\bAndroid(?:.+)(?:KF[A-Z]{2,4})\b/i,f=/Windows Phone/i,s=/\bWindows(?:.+)ARM\b/i,u=/BlackBerry/i,c=/BB10/i,h=/Opera Mini/i,v=/\b(CriOS|Chrome)(?:.+)Mobile/i,w=/Mobile(?:.+)Firefox\b/i;function m(e,i){return e.test(i)}function i(e){var i=e||("undefined"!=typeof navigator?navigator.userAgent:""),o=i.split("[FBAN");void 0!==o[1]&&(i=o[0]),void 0!==(o=i.split("Twitter"))[1]&&(i=o[0]);var d={apple:{phone:m(n,i)&&!m(f,i),ipod:m(t,i),tablet:!m(n,i)&&m(r,i)&&!m(f,i),device:(m(n,i)||m(t,i)||m(r,i))&&!m(f,i)},amazon:{phone:m(b,i),tablet:!m(b,i)&&m(l,i),device:m(b,i)||m(l,i)},android:{phone:!m(f,i)&&m(b,i)||!m(f,i)&&m(a,i),tablet:!m(f,i)&&!m(b,i)&&!m(a,i)&&(m(l,i)||m(p,i)),device:!m(f,i)&&(m(b,i)||m(l,i)||m(a,i)||m(p,i))||m(/\bokhttp\b/i,i)},windows:{phone:m(f,i),tablet:m(s,i),device:m(f,i)||m(s,i)},other:{blackberry:m(u,i),blackberry10:m(c,i),opera:m(h,i),firefox:m(w,i),chrome:m(v,i),device:m(u,i)||m(c,i)||m(h,i)||m(w,i)||m(v,i)}};return d.any=d.apple.device||d.android.device||d.windows.device||d.other.device,d.phone=d.apple.phone||d.android.phone||d.windows.phone,d.tablet=d.apple.tablet||d.android.tablet||d.windows.tablet,d} true&&module.exports&&"undefined"==typeof window?module.exports=i: true&&module.exports&&"undefined"!=typeof window?(module.exports=i(),module.exports.isMobile=i): true?!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (e.isMobile=i()),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):undefined}(this);
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _isMobile__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isMobile */ "./node_modules/ismobilejs/esm/isMobile.js");
+/* empty/unused harmony star reexport *//* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _isMobile__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+
+
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+
+/***/ "./node_modules/ismobilejs/esm/isMobile.js":
+/*!*************************************************!*\
+  !*** ./node_modules/ismobilejs/esm/isMobile.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return isMobile; });
+const appleIphone = /iPhone/i;
+const appleIpod = /iPod/i;
+const appleTablet = /iPad/i;
+const androidPhone = /\bAndroid(?:.+)Mobile\b/i;
+const androidTablet = /Android/i;
+const amazonPhone = /(?:SD4930UR|\bSilk(?:.+)Mobile\b)/i;
+const amazonTablet = /Silk/i;
+const windowsPhone = /Windows Phone/i;
+const windowsTablet = /\bWindows(?:.+)ARM\b/i;
+const otherBlackBerry = /BlackBerry/i;
+const otherBlackBerry10 = /BB10/i;
+const otherOpera = /Opera Mini/i;
+const otherChrome = /\b(CriOS|Chrome)(?:.+)Mobile/i;
+const otherFirefox = /Mobile(?:.+)Firefox\b/i;
+function match(regex, userAgent) {
+    return regex.test(userAgent);
+}
+function isMobile(userAgent) {
+    userAgent =
+        userAgent || (typeof navigator !== 'undefined' ? navigator.userAgent : '');
+    let tmp = userAgent.split('[FBAN');
+    if (typeof tmp[1] !== 'undefined') {
+        userAgent = tmp[0];
+    }
+    tmp = userAgent.split('Twitter');
+    if (typeof tmp[1] !== 'undefined') {
+        userAgent = tmp[0];
+    }
+    const result = {
+        apple: {
+            phone: match(appleIphone, userAgent) && !match(windowsPhone, userAgent),
+            ipod: match(appleIpod, userAgent),
+            tablet: !match(appleIphone, userAgent) &&
+                match(appleTablet, userAgent) &&
+                !match(windowsPhone, userAgent),
+            device: (match(appleIphone, userAgent) ||
+                match(appleIpod, userAgent) ||
+                match(appleTablet, userAgent)) &&
+                !match(windowsPhone, userAgent),
+        },
+        amazon: {
+            phone: match(amazonPhone, userAgent),
+            tablet: !match(amazonPhone, userAgent) && match(amazonTablet, userAgent),
+            device: match(amazonPhone, userAgent) || match(amazonTablet, userAgent),
+        },
+        android: {
+            phone: (!match(windowsPhone, userAgent) && match(amazonPhone, userAgent)) ||
+                (!match(windowsPhone, userAgent) && match(androidPhone, userAgent)),
+            tablet: !match(windowsPhone, userAgent) &&
+                !match(amazonPhone, userAgent) &&
+                !match(androidPhone, userAgent) &&
+                (match(amazonTablet, userAgent) || match(androidTablet, userAgent)),
+            device: (!match(windowsPhone, userAgent) &&
+                (match(amazonPhone, userAgent) ||
+                    match(amazonTablet, userAgent) ||
+                    match(androidPhone, userAgent) ||
+                    match(androidTablet, userAgent))) ||
+                match(/\bokhttp\b/i, userAgent),
+        },
+        windows: {
+            phone: match(windowsPhone, userAgent),
+            tablet: match(windowsTablet, userAgent),
+            device: match(windowsPhone, userAgent) || match(windowsTablet, userAgent),
+        },
+        other: {
+            blackberry: match(otherBlackBerry, userAgent),
+            blackberry10: match(otherBlackBerry10, userAgent),
+            opera: match(otherOpera, userAgent),
+            firefox: match(otherFirefox, userAgent),
+            chrome: match(otherChrome, userAgent),
+            device: match(otherBlackBerry, userAgent) ||
+                match(otherBlackBerry10, userAgent) ||
+                match(otherOpera, userAgent) ||
+                match(otherFirefox, userAgent) ||
+                match(otherChrome, userAgent),
+        },
+        any: false,
+        phone: false,
+        tablet: false,
+    };
+    result.any =
+        result.apple.device ||
+            result.android.device ||
+            result.windows.device ||
+            result.other.device;
+    result.phone =
+        result.apple.phone || result.android.phone || result.windows.phone;
+    result.tablet =
+        result.apple.tablet || result.android.tablet || result.windows.tablet;
+    return result;
+}
+//# sourceMappingURL=isMobile.js.map
 
 /***/ }),
 
@@ -87687,21 +87963,19 @@ exports.default = {
 
 /***/ }),
 
-/***/ "./node_modules/warning/browser.js":
+/***/ "./node_modules/warning/warning.js":
 /*!*****************************************!*\
-  !*** ./node_modules/warning/browser.js ***!
+  !*** ./node_modules/warning/warning.js ***!
   \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
- * Copyright 2014-2015, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) 2014-present, Facebook, Inc.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 
@@ -87713,9 +87987,33 @@ exports.default = {
  * same logic and follow the same code paths.
  */
 
+var __DEV__ = "development" !== 'production';
+
 var warning = function() {};
 
-if (true) {
+if (__DEV__) {
+  var printWarning = function printWarning(format, args) {
+    var len = arguments.length;
+    args = new Array(len > 1 ? len - 1 : 0);
+    for (var key = 1; key < len; key++) {
+      args[key - 1] = arguments[key];
+    }
+    var argIndex = 0;
+    var message = 'Warning: ' +
+      format.replace(/%s/g, function() {
+        return args[argIndex++];
+      });
+    if (typeof console !== 'undefined') {
+      console.error(message);
+    }
+    try {
+      // --- Welcome to debugging React ---
+      // This error was thrown as a convenience so that you can use this stack
+      // to find the callsite that caused this warning to fire.
+      throw new Error(message);
+    } catch (x) {}
+  }
+
   warning = function(condition, format, args) {
     var len = arguments.length;
     args = new Array(len > 2 ? len - 2 : 0);
@@ -87724,32 +88022,12 @@ if (true) {
     }
     if (format === undefined) {
       throw new Error(
-        '`warning(condition, format, ...args)` requires a warning ' +
-        'message argument'
+          '`warning(condition, format, ...args)` requires a warning ' +
+          'message argument'
       );
     }
-
-    if (format.length < 10 || (/^[s\W]*$/).test(format)) {
-      throw new Error(
-        'The warning format should be able to uniquely identify this ' +
-        'warning. Please, use a more descriptive format than: ' + format
-      );
-    }
-
     if (!condition) {
-      var argIndex = 0;
-      var message = 'Warning: ' +
-        format.replace(/%s/g, function() {
-          return args[argIndex++];
-        });
-      if (typeof console !== 'undefined') {
-        console.error(message);
-      }
-      try {
-        // This error was thrown as a convenience so that you can use this stack
-        // to find the callsite that caused this warning to fire.
-        throw new Error(message);
-      } catch(x) {}
+      printWarning.apply(null, [format].concat(args));
     }
   };
 }
@@ -87827,10 +88105,10 @@ module.exports = function(module) {
 /*!**********************!*\
   !*** ./package.json ***!
   \**********************/
-/*! exports provided: name, version, title, description, keywords, main, module, typings, files, scripts, repository, license, bugs, homepage, husky, peerDependencies, devDependencies, dependencies, sideEffects, default */
+/*! exports provided: name, version, title, description, keywords, main, module, typings, files, scripts, repository, license, bugs, homepage, peerDependencies, devDependencies, dependencies, sideEffects, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"ant-design-vue\",\"version\":\"1.4.0\",\"title\":\"Ant Design Vue\",\"description\":\"An enterprise-class UI design language and Vue-based implementation\",\"keywords\":[\"ant\",\"design\",\"antd\",\"vue\",\"vueComponent\",\"component\",\"components\",\"ui\",\"framework\",\"frontend\"],\"main\":\"lib/index.js\",\"module\":\"es/index.js\",\"typings\":\"types/index.d.ts\",\"files\":[\"dist\",\"lib\",\"es\",\"types\",\"scripts\"],\"scripts\":{\"dev\":\"cross-env NODE_ENV=development ENTRY_INDEX=dev ./node_modules/.bin/webpack-dev-server --open --hot --port 3001\",\"start\":\"cross-env NODE_ENV=development ./node_modules/.bin/webpack-dev-server --open --hot\",\"test\":\"cross-env NODE_ENV=test jest --config .jest.js\",\"site\":\"node scripts/run.js _site\",\"copy\":\"node scripts/run.js copy-html\",\"compile\":\"node antd-tools/cli/run.js compile\",\"pub\":\"node antd-tools/cli/run.js pub\",\"pub-with-ci\":\"node antd-tools/cli/run.js pub-with-ci\",\"prepublish\":\"node antd-tools/cli/run.js guard\",\"pre-publish\":\"node ./scripts/prepub\",\"prettier\":\"prettier -c --write '**/*'\",\"pretty-quick\":\"pretty-quick\",\"dist\":\"node antd-tools/cli/run.js dist\",\"lint\":\"eslint -c ./.eslintrc --fix --ext .jsx,.js,.vue ./components\",\"lint:style\":\"stylelint \\\"{site,components}/**/*.less\\\" --syntax less\",\"commitmsg\":\"commitlint -x @commitlint/config-conventional -e $GIT_PARAMS\",\"codecov\":\"codecov\",\"postinstall\":\"node scripts/postinstall || echo \\\"ignore\\\"\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/vueComponent/ant-design-vue.git\"},\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/vueComponent/ant-design-vue/issues\"},\"homepage\":\"https://vue.ant.design/\",\"husky\":{\"hooks\":{\"pre-commit\":\"pretty-quick --staged\"}},\"peerDependencies\":{\"vue\":\">=2.6.6\",\"vue-template-compiler\":\">=2.6.6\"},\"devDependencies\":{\"@commitlint/cli\":\"^6.2.0\",\"@commitlint/config-conventional\":\"^6.1.3\",\"@octokit/rest\":\"^15.4.1\",\"@vue/cli-plugin-eslint\":\"^3.0.5\",\"@vue/server-test-utils\":\"1.0.0-beta.16\",\"@vue/test-utils\":\"1.0.0-beta.16\",\"acorn\":\"^6.0.5\",\"autoprefixer\":\"^9.6.0\",\"axios\":\"^0.18.0\",\"babel-cli\":\"^6.26.0\",\"babel-core\":\"^6.26.0\",\"babel-eslint\":\"^10.0.1\",\"babel-helper-vue-jsx-merge-props\":\"^2.0.3\",\"babel-jest\":\"^23.6.0\",\"babel-loader\":\"^7.1.2\",\"babel-plugin-import\":\"^1.1.1\",\"babel-plugin-inline-import-data-uri\":\"^1.0.1\",\"babel-plugin-istanbul\":\"^4.1.1\",\"babel-plugin-syntax-dynamic-import\":\"^6.18.0\",\"babel-plugin-syntax-jsx\":\"^6.18.0\",\"babel-plugin-transform-class-properties\":\"^6.24.1\",\"babel-plugin-transform-decorators\":\"^6.24.1\",\"babel-plugin-transform-decorators-legacy\":\"^1.3.4\",\"babel-plugin-transform-es3-member-expression-literals\":\"^6.22.0\",\"babel-plugin-transform-es3-property-literals\":\"^6.22.0\",\"babel-plugin-transform-object-assign\":\"^6.22.0\",\"babel-plugin-transform-object-rest-spread\":\"^6.26.0\",\"babel-plugin-transform-runtime\":\"~6.23.0\",\"babel-plugin-transform-vue-jsx\":\"^3.7.0\",\"babel-polyfill\":\"^6.26.0\",\"babel-preset-env\":\"^1.6.1\",\"case-sensitive-paths-webpack-plugin\":\"^2.1.2\",\"chalk\":\"^2.3.2\",\"cheerio\":\"^1.0.0-rc.2\",\"codecov\":\"^3.0.0\",\"colorful\":\"^2.1.0\",\"commander\":\"^2.15.0\",\"compare-versions\":\"^3.3.0\",\"cross-env\":\"^5.1.4\",\"css-loader\":\"^0.28.7\",\"deep-assign\":\"^2.0.0\",\"enquire-js\":\"^0.2.1\",\"eslint\":\"^5.8.0\",\"eslint-config-prettier\":\"^3.0.1\",\"eslint-plugin-html\":\"^3.2.2\",\"eslint-plugin-markdown\":\"^1.0.0\",\"eslint-plugin-vue\":\"^5.1.0\",\"fetch-jsonp\":\"^1.1.3\",\"fs-extra\":\"^7.0.0\",\"glob\":\"^7.1.2\",\"gulp\":\"^4.0.1\",\"gulp-babel\":\"^7.0.0\",\"gulp-strip-code\":\"^0.1.4\",\"highlight.js\":\"^9.12.0\",\"html-webpack-plugin\":\"^3.2.0\",\"husky\":\"^0.14.3\",\"istanbul-instrumenter-loader\":\"^3.0.0\",\"jest\":\"^24.0.0\",\"jest-serializer-vue\":\"^1.0.0\",\"jest-transform-stub\":\"^2.0.0\",\"js-base64\":\"^2.4.8\",\"jsonp\":\"^0.2.1\",\"less\":\"^3.9.0\",\"less-loader\":\"^4.1.0\",\"less-plugin-npm-import\":\"^2.1.0\",\"lint-staged\":\"^7.2.2\",\"markdown-it\":\"^8.4.0\",\"markdown-it-anchor\":\"^4.0.0\",\"marked\":\"^0.3.7\",\"merge2\":\"^1.2.1\",\"mini-css-extract-plugin\":\"^0.5.0\",\"minimist\":\"^1.2.0\",\"mkdirp\":\"^0.5.1\",\"mockdate\":\"^2.0.2\",\"nprogress\":\"^0.2.0\",\"optimize-css-assets-webpack-plugin\":\"^5.0.1\",\"postcss\":\"^7.0.6\",\"postcss-loader\":\"^3.0.0\",\"pre-commit\":\"^1.2.2\",\"prettier\":\"^1.18.2\",\"pretty-quick\":\"^1.11.1\",\"querystring\":\"^0.2.0\",\"raw-loader\":\"^1.0.0-beta.0\",\"reqwest\":\"^2.0.5\",\"rimraf\":\"^2.6.2\",\"rucksack-css\":\"^1.0.2\",\"selenium-server\":\"^3.0.1\",\"semver\":\"^5.3.0\",\"style-loader\":\"^0.18.2\",\"stylelint\":\"^9.10.1\",\"stylelint-config-prettier\":\"^4.0.0\",\"stylelint-config-standard\":\"^18.2.0\",\"through2\":\"^2.0.3\",\"uglifyjs-webpack-plugin\":\"^2.1.1\",\"url-loader\":\"^1.1.2\",\"vue\":\"^2.6.6\",\"vue-antd-md-loader\":\"^1.1.0\",\"vue-clipboard2\":\"0.0.8\",\"vue-eslint-parser\":\"^5.0.0\",\"vue-i18n\":\"^8.3.2\",\"vue-infinite-scroll\":\"^2.0.2\",\"vue-jest\":\"^2.5.0\",\"vue-loader\":\"^15.6.2\",\"vue-router\":\"^3.0.1\",\"vue-server-renderer\":\"^2.6.6\",\"vue-template-compiler\":\"^2.6.6\",\"vue-virtual-scroller\":\"^0.12.0\",\"vuex\":\"^3.1.0\",\"webpack\":\"^4.28.4\",\"webpack-cli\":\"^3.2.1\",\"webpack-dev-server\":\"^3.1.14\",\"webpack-merge\":\"^4.1.1\",\"webpackbar\":\"^3.1.5\"},\"dependencies\":{\"@ant-design/icons\":\"^2.1.1\",\"@ant-design/icons-vue\":\"^2.0.0\",\"add-dom-event-listener\":\"^1.0.2\",\"array-tree-filter\":\"^2.1.0\",\"async-validator\":\"^3.0.3\",\"babel-helper-vue-jsx-merge-props\":\"^2.0.3\",\"babel-runtime\":\"6.x\",\"classnames\":\"^2.2.5\",\"component-classes\":\"^1.2.6\",\"dom-align\":\"^1.7.0\",\"dom-closest\":\"^0.2.0\",\"dom-scroll-into-view\":\"^1.2.1\",\"enquire.js\":\"^2.1.6\",\"intersperse\":\"^1.0.0\",\"is-negative-zero\":\"^2.0.0\",\"ismobilejs\":\"^0.5.1\",\"json2mq\":\"^0.2.0\",\"lodash\":\"^4.17.5\",\"moment\":\"^2.21.0\",\"mutationobserver-shim\":\"^0.3.2\",\"node-emoji\":\"^1.10.0\",\"omit.js\":\"^1.0.0\",\"raf\":\"^3.4.0\",\"resize-observer-polyfill\":\"^1.5.1\",\"shallow-equal\":\"^1.0.0\",\"shallowequal\":\"^1.0.2\",\"vue-ref\":\"^1.0.4\",\"warning\":\"^3.0.0\"},\"sideEffects\":[\"site/*\",\"components/style.js\",\"components/**/style/*\",\"*.vue\",\"*.md\",\"dist/*\",\"es/**/style/*\",\"lib/**/style/*\",\"*.less\"]}");
+module.exports = JSON.parse("{\"name\":\"ant-design-vue\",\"version\":\"1.4.10\",\"title\":\"Ant Design Vue\",\"description\":\"An enterprise-class UI design language and Vue-based implementation\",\"keywords\":[\"ant\",\"design\",\"antd\",\"vue\",\"vueComponent\",\"component\",\"components\",\"ui\",\"framework\",\"frontend\"],\"main\":\"lib/index.js\",\"module\":\"es/index.js\",\"typings\":\"types/index.d.ts\",\"files\":[\"dist\",\"lib\",\"es\",\"types\",\"scripts\"],\"scripts\":{\"dev\":\"node build/dev.js\",\"start\":\"cross-env NODE_ENV=development webpack-dev-server --config build/webpack.dev.conf.js\",\"test\":\"cross-env NODE_ENV=test jest --config .jest.js\",\"site\":\"node scripts/run.js _site\",\"copy\":\"node scripts/run.js copy-html\",\"compile\":\"node antd-tools/cli/run.js compile\",\"pub\":\"node antd-tools/cli/run.js pub\",\"pub-with-ci\":\"node antd-tools/cli/run.js pub-with-ci\",\"prepublish\":\"node antd-tools/cli/run.js guard\",\"pre-publish\":\"node ./scripts/prepub\",\"prettier\":\"prettier -c --write '**/*'\",\"pretty-quick\":\"pretty-quick\",\"dist\":\"node antd-tools/cli/run.js dist\",\"lint\":\"eslint -c ./.eslintrc --fix --ext .jsx,.js,.vue ./components\",\"lint:style\":\"stylelint \\\"{site,components}/**/*.less\\\" --syntax less\",\"codecov\":\"codecov\",\"postinstall\":\"node scripts/postinstall || echo \\\"ignore\\\"\"},\"repository\":{\"type\":\"git\",\"url\":\"git+https://github.com/vueComponent/ant-design-vue.git\"},\"license\":\"MIT\",\"bugs\":{\"url\":\"https://github.com/vueComponent/ant-design-vue/issues\"},\"homepage\":\"https://www.antdv.com/\",\"peerDependencies\":{\"vue\":\">=2.6.0\",\"vue-template-compiler\":\">=2.6.0\"},\"devDependencies\":{\"@commitlint/cli\":\"^8.0.0\",\"@commitlint/config-conventional\":\"^8.0.0\",\"@octokit/rest\":\"^16.0.0\",\"@vue/cli-plugin-eslint\":\"^4.0.0\",\"@vue/server-test-utils\":\"1.0.0-beta.16\",\"@vue/test-utils\":\"1.0.0-beta.16\",\"acorn\":\"^7.0.0\",\"autoprefixer\":\"^9.6.0\",\"axios\":\"^0.19.0\",\"babel-cli\":\"^6.26.0\",\"babel-core\":\"^6.26.0\",\"babel-eslint\":\"^10.0.1\",\"babel-helper-vue-jsx-merge-props\":\"^2.0.3\",\"babel-jest\":\"^23.6.0\",\"babel-loader\":\"^7.1.2\",\"babel-plugin-import\":\"^1.1.1\",\"babel-plugin-inline-import-data-uri\":\"^1.0.1\",\"babel-plugin-istanbul\":\"^6.0.0\",\"babel-plugin-syntax-dynamic-import\":\"^6.18.0\",\"babel-plugin-syntax-jsx\":\"^6.18.0\",\"babel-plugin-transform-class-properties\":\"^6.24.1\",\"babel-plugin-transform-decorators\":\"^6.24.1\",\"babel-plugin-transform-decorators-legacy\":\"^1.3.4\",\"babel-plugin-transform-es3-member-expression-literals\":\"^6.22.0\",\"babel-plugin-transform-es3-property-literals\":\"^6.22.0\",\"babel-plugin-transform-object-assign\":\"^6.22.0\",\"babel-plugin-transform-object-rest-spread\":\"^6.26.0\",\"babel-plugin-transform-runtime\":\"~6.23.0\",\"babel-plugin-transform-vue-jsx\":\"^3.7.0\",\"babel-polyfill\":\"^6.26.0\",\"babel-preset-env\":\"^1.6.1\",\"case-sensitive-paths-webpack-plugin\":\"^2.1.2\",\"chalk\":\"^3.0.0\",\"cheerio\":\"^1.0.0-rc.2\",\"codecov\":\"^3.0.0\",\"colorful\":\"^2.1.0\",\"commander\":\"^4.0.0\",\"compare-versions\":\"^3.3.0\",\"cross-env\":\"^6.0.0\",\"css-loader\":\"^3.0.0\",\"deep-assign\":\"^2.0.0\",\"enquire-js\":\"^0.2.1\",\"eslint\":\"^6.0.0\",\"eslint-config-prettier\":\"^6.0.0\",\"eslint-plugin-html\":\"^6.0.0\",\"eslint-plugin-markdown\":\"^1.0.0\",\"eslint-plugin-vue\":\"^6.0.0\",\"fetch-jsonp\":\"^1.1.3\",\"fs-extra\":\"^8.0.0\",\"glob\":\"^7.1.2\",\"gulp\":\"^4.0.1\",\"gulp-babel\":\"^7.0.0\",\"gulp-strip-code\":\"^0.1.4\",\"highlight.js\":\"^9.12.0\",\"html-webpack-plugin\":\"^3.2.0\",\"husky\":\"^3.1.0\",\"istanbul-instrumenter-loader\":\"^3.0.0\",\"jest\":\"^24.0.0\",\"jest-serializer-vue\":\"^2.0.0\",\"jest-transform-stub\":\"^2.0.0\",\"js-base64\":\"^2.4.8\",\"json-templater\":\"^1.2.0\",\"jsonp\":\"^0.2.1\",\"less\":\"^3.9.0\",\"less-loader\":\"^5.0.0\",\"less-plugin-npm-import\":\"^2.1.0\",\"lint-staged\":\"^10.0.0\",\"markdown-it\":\"^10.0.0\",\"markdown-it-anchor\":\"^5.0.0\",\"marked\":\"0.3.18\",\"merge2\":\"^1.2.1\",\"mini-css-extract-plugin\":\"^0.9.0\",\"minimist\":\"^1.2.0\",\"mkdirp\":\"^0.5.1\",\"mockdate\":\"^2.0.2\",\"nprogress\":\"^0.2.0\",\"optimize-css-assets-webpack-plugin\":\"^5.0.1\",\"postcss\":\"^7.0.6\",\"postcss-loader\":\"^3.0.0\",\"prettier\":\"^1.18.2\",\"pretty-quick\":\"^2.0.0\",\"querystring\":\"^0.2.0\",\"raw-loader\":\"^4.0.0\",\"reqwest\":\"^2.0.5\",\"rimraf\":\"^3.0.0\",\"rucksack-css\":\"^1.0.2\",\"selenium-server\":\"^3.0.1\",\"semver\":\"^7.0.0\",\"style-loader\":\"^1.0.0\",\"stylelint\":\"^13.0.0\",\"stylelint-config-prettier\":\"^8.0.0\",\"stylelint-config-standard\":\"^19.0.0\",\"terser-webpack-plugin\":\"^2.3.1\",\"through2\":\"^3.0.0\",\"url-loader\":\"^3.0.0\",\"vue\":\"^2.6.11\",\"vue-antd-md-loader\":\"^1.1.0\",\"vue-clipboard2\":\"0.3.1\",\"vue-draggable-resizable\":\"^2.1.0\",\"vue-eslint-parser\":\"^7.0.0\",\"vue-i18n\":\"^8.3.2\",\"vue-infinite-scroll\":\"^2.0.2\",\"vue-jest\":\"^2.5.0\",\"vue-loader\":\"^15.6.2\",\"vue-router\":\"^3.0.1\",\"vue-server-renderer\":\"^2.6.11\",\"vue-template-compiler\":\"^2.6.11\",\"vue-virtual-scroller\":\"^0.12.0\",\"vuex\":\"^3.1.0\",\"webpack\":\"^4.28.4\",\"webpack-cli\":\"^3.2.1\",\"webpack-dev-server\":\"^3.1.14\",\"webpack-merge\":\"^4.1.1\",\"webpackbar\":\"^4.0.0\",\"xhr-mock\":\"^2.5.1\"},\"dependencies\":{\"@ant-design/icons\":\"^2.1.1\",\"@ant-design/icons-vue\":\"^2.0.0\",\"add-dom-event-listener\":\"^1.0.2\",\"array-tree-filter\":\"^2.1.0\",\"async-validator\":\"^3.0.3\",\"babel-helper-vue-jsx-merge-props\":\"^2.0.3\",\"babel-runtime\":\"6.x\",\"classnames\":\"^2.2.5\",\"component-classes\":\"^1.2.6\",\"dom-align\":\"^1.7.0\",\"dom-closest\":\"^0.2.0\",\"dom-scroll-into-view\":\"^1.2.1\",\"enquire.js\":\"^2.1.6\",\"intersperse\":\"^1.0.0\",\"is-negative-zero\":\"^2.0.0\",\"ismobilejs\":\"^1.0.0\",\"json2mq\":\"^0.2.0\",\"lodash\":\"^4.17.5\",\"moment\":\"^2.21.0\",\"mutationobserver-shim\":\"^0.3.2\",\"node-emoji\":\"^1.10.0\",\"omit.js\":\"^1.0.0\",\"raf\":\"^3.4.0\",\"resize-observer-polyfill\":\"^1.5.1\",\"shallow-equal\":\"^1.0.0\",\"shallowequal\":\"^1.0.2\",\"vue-ref\":\"^1.0.4\",\"warning\":\"^4.0.0\"},\"sideEffects\":[\"site/*\",\"components/style.js\",\"components/**/style/*\",\"*.vue\",\"*.md\",\"dist/*\",\"es/**/style/*\",\"lib/**/style/*\",\"*.less\"]}");
 
 /***/ }),
 

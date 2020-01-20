@@ -4,7 +4,7 @@ import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
 import _slicedToArray from 'babel-runtime/helpers/slicedToArray';
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
-import { getOptionProps, hasProp, mergeProps, getComponentFromProp } from '../../_util/props-util';
+import { getOptionProps, hasProp, mergeProps, getComponentFromProp, getListeners } from '../../_util/props-util';
 import moment from 'moment';
 import KeyCode from '../../_util/KeyCode';
 import CalendarPart from './range-calendar/CalendarPart';
@@ -655,13 +655,12 @@ var RangeCalendar = {
         sSelectedValue = this.sSelectedValue,
         sMode = this.sMode,
         showTimePicker = this.showTimePicker,
-        sValue = this.sValue,
-        $listeners = this.$listeners;
+        sValue = this.sValue;
 
     var className = (_className = {}, _defineProperty(_className, prefixCls, 1), _defineProperty(_className, prefixCls + '-hidden', !props.visible), _defineProperty(_className, prefixCls + '-range', 1), _defineProperty(_className, prefixCls + '-show-time-picker', showTimePicker), _defineProperty(_className, prefixCls + '-week-number', props.showWeekNumber), _className);
     var baseProps = {
       props: props,
-      on: $listeners
+      on: getListeners(this)
     };
     var newProps = {
       props: {

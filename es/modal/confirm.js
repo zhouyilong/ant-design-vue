@@ -3,13 +3,14 @@ import Vue from 'vue';
 import ConfirmDialog from './ConfirmDialog';
 import { destroyFns } from './Modal';
 import Base from '../base';
+import Omit from 'omit.js';
 
 export default function confirm(config) {
   var div = document.createElement('div');
   var el = document.createElement('div');
   div.appendChild(el);
   document.body.appendChild(div);
-  var currentConfig = _extends({}, config, { close: close, visible: true });
+  var currentConfig = _extends({}, Omit(config, ['parentContext']), { close: close, visible: true });
 
   var confirmDialogInstance = null;
   var confirmDialogProps = { props: {} };
@@ -51,6 +52,7 @@ export default function confirm(config) {
     var V = Base.Vue || Vue;
     return new V({
       el: el,
+      parent: config.parentContext,
       data: function data() {
         return { confirmDialogProps: confirmDialogProps };
       },

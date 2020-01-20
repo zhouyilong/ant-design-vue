@@ -3,7 +3,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import T from './src/Table';
 import Column from './src/Column';
 import ColumnGroup from './src/ColumnGroup';
-import { getOptionProps, getKey, getClass, getStyle, getEvents, getSlotOptions, camelize, getSlots } from '../_util/props-util';
+import { getOptionProps, getKey, getClass, getStyle, getEvents, getSlotOptions, camelize, getSlots, getListeners } from '../_util/props-util';
 var Table = {
   name: 'Table',
   Column: Column,
@@ -52,8 +52,7 @@ var Table = {
   },
   render: function render() {
     var h = arguments[0];
-    var $listeners = this.$listeners,
-        $slots = this.$slots,
+    var $slots = this.$slots,
         normalize = this.normalize;
 
     var props = getOptionProps(this);
@@ -62,7 +61,7 @@ var Table = {
       props: _extends({}, props, {
         columns: columns
       }),
-      on: $listeners
+      on: getListeners(this)
     };
     return h(T, tProps);
   }

@@ -1,11 +1,11 @@
-import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
+import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import warning from 'warning';
 import { Tree as VcTree, TreeNode } from '../vc-tree';
 import animation from '../_util/openAnimation';
 import PropTypes from '../_util/vue-types';
-import { initDefaultProps, getOptionProps, filterEmpty, getComponentFromProp, getClass } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, filterEmpty, getComponentFromProp, getClass, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import { ConfigConsumerProps } from '../config-provider';
 import Icon from '../icon';
@@ -80,7 +80,12 @@ function TreeProps() {
     filterTreeNode: PropTypes.func,
     openAnimation: PropTypes.any,
     treeNodes: PropTypes.array,
-    treeData: PropTypes.array
+    treeData: PropTypes.array,
+    /**
+     * @default{title,key,children}
+     * 替换treeNode中 title,key,children字段为treeData中对应的字段
+     */
+    replaceFields: PropTypes.object
   };
 }
 
@@ -158,22 +163,25 @@ export default {
       var $slots = this.$slots,
           $scopedSlots = this.$scopedSlots;
 
+      var defaultFields = { children: 'children', title: 'title', key: 'key' };
+      var replaceFields = _extends({}, defaultFields, this.$props.replaceFields);
       return treeData.map(function (item) {
-        var children = item.children,
-            _item$on = item.on,
+        var key = item[replaceFields.key];
+        var children = item[replaceFields.children];
+
+        var _item$on = item.on,
             on = _item$on === undefined ? {} : _item$on,
             _item$slots = item.slots,
             slots = _item$slots === undefined ? {} : _item$slots,
             _item$scopedSlots = item.scopedSlots,
             scopedSlots = _item$scopedSlots === undefined ? {} : _item$scopedSlots,
-            key = item.key,
             cls = item['class'],
             style = item.style,
-            restProps = _objectWithoutProperties(item, ['children', 'on', 'slots', 'scopedSlots', 'key', 'class', 'style']);
+            restProps = _objectWithoutProperties(item, ['on', 'slots', 'scopedSlots', 'class', 'style']);
 
         var treeNodeProps = _extends({}, restProps, {
-          icon: $slots[slots.icon] || $scopedSlots[scopedSlots.icon] && $scopedSlots[scopedSlots.icon] || restProps.icon,
-          title: $slots[slots.title] || $scopedSlots[scopedSlots.title] && $scopedSlots[scopedSlots.title](item) || restProps.title,
+          icon: $slots[slots.icon] || $scopedSlots[scopedSlots.icon] && $scopedSlots[scopedSlots.icon](item) || restProps.icon,
+          title: $slots[slots.title] || $scopedSlots[scopedSlots.title] && $scopedSlots[scopedSlots.title](item) || restProps[replaceFields.title],
           dataRef: item,
           on: on,
           key: key,
@@ -215,7 +223,7 @@ export default {
           return _this2.renderSwitcherIcon(prefixCls, _switcherIcon, nodeProps);
         }
       }),
-      on: this.$listeners,
+      on: getListeners(this),
       ref: 'tree',
       'class': !showIcon && prefixCls + '-icon-hide'
     };

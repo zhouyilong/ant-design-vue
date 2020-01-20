@@ -4,7 +4,7 @@ import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutPropert
 import debounce from 'lodash/debounce';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
-import { filterEmpty, initDefaultProps, isValidElement, getComponentFromProp } from '../_util/props-util';
+import { filterEmpty, initDefaultProps, isValidElement, getComponentFromProp, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import { ConfigConsumerProps } from '../config-provider';
 
@@ -156,7 +156,9 @@ export default {
 
       return h(
         'div',
-        _mergeJSXProps([{ on: this.$listeners }, { 'class': [prefixCls + '-nested-loading', wrapperClassName] }]),
+        _mergeJSXProps([{ on: getListeners(this) }, {
+          'class': [prefixCls + '-nested-loading', wrapperClassName]
+        }]),
         [sSpinning && h(
           'div',
           { key: 'loading' },

@@ -1,6 +1,6 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropsTypes from '../_util/vue-types';
-import { initDefaultProps, getComponentFromProp } from '../_util/props-util';
+import { initDefaultProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import Base from '../base';
 export var CommentProps = {
@@ -41,10 +41,8 @@ var Comment = {
       });
       return actionList;
     },
-    renderNested: function renderNested(children) {
+    renderNested: function renderNested(prefixCls, children) {
       var h = this.$createElement;
-      var prefixCls = this.$props.prefixCls;
-
 
       return h(
         'div',
@@ -114,8 +112,8 @@ var Comment = {
     var children = this.$slots['default'];
     return h(
       'div',
-      _mergeJSXProps([{ 'class': prefixCls }, { on: this.$listeners }]),
-      [comment, children ? this.renderNested(children) : null]
+      _mergeJSXProps([{ 'class': prefixCls }, { on: getListeners(this) }]),
+      [comment, children ? this.renderNested(prefixCls, children) : null]
     );
   }
 };

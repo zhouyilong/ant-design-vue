@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import omit from 'omit.js';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import VcRate from '../vc-rate';
 import Icon from '../icon';
@@ -75,7 +75,7 @@ var Rate = {
         characterRender: this.characterRender,
         prefixCls: prefixCls
       }, omit(restProps, ['tooltips'])),
-      on: this.$listeners,
+      on: getListeners(this),
       ref: 'refRate'
     };
     return h(VcRate, rateProps);

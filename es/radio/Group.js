@@ -3,7 +3,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
 import Radio from './Radio';
-import { getOptionProps, filterEmpty, hasProp } from '../_util/props-util';
+import { getOptionProps, filterEmpty, hasProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 function noop() {}
 
@@ -36,6 +36,7 @@ export default {
     var value = this.value,
         defaultValue = this.defaultValue;
 
+    this.updatingValue = false;
     return {
       stateValue: value === undefined ? defaultValue : value
     };
@@ -70,6 +71,7 @@ export default {
   },
   watch: {
     value: function value(val) {
+      this.updatingValue = false;
       this.stateValue = val;
     }
   },
@@ -84,11 +86,13 @@ export default {
         this.stateValue = value;
       }
       // nextTick for https://github.com/vueComponent/ant-design-vue/issues/1280
+      if (!this.updatingValue && value !== lastValue) {
+        this.updatingValue = true;
+        this.$emit('input', value);
+        this.$emit('change', ev);
+      }
       this.$nextTick(function () {
-        if (value !== lastValue) {
-          _this.$emit('input', value);
-          _this.$emit('change', ev);
-        }
+        _this.updatingValue = false;
       });
     }
   },
@@ -96,11 +100,12 @@ export default {
     var _this2 = this;
 
     var h = arguments[0];
-    var _$listeners = this.$listeners,
-        _$listeners$mouseente = _$listeners.mouseenter,
-        mouseenter = _$listeners$mouseente === undefined ? noop : _$listeners$mouseente,
-        _$listeners$mouseleav = _$listeners.mouseleave,
-        mouseleave = _$listeners$mouseleav === undefined ? noop : _$listeners$mouseleav;
+
+    var _getListeners = getListeners(this),
+        _getListeners$mouseen = _getListeners.mouseenter,
+        mouseenter = _getListeners$mouseen === undefined ? noop : _getListeners$mouseen,
+        _getListeners$mousele = _getListeners.mouseleave,
+        mouseleave = _getListeners$mousele === undefined ? noop : _getListeners$mousele;
 
     var props = getOptionProps(this);
     var customizePrefixCls = props.prefixCls,

@@ -1,6 +1,7 @@
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
+import { getListeners } from '../../../_util/props-util';
 var ROW = 4;
 var COL = 3;
 function noop() {}
@@ -16,6 +17,7 @@ function chooseYear(year) {
   var value = this.sValue.clone();
   value.year(year);
   value.month(this.sValue.month());
+  this.sValue = value;
   this.__emit('select', value);
 }
 
@@ -67,11 +69,9 @@ export default {
     var h = arguments[0];
     var value = this.sValue,
         locale = this.locale,
-        renderFooter = this.renderFooter,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+        renderFooter = this.renderFooter;
 
-    var decadePanelShow = $listeners.decadePanelShow || noop;
+    var decadePanelShow = getListeners(this).decadePanelShow || noop;
     var years = this.years();
     var currentYear = value.year();
     var startYear = parseInt(currentYear / 10, 10) * 10;

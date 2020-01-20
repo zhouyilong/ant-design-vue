@@ -3,7 +3,7 @@ import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutPropert
 import _extends from 'babel-runtime/helpers/extends';
 import { switchPropTypes } from './PropTypes';
 import BaseMixin from '../_util/BaseMixin';
-import { hasProp, getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { hasProp, getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 
 // function noop () {
 // }
@@ -102,7 +102,7 @@ export default {
     var switchClassName = (_switchClassName = {}, _defineProperty(_switchClassName, prefixCls, true), _defineProperty(_switchClassName, prefixCls + '-checked', checked), _defineProperty(_switchClassName, prefixCls + '-disabled', disabled), _switchClassName);
     var spanProps = {
       props: _extends({}, restProps),
-      on: _extends({}, this.$listeners, {
+      on: _extends({}, getListeners(this), {
         keydown: this.handleKeyDown,
         click: this.handleClick,
         mouseup: this.handleMouseUp

@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import PropTypes from '../_util/vue-types';
-import { getOptionProps, getComponentFromProp } from '../_util/props-util';
+import { getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import VcSwitch from '../vc-switch';
 import Wave from '../_util/wave';
 import Icon from '../icon';
@@ -69,7 +69,7 @@ var Switch = {
         unCheckedChildren: getComponentFromProp(this, 'unCheckedChildren'),
         disabled: disabled || loading
       }),
-      on: this.$listeners,
+      on: getListeners(this),
       'class': classes,
       ref: 'refSwitchNode'
     };

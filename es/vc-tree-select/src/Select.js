@@ -38,7 +38,7 @@ import { SHOW_ALL, SHOW_PARENT, SHOW_CHILD } from './strategies';
 import BaseMixin from '../../_util/BaseMixin';
 import { createRef, generateAriaId, formatInternalValue, formatSelectorValue, parseSimpleTreeData, convertDataToTree, convertTreeToEntities, conductCheck, getHalfCheckedKeys, flatToHierarchy, isPosRelated, isLabelInValue as _isLabelInValue, getFilterTree, cleanEntity } from './util';
 import SelectNode from './SelectNode';
-import { initDefaultProps, getOptionProps, mergeProps, getPropsData, filterEmpty } from '../../_util/props-util';
+import { initDefaultProps, getOptionProps, mergeProps, getPropsData, filterEmpty, getListeners } from '../../_util/props-util';
 function getWatch() {
   var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
@@ -803,8 +803,8 @@ var Select = {
       }
       this.setOpenState(open, true);
     },
-    onSearchInputChange: function onSearchInputChange(_ref15) {
-      var value = _ref15.target.value;
+    onSearchInputChange: function onSearchInputChange(event) {
+      var value = event.target.value;
       var _$data5 = this.$data,
           treeNodes = _$data5._treeNodes,
           valueEntities = _$data5._valueEntities;
@@ -962,9 +962,9 @@ var Select = {
       // Trigger
       var extra = _extends({
         // [Legacy] Always return as array contains label & value
-        preValue: prevSelectorValueList.map(function (_ref16) {
-          var label = _ref16.label,
-              value = _ref16.value;
+        preValue: prevSelectorValueList.map(function (_ref15) {
+          var label = _ref15.label,
+              value = _ref15.value;
           return { label: label, value: value };
         })
       }, extraInfo);
@@ -987,7 +987,7 @@ var Select = {
       }
 
       // Only do the logic when `onChange` function provided
-      if (this.$listeners.change) {
+      if (getListeners(this).change) {
         var connectValueList = void 0;
 
         // Get value by mode
@@ -1001,16 +1001,16 @@ var Select = {
         var returnValue = void 0;
 
         if (this.isLabelInValue()) {
-          returnValue = connectValueList.map(function (_ref17) {
-            var label = _ref17.label,
-                value = _ref17.value;
+          returnValue = connectValueList.map(function (_ref16) {
+            var label = _ref16.label,
+                value = _ref16.value;
             return { label: label, value: value };
           });
         } else {
           labelList = [];
-          returnValue = connectValueList.map(function (_ref18) {
-            var label = _ref18.label,
-                value = _ref18.value;
+          returnValue = connectValueList.map(function (_ref17) {
+            var label = _ref17.label,
+                value = _ref17.value;
 
             labelList.push(label);
             return value;
@@ -1069,7 +1069,7 @@ var Select = {
         dropdownPrefixCls: prefixCls + '-dropdown',
         ariaId: this.ariaId
       }),
-      on: _extends({}, this.$listeners, {
+      on: _extends({}, getListeners(this), {
         choiceAnimationLeave: this.onChoiceAnimationLeave
       }),
       scopedSlots: this.$scopedSlots

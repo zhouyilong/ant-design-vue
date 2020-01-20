@@ -10,7 +10,7 @@ import { connect } from '../_util/store';
 import SubPopupMenu from './SubPopupMenu';
 import placements from './placements';
 import BaseMixin from '../_util/BaseMixin';
-import { getComponentFromProp, filterEmpty } from '../_util/props-util';
+import { getComponentFromProp, filterEmpty, getListeners } from '../_util/props-util';
 import { requestAnimationTimeout, cancelAnimationTimeout } from '../_util/requestAnimationTimeout';
 import { noop, loopMenuItemRecursively, getMenuIdFromSubMenuEventKey } from './util';
 import getTransitionProps from '../_util/getTransitionProps';
@@ -344,10 +344,11 @@ var SubMenu = {
       var h = this.$createElement;
 
       var props = this.$props;
-      var _$listeners = this.$listeners,
-          select = _$listeners.select,
-          deselect = _$listeners.deselect,
-          openChange = _$listeners.openChange;
+
+      var _getListeners = getListeners(this),
+          select = _getListeners.select,
+          deselect = _getListeners.deselect,
+          openChange = _getListeners.openChange;
 
       var subPopupMenuProps = {
         props: {
@@ -439,9 +440,7 @@ var SubMenu = {
 
     var props = this.$props;
     var rootPrefixCls = this.rootPrefixCls,
-        parentMenu = this.parentMenu,
-        _$listeners2 = this.$listeners,
-        $listeners = _$listeners2 === undefined ? {} : _$listeners2;
+        parentMenu = this.parentMenu;
 
     var isOpen = props.isOpen;
     var prefixCls = this.getPrefixCls();
@@ -519,7 +518,7 @@ var SubMenu = {
     var popupAlign = props.popupOffset ? { offset: props.popupOffset } : {};
     var popupClassName = props.mode === 'inline' ? '' : props.popupClassName;
     var liProps = {
-      on: _extends({}, omit($listeners, ['click']), mouseEvents),
+      on: _extends({}, omit(getListeners(this), ['click']), mouseEvents),
       'class': className
     };
 

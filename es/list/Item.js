@@ -2,7 +2,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropTypes from '../_util/vue-types';
 import classNames from 'classnames';
-import { getSlotOptions, getComponentFromProp, isEmptyElement } from '../_util/props-util';
+import { getSlotOptions, getComponentFromProp, isEmptyElement, getListeners } from '../_util/props-util';
 import { Col } from '../grid';
 import { ConfigConsumerProps } from '../config-provider';
 import { ListGridType } from './index';
@@ -90,9 +90,9 @@ export default {
     var h = arguments[0];
     var grid = this.listContext.grid;
     var customizePrefixCls = this.prefixCls,
-        $slots = this.$slots,
-        $listeners = this.$listeners;
+        $slots = this.$slots;
 
+    var listeners = getListeners(this);
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('list', customizePrefixCls);
 
@@ -166,12 +166,12 @@ export default {
       },
       [h(
         'div',
-        _mergeJSXProps([{ on: $listeners }, { 'class': classString }]),
+        _mergeJSXProps([{ on: listeners }, { 'class': classString }]),
         [extra && extraContent, !extra && metaContent, !extra && content, !extra && actionsContent]
       )]
     ) : h(
       'div',
-      _mergeJSXProps([{ on: $listeners }, { 'class': classString }]),
+      _mergeJSXProps([{ on: listeners }, { 'class': classString }]),
       [extra && extraContent, !extra && metaContent, !extra && content, !extra && actionsContent]
     );
 

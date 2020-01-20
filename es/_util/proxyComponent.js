@@ -1,7 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from './vue-types';
-import { getOptionProps } from './props-util';
+import { getOptionProps, getListeners } from './props-util';
 
 function getDisplayName(WrappedComponent) {
   return WrappedComponent.name || 'Component';
@@ -11,7 +11,7 @@ export default function wrapWithConnect(WrappedComponent) {
   var methods = WrappedComponent.methods || {};
   var props = {};
   Object.keys(tempProps).forEach(function (k) {
-    props[k] = _extends({}, k, { required: false });
+    props[k] = _extends({}, tempProps[k], { required: false });
   });
   WrappedComponent.props.__propsSymbol__ = PropTypes.any;
   WrappedComponent.props.children = PropTypes.array.def([]);
@@ -26,10 +26,8 @@ export default function wrapWithConnect(WrappedComponent) {
     },
     render: function render() {
       var h = arguments[0];
-      var $listeners = this.$listeners,
-          _$slots = this.$slots,
+      var _$slots = this.$slots,
           $slots = _$slots === undefined ? {} : _$slots,
-          $attrs = this.$attrs,
           $scopedSlots = this.$scopedSlots;
 
       var props = getOptionProps(this);
@@ -39,8 +37,7 @@ export default function wrapWithConnect(WrappedComponent) {
           componentWillReceiveProps: _extends({}, props),
           children: $slots['default'] || props.children || []
         }),
-        on: $listeners,
-        attrs: $attrs
+        on: getListeners(this)
       };
       if (Object.keys($scopedSlots).length) {
         wrapProps.scopedSlots = $scopedSlots;

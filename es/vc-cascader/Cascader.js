@@ -1,7 +1,7 @@
 import _extends from 'babel-runtime/helpers/extends';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import _toConsumableArray from 'babel-runtime/helpers/toConsumableArray';
-import { getComponentFromProp } from '../_util/props-util';
+import { getComponentFromProp, getListeners } from '../_util/props-util';
 import PropTypes from '../_util/vue-types';
 import Trigger from '../vc-trigger';
 import Menus from './Menus';
@@ -305,13 +305,13 @@ export default {
   render: function render() {
     var h = arguments[0];
     var $props = this.$props,
-        $slots = this.$slots,
         sActiveValue = this.sActiveValue,
         handleMenuSelect = this.handleMenuSelect,
         sPopupVisible = this.sPopupVisible,
         handlePopupVisibleChange = this.handlePopupVisibleChange,
-        handleKeyDown = this.handleKeyDown,
-        $listeners = this.$listeners;
+        handleKeyDown = this.handleKeyDown;
+
+    var listeners = getListeners(this);
 
     var prefixCls = $props.prefixCls,
         transitionName = $props.transitionName,
@@ -339,7 +339,7 @@ export default {
           loadingIcon: loadingIcon,
           expandIcon: expandIcon
         }),
-        on: _extends({}, $listeners, {
+        on: _extends({}, listeners, {
           select: handleMenuSelect,
           itemDoubleClick: this.handleItemDoubleClick
         })
@@ -359,7 +359,7 @@ export default {
         prefixCls: prefixCls + '-menus',
         popupClassName: popupClassName + emptyMenuClassName
       }),
-      on: _extends({}, $listeners, {
+      on: _extends({}, listeners, {
         popupVisibleChange: handlePopupVisibleChange
       }),
       ref: 'trigger'

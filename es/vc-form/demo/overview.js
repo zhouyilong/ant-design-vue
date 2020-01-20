@@ -1,5 +1,5 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
-/* eslint react/no-multi-comp:0, no-console:0 */
+/* eslint no-console:0 */
 
 import createDOMForm from '../src/createDOMForm';
 import { DatePicker, Select } from 'ant-design-vue';

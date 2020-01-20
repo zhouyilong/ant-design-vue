@@ -3,6 +3,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import _typeof from 'babel-runtime/helpers/typeof';
 import PropTypes from '../_util/vue-types';
 import { ConfigConsumerProps } from '../config-provider';
+import { getListeners } from '../_util/props-util';
 
 var stringOrNumber = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
 
@@ -56,8 +57,6 @@ export default {
         pull = this.pull,
         customizePrefixCls = this.prefixCls,
         $slots = this.$slots,
-        $attrs = this.$attrs,
-        $listeners = this.$listeners,
         rowContext = this.rowContext;
 
     var getPrefixCls = this.configProvider.getPrefixCls;
@@ -78,8 +77,7 @@ export default {
     });
     var classes = _extends((_extends3 = {}, _defineProperty(_extends3, prefixCls + '-' + span, span !== undefined), _defineProperty(_extends3, prefixCls + '-order-' + order, order), _defineProperty(_extends3, prefixCls + '-offset-' + offset, offset), _defineProperty(_extends3, prefixCls + '-push-' + push, push), _defineProperty(_extends3, prefixCls + '-pull-' + pull, pull), _extends3), sizeClassObj);
     var divProps = {
-      on: $listeners,
-      attrs: $attrs,
+      on: getListeners(this),
       'class': classes,
       style: {}
     };

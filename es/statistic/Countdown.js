@@ -3,7 +3,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import * as moment from 'moment';
 import interopDefault from '../_util/interopDefault';
 import { cloneElement } from '../_util/vnode';
-import { initDefaultProps } from '../_util/props-util';
+import { initDefaultProps, getListeners } from '../_util/props-util';
 import Statistic, { StatisticProps } from './Statistic';
 import { formatCountdown as _formatCountdown } from './utils';
 
@@ -94,7 +94,7 @@ export default {
         valueRender: this.valueRenderHtml,
         formatter: this.formatCountdown
       }),
-      on: this.$listeners
+      on: getListeners(this)
     }]));
   }
 };

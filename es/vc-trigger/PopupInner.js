@@ -1,6 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropTypes from '../_util/vue-types';
 import LazyRenderBox from './LazyRenderBox';
+import { getListeners } from '../_util/props-util';
 
 export default {
   props: {
@@ -14,10 +15,9 @@ export default {
         prefixCls = _$props.prefixCls,
         visible = _$props.visible,
         hiddenClassName = _$props.hiddenClassName;
-    var $listeners = this.$listeners;
 
     var divProps = {
-      on: $listeners
+      on: getListeners(this)
     };
 
     return h(

@@ -1,7 +1,7 @@
 import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _extends from 'babel-runtime/helpers/extends';
 import { Item, itemProps } from '../vc-menu';
-import { getOptionProps } from '../_util/props-util';
+import { getOptionProps, getListeners } from '../_util/props-util';
 import Tooltip from '../tooltip';
 function noop() {}
 export default {
@@ -28,8 +28,7 @@ export default {
         rootPrefixCls = props.rootPrefixCls;
     var getInlineCollapsed = this.getInlineCollapsed,
         $slots = this.$slots,
-        attrs = this.$attrs,
-        $listeners = this.$listeners;
+        attrs = this.$attrs;
 
     var inlineCollapsed = getInlineCollapsed();
     var titleNode = void 0;
@@ -42,7 +41,7 @@ export default {
         title: inlineCollapsed ? null : title
       }),
       attrs: attrs,
-      on: $listeners
+      on: getListeners(this)
     };
     var toolTipProps = {
       props: {

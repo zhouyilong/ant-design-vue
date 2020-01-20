@@ -5,12 +5,9 @@ import classNames from 'classnames';
 import TextArea from './TextArea';
 import omit from 'omit.js';
 import inputProps from './inputProps';
-import { hasProp, getComponentFromProp } from '../_util/props-util';
-import { isIE, isIE9 } from '../_util/env';
+import { hasProp, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
-import Password from './Password';
 import Icon from '../icon';
-import warning from '../_util/warning';
 
 function noop() {}
 
@@ -21,8 +18,8 @@ function fixControlledValue(value) {
   return value;
 }
 
-function hasPrefixSuffix(props) {
-  return 'prefix' in props || props.suffix || props.allowClear;
+function hasPrefixSuffix(instance) {
+  return !!(getComponentFromProp(instance, 'prefix') || getComponentFromProp(instance, 'suffix') || instance.$props.allowClear);
 }
 
 export default {
@@ -40,8 +37,10 @@ export default {
   },
   data: function data() {
     var _$props = this.$props,
-        value = _$props.value,
-        defaultValue = _$props.defaultValue;
+        _$props$value = _$props.value,
+        value = _$props$value === undefined ? '' : _$props$value,
+        _$props$defaultValue = _$props.defaultValue,
+        defaultValue = _$props$defaultValue === undefined ? '' : _$props$defaultValue;
 
     return {
       stateValue: !hasProp(this, 'value') ? defaultValue : value
@@ -89,8 +88,7 @@ export default {
       return _ref = {}, _defineProperty(_ref, '' + prefixCls, true), _defineProperty(_ref, prefixCls + '-sm', size === 'small'), _defineProperty(_ref, prefixCls + '-lg', size === 'large'), _defineProperty(_ref, prefixCls + '-disabled', disabled), _ref;
     },
     setValue: function setValue(value, e) {
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (isIE && !isIE9 && this.stateValue === value) {
+      if (this.stateValue === value) {
         return;
       }
       if (!hasProp(this, 'value')) {
@@ -98,9 +96,7 @@ export default {
       } else {
         this.$forceUpdate();
       }
-      if (!e.target.composing) {
-        this.$emit('change.value', value);
-      }
+      this.$emit('change.value', value);
       var event = e;
       if (e.type === 'click' && this.$refs.input) {
         // click clear icon
@@ -120,17 +116,29 @@ export default {
       this.$emit('input', e);
     },
     handleReset: function handleReset(e) {
+      var _this2 = this;
+
       this.setValue('', e);
+      this.$nextTick(function () {
+        _this2.focus();
+      });
     },
     handleChange: function handleChange(e) {
-      this.setValue(e.target.value, e);
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+
+      if (composing && this.lazy) return;
+      this.setValue(value, e);
     },
     renderClearIcon: function renderClearIcon(prefixCls) {
       var h = this.$createElement;
-      var allowClear = this.$props.allowClear;
+      var _$props3 = this.$props,
+          allowClear = _$props3.allowClear,
+          disabled = _$props3.disabled;
       var stateValue = this.stateValue;
 
-      if (!allowClear || stateValue === undefined || stateValue === null || stateValue === '') {
+      if (!allowClear || disabled || stateValue === undefined || stateValue === null || stateValue === '') {
         return null;
       }
       return h(Icon, {
@@ -207,7 +215,7 @@ export default {
       var size = this.$props.size;
 
       var suffix = this.renderSuffix(prefixCls);
-      if (!hasPrefixSuffix(this.$props)) {
+      if (!hasPrefixSuffix(this)) {
         return children;
       }
       var prefix = getComponentFromProp(this, 'prefix');
@@ -227,19 +235,19 @@ export default {
     renderInput: function renderInput(prefixCls) {
       var h = this.$createElement;
 
-      var otherProps = omit(this.$props, ['prefixCls', 'addonBefore', 'addonAfter', 'prefix', 'suffix', 'allowClear', 'value', 'defaultValue']);
+      var otherProps = omit(this.$props, ['prefixCls', 'addonBefore', 'addonAfter', 'prefix', 'suffix', 'allowClear', 'value', 'defaultValue', 'lazy']);
       var stateValue = this.stateValue,
           getInputClassName = this.getInputClassName,
           handleKeyDown = this.handleKeyDown,
-          handleChange = this.handleChange,
-          $listeners = this.$listeners;
+          handleChange = this.handleChange;
 
       var inputProps = {
+        directives: [{ name: 'ant-input' }],
         domProps: {
           value: fixControlledValue(stateValue)
         },
         attrs: _extends({}, otherProps, this.$attrs),
-        on: _extends({}, $listeners, {
+        on: _extends({}, getListeners(this), {
           keydown: handleKeyDown,
           input: handleChange,
           change: noop
@@ -248,9 +256,6 @@ export default {
         ref: 'input',
         key: 'ant-input'
       };
-      if ($listeners['change.value']) {
-        inputProps.directives = [{ name: 'ant-input' }];
-      }
       return this.renderLabeledIcon(prefixCls, h('input', inputProps));
     }
   },
@@ -258,14 +263,13 @@ export default {
     var h = arguments[0];
 
     if (this.$props.type === 'textarea') {
-      var $listeners = this.$listeners;
-
       var textareaProps = {
         props: this.$props,
         attrs: this.$attrs,
-        on: _extends({}, $listeners, {
-          change: this.handleChange,
-          keydown: this.handleKeyDown
+        on: _extends({}, getListeners(this), {
+          input: this.handleChange,
+          keydown: this.handleKeyDown,
+          change: noop
         }),
         directives: [{
           name: 'ant-input'

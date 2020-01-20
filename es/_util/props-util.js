@@ -178,7 +178,9 @@ var getComponentFromProp = function getComponentFromProp(instance, prop) {
     var componentOptions = instance.componentOptions || {};
     (componentOptions.children || []).forEach(function (child) {
       if (child.data && child.data.slot === prop) {
-        delete child.data.attrs.slot;
+        if (child.data.attrs) {
+          delete child.data.attrs.slot;
+        }
         if (child.tag === 'template') {
           slotsProp.push(child.children);
         } else {
@@ -235,6 +237,12 @@ export function getEvents(child) {
     events = child.data.on;
   }
   return _extends({}, events);
+}
+
+// use getListeners instead this.$listeners
+// https://github.com/vueComponent/ant-design-vue/issues/1705
+export function getListeners(context) {
+  return (context.$vnode ? context.$vnode.componentOptions.listeners : context.$listeners) || {};
 }
 export function getClass(ele) {
   var data = {};

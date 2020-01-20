@@ -1,17 +1,16 @@
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
-import { hasProp } from '../../../_util/props-util';
+import { hasProp, getListeners } from '../../../_util/props-util';
 import MonthTable from './MonthTable';
 
 function goYear(direction) {
-  var next = this.sValue.clone();
-  next.add(direction, 'year');
-  this.setAndChangeValue(next);
+  this.changeYear(direction);
 }
 
 function noop() {}
 
 var MonthPanel = {
+  name: 'MonthPanel',
   mixins: [BaseMixin],
   props: {
     value: PropTypes.any,
@@ -23,7 +22,8 @@ var MonthPanel = {
     // onChange: PropTypes.func,
     disabledDate: PropTypes.func,
     // onSelect: PropTypes.func,
-    renderFooter: PropTypes.func
+    renderFooter: PropTypes.func,
+    changeYear: PropTypes.func.def(noop)
   },
 
   data: function data() {
@@ -46,16 +46,12 @@ var MonthPanel = {
     }
   },
   methods: {
-    setAndChangeValue: function setAndChangeValue(value) {
-      this.setValue(value);
-      this.__emit('change', value);
-    },
     setAndSelectValue: function setAndSelectValue(value) {
       this.setValue(value);
       this.__emit('select', value);
     },
     setValue: function setValue(value) {
-      if (!hasProp(this, 'value')) {
+      if (hasProp(this, 'value')) {
         this.setState({
           sValue: value
         });
@@ -71,9 +67,7 @@ var MonthPanel = {
         locale = this.locale,
         rootPrefixCls = this.rootPrefixCls,
         disabledDate = this.disabledDate,
-        renderFooter = this.renderFooter,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+        renderFooter = this.renderFooter;
 
     var year = sValue.year();
     var prefixCls = rootPrefixCls + '-month-panel';
@@ -103,7 +97,7 @@ var MonthPanel = {
               title: locale.yearSelect
             },
             on: {
-              'click': $listeners.yearPanelShow || noop
+              'click': getListeners(this).yearPanelShow || noop
             }
           },
           [h(

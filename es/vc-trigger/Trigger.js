@@ -3,7 +3,7 @@ import Vue from 'vue';
 import ref from 'vue-ref';
 import PropTypes from '../_util/vue-types';
 import contains from '../_util/Dom/contains';
-import { hasProp, getComponentFromProp, getEvents, filterEmpty } from '../_util/props-util';
+import { hasProp, getComponentFromProp, getEvents, filterEmpty, getListeners } from '../_util/props-util';
 import { requestAnimationTimeout, cancelAnimationTimeout } from '../_util/requestAnimationTimeout';
 import addEventListener from '../_util/Dom/addEventListener';
 import warning from '../_util/warning';
@@ -74,6 +74,9 @@ export default {
       } },
     savePopupRef: { 'default': function _default() {
         return noop;
+      } },
+    dialogContext: { 'default': function _default() {
+        return null;
       } }
   },
   data: function data() {
@@ -115,6 +118,9 @@ export default {
         _this2.fireEvents(h, e);
       };
     });
+  },
+  deactivated: function deactivated() {
+    this.setPopupVisible(false);
   },
   mounted: function mounted() {
     var _this3 = this;
@@ -343,8 +349,7 @@ export default {
       mouseProps.touchstart = this.onPopupMouseDown;
       var handleGetPopupClassFromAlign = self.handleGetPopupClassFromAlign,
           getRootDomNode = self.getRootDomNode,
-          getContainer = self.getContainer,
-          $listeners = self.$listeners;
+          getContainer = self.getContainer;
       var _self$$props = self.$props,
           prefixCls = _self$$props.prefixCls,
           destroyPopupOnHide = _self$$props.destroyPopupOnHide,
@@ -386,7 +391,7 @@ export default {
           popupStyle: popupStyle
         },
         on: _extends({
-          align: $listeners.popupAlign || noop
+          align: getListeners(this).popupAlign || noop
         }, mouseProps),
         directives: [{
           name: 'ant-ref',
@@ -400,7 +405,8 @@ export default {
       );
     },
     getContainer: function getContainer() {
-      var props = this.$props;
+      var props = this.$props,
+          dialogContext = this.dialogContext;
 
       var popupContainer = document.createElement('div');
       // Make sure default popup container will never cause scrollbar appearing
@@ -409,7 +415,7 @@ export default {
       popupContainer.style.top = '0';
       popupContainer.style.left = '0';
       popupContainer.style.width = '100%';
-      var mountNode = props.getPopupContainer ? props.getPopupContainer(this.$el) : props.getDocument().body;
+      var mountNode = props.getPopupContainer ? props.getPopupContainer(this.$el, dialogContext) : props.getDocument().body;
       mountNode.appendChild(popupContainer);
       this.popupContainer = popupContainer;
       return popupContainer;
@@ -424,7 +430,8 @@ export default {
             sPopupVisible: sPopupVisible
           });
         }
-        this.$listeners.popupVisibleChange && this.$listeners.popupVisibleChange(sPopupVisible);
+        var listeners = getListeners(this);
+        listeners.popupVisibleChange && listeners.popupVisibleChange(sPopupVisible);
       }
       // Always record the point position since mouseEnterDelay will delay the show
       if (sPopupVisible && alignPoint && event) {
@@ -487,7 +494,7 @@ export default {
     },
     createTwoChains: function createTwoChains(event) {
       var fn = function fn() {};
-      var events = this.$listeners;
+      var events = getListeners(this);
       if (this.childOriginEvents[event] && events[event]) {
         return this['fire' + event];
       }
@@ -622,7 +629,7 @@ export default {
       };
     }
 
-    var trigger = cloneElement(child, newChildProps);
+    this.trigger = cloneElement(child, newChildProps);
 
     return h(ContainerRender, {
       attrs: {
@@ -636,7 +643,7 @@ export default {
           var renderComponent = _ref.renderComponent;
 
           _this7.renderComponent = renderComponent;
-          return trigger;
+          return _this7.trigger;
         }
       }
     });

@@ -9,7 +9,7 @@ import Icon from '../icon';
 import { ConfigConsumerProps } from '../config-provider';
 import interopDefault from '../_util/interopDefault';
 import BaseMixin from '../_util/BaseMixin';
-import { hasProp, getOptionProps, initDefaultProps, mergeProps, getComponentFromProp, isValidElement } from '../_util/props-util';
+import { hasProp, getOptionProps, initDefaultProps, mergeProps, getComponentFromProp, isValidElement, getListeners } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 
 // export const PickerProps = {
@@ -129,8 +129,7 @@ export default function createPicker(TheCalendar, props) {
       var _classNames;
 
       var h = arguments[0];
-      var $listeners = this.$listeners,
-          $scopedSlots = this.$scopedSlots;
+      var $scopedSlots = this.$scopedSlots;
       var _$data = this.$data,
           value = _$data.sValue,
           showDate = _$data.showDate,
@@ -138,14 +137,15 @@ export default function createPicker(TheCalendar, props) {
 
       var suffixIcon = getComponentFromProp(this, 'suffixIcon');
       suffixIcon = Array.isArray(suffixIcon) ? suffixIcon[0] : suffixIcon;
-      var _$listeners$panelChan = $listeners.panelChange,
-          panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan,
-          _$listeners$focus = $listeners.focus,
-          focus = _$listeners$focus === undefined ? noop : _$listeners$focus,
-          _$listeners$blur = $listeners.blur,
-          blur = _$listeners$blur === undefined ? noop : _$listeners$blur,
-          _$listeners$ok = $listeners.ok,
-          ok = _$listeners$ok === undefined ? noop : _$listeners$ok;
+      var listeners = getListeners(this);
+      var _listeners$panelChang = listeners.panelChange,
+          panelChange = _listeners$panelChang === undefined ? noop : _listeners$panelChang,
+          _listeners$focus = listeners.focus,
+          focus = _listeners$focus === undefined ? noop : _listeners$focus,
+          _listeners$blur = listeners.blur,
+          blur = _listeners$blur === undefined ? noop : _listeners$blur,
+          _listeners$ok = listeners.ok,
+          ok = _listeners$ok === undefined ? noop : _listeners$ok;
 
       var props = getOptionProps(this);
 
@@ -257,7 +257,7 @@ export default function createPicker(TheCalendar, props) {
           value: value,
           prefixCls: prefixCls + '-picker-container'
         }),
-        on: _extends({}, omit($listeners, 'change'), pickerProps.on, {
+        on: _extends({}, omit(listeners, 'change'), pickerProps.on, {
           open: open,
           onOpenChange: this.handleOpenChange
         }),

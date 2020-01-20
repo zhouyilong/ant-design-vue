@@ -2,7 +2,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
-import { getOptionProps, getComponentFromProp } from '../../../_util/props-util';
+import { getOptionProps, getComponentFromProp, getListeners } from '../../../_util/props-util';
 import { cloneElement } from '../../../_util/vnode';
 import CalendarHeader from '../calendar/CalendarHeader';
 import DateTable from '../date/DateTable';
@@ -39,9 +39,7 @@ var CalendarPart = {
     var _on;
 
     var h = arguments[0];
-    var props = this.$props,
-        _$listeners = this.$listeners,
-        $listeners = _$listeners === undefined ? {} : _$listeners;
+    var props = this.$props;
     var prefixCls = props.prefixCls,
         value = props.value,
         hoverValue = props.hoverValue,
@@ -64,18 +62,20 @@ var CalendarPart = {
         showWeekNumber = props.showWeekNumber;
 
     var clearIcon = getComponentFromProp(this, 'clearIcon');
-    var _$listeners$inputChan = $listeners.inputChange,
-        inputChange = _$listeners$inputChan === undefined ? noop : _$listeners$inputChan,
-        _$listeners$inputSele = $listeners.inputSelect,
-        inputSelect = _$listeners$inputSele === undefined ? noop : _$listeners$inputSele,
-        _$listeners$valueChan = $listeners.valueChange,
-        valueChange = _$listeners$valueChan === undefined ? noop : _$listeners$valueChan,
-        _$listeners$panelChan = $listeners.panelChange,
-        panelChange = _$listeners$panelChan === undefined ? noop : _$listeners$panelChan,
-        _$listeners$select = $listeners.select,
-        select = _$listeners$select === undefined ? noop : _$listeners$select,
-        _$listeners$dayHover = $listeners.dayHover,
-        dayHover = _$listeners$dayHover === undefined ? noop : _$listeners$dayHover;
+
+    var _getListeners = getListeners(this),
+        _getListeners$inputCh = _getListeners.inputChange,
+        inputChange = _getListeners$inputCh === undefined ? noop : _getListeners$inputCh,
+        _getListeners$inputSe = _getListeners.inputSelect,
+        inputSelect = _getListeners$inputSe === undefined ? noop : _getListeners$inputSe,
+        _getListeners$valueCh = _getListeners.valueChange,
+        valueChange = _getListeners$valueCh === undefined ? noop : _getListeners$valueCh,
+        _getListeners$panelCh = _getListeners.panelChange,
+        panelChange = _getListeners$panelCh === undefined ? noop : _getListeners$panelCh,
+        _getListeners$select = _getListeners.select,
+        select = _getListeners$select === undefined ? noop : _getListeners$select,
+        _getListeners$dayHove = _getListeners.dayHover,
+        dayHover = _getListeners$dayHove === undefined ? noop : _getListeners$dayHove;
 
     var shouldShowTimePicker = showTimePicker && timePicker;
     var disabledTimeConfig = shouldShowTimePicker && disabledTime ? getTimeConfig(selectedValue, disabledTime) : null;

@@ -1,8 +1,8 @@
-import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _objectWithoutProperties from 'babel-runtime/helpers/objectWithoutProperties';
 import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import classNames from 'classnames';
+import { getComponentFromProp, getOptionProps, getListeners } from '../_util/props-util';
 import Input from './Input';
 import Icon from '../icon';
 import inputProps from './inputProps';
@@ -16,6 +16,8 @@ var ActionMap = {
 
 export default {
   name: 'AInputPassword',
+  mixins: [BaseMixin],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'change.value'
@@ -32,8 +34,13 @@ export default {
     };
   },
 
-  mixins: [BaseMixin],
   methods: {
+    focus: function focus() {
+      this.$refs.input.focus();
+    },
+    blur: function blur() {
+      this.$refs.input.blur();
+    },
     onChange: function onChange() {
       this.setState({
         visible: !this.visible
@@ -66,24 +73,32 @@ export default {
   render: function render() {
     var h = arguments[0];
 
-    var _$props2 = this.$props,
-        prefixCls = _$props2.prefixCls,
-        inputPrefixCls = _$props2.inputPrefixCls,
-        size = _$props2.size,
-        suffix = _$props2.suffix,
-        visibilityToggle = _$props2.visibilityToggle,
-        restProps = _objectWithoutProperties(_$props2, ['prefixCls', 'inputPrefixCls', 'size', 'suffix', 'visibilityToggle']);
+    var _getOptionProps = getOptionProps(this),
+        prefixCls = _getOptionProps.prefixCls,
+        inputPrefixCls = _getOptionProps.inputPrefixCls,
+        size = _getOptionProps.size,
+        suffix = _getOptionProps.suffix,
+        visibilityToggle = _getOptionProps.visibilityToggle,
+        restProps = _objectWithoutProperties(_getOptionProps, ['prefixCls', 'inputPrefixCls', 'size', 'suffix', 'visibilityToggle']);
 
     var suffixIcon = visibilityToggle && this.getIcon();
     var inputClassName = classNames(prefixCls, _defineProperty({}, prefixCls + '-' + size, !!size));
-    return h(Input, _mergeJSXProps([restProps, {
-      attrs: {
-        type: this.visible ? 'text' : 'password',
-        size: size,
-
+    var inputProps = {
+      props: _extends({}, restProps, {
         prefixCls: inputPrefixCls,
-        suffix: suffixIcon
-      },
-      'class': inputClassName }]));
+        size: size,
+        suffix: suffixIcon,
+        prefix: getComponentFromProp(this, 'prefix'),
+        addonAfter: getComponentFromProp(this, 'addonAfter'),
+        addonBefore: getComponentFromProp(this, 'addonBefore')
+      }),
+      attrs: _extends({}, this.$attrs, {
+        type: this.visible ? 'text' : 'password'
+      }),
+      'class': inputClassName,
+      ref: 'input',
+      on: getListeners(this)
+    };
+    return h(Input, inputProps);
   }
 };

@@ -68,7 +68,7 @@ export default {
     var rowSpan = void 0;
 
     if (customRender) {
-      text = customRender(text, record, index);
+      text = customRender(text, record, index, column);
       if (isInvalidRenderCellText(text)) {
         tdProps.attrs = text.attrs || {};
         tdProps.props = text.props || {};

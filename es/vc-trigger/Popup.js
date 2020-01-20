@@ -6,6 +6,7 @@ import PopupInner from './PopupInner';
 import LazyRenderBox from './LazyRenderBox';
 import animate from '../_util/css-animation';
 import BaseMixin from '../_util/BaseMixin';
+import { getListeners } from '../_util/props-util';
 
 export default {
   mixins: [BaseMixin],
@@ -32,6 +33,7 @@ export default {
     })
   },
   data: function data() {
+    this.domEl = null;
     return {
       // Used for stretch
       stretchChecked: false,
@@ -46,6 +48,12 @@ export default {
       _this.rootNode = _this.getPopupDomNode();
       _this.setStretchSize();
     });
+  },
+  beforeUpdate: function beforeUpdate() {
+    if (this.domEl && this.domEl.rcEndListener) {
+      this.domEl.rcEndListener();
+      this.domEl = null;
+    }
   },
   updated: function updated() {
     var _this2 = this;
@@ -72,7 +80,8 @@ export default {
         this.currentAlignClassName = currentAlignClassName;
         popupDomNode.className = this.getClassName(currentAlignClassName);
       }
-      this.$listeners.align && this.$listeners.align(popupDomNode, align);
+      var listeners = getListeners(this);
+      listeners.align && listeners.align(popupDomNode, align);
     },
 
 
@@ -158,7 +167,6 @@ export default {
       var h = this.$createElement;
       var props = this.$props,
           $slots = this.$slots,
-          $listeners = this.$listeners,
           getTransitionName = this.getTransitionName;
       var _$data2 = this.$data,
           stretchChecked = _$data2.stretchChecked,
@@ -172,7 +180,6 @@ export default {
           getClassNameFromAlign = props.getClassNameFromAlign,
           destroyPopupOnHide = props.destroyPopupOnHide,
           stretch = props.stretch;
-      // const { mouseenter, mouseleave } = $listeners
 
       var className = this.getClassName(this.currentAlignClassName || getClassNameFromAlign(align));
       // const hiddenClassName = `${prefixCls}-hidden`
@@ -210,7 +217,7 @@ export default {
           // hiddenClassName,
         },
         'class': className,
-        on: $listeners,
+        on: getListeners(this),
         ref: 'popupInstance',
         style: _extends({}, sizeStyle, popupStyle, this.getZIndexStyle())
       };
@@ -225,17 +232,21 @@ export default {
       var transitionEvent = {
         beforeEnter: function beforeEnter() {
           // el.style.display = el.__vOriginalDisplay
-          // this.$refs.alignInstance.forceAlign()
+          // this.$refs.alignInstance.forceAlign();
         },
         enter: function enter(el, done) {
-          // align updated后执行动画
+          // render 后 vue 会移除通过animate动态添加的 class导致动画闪动，延迟两帧添加动画class，可以进一步定位或者重写 transition 组件
           _this3.$nextTick(function () {
             if (_this3.$refs.alignInstance) {
               _this3.$refs.alignInstance.$nextTick(function () {
+                _this3.domEl = el;
                 animate(el, transitionName + '-enter', done);
               });
             }
           });
+        },
+        beforeLeave: function beforeLeave() {
+          _this3.domEl = null;
         },
         leave: function leave(el, done) {
           animate(el, transitionName + '-leave', done);

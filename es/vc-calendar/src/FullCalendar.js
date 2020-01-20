@@ -2,7 +2,7 @@ import _extends from 'babel-runtime/helpers/extends';
 import moment from 'moment';
 import PropTypes from '../../_util/vue-types';
 import BaseMixin from '../../_util/BaseMixin';
-import { getOptionProps, hasProp } from '../../_util/props-util';
+import { getOptionProps, hasProp, getListeners } from '../../_util/props-util';
 import DateTable from './date/DateTable';
 import MonthTable from './month/MonthTable';
 import CalendarMixin, { getNowByCurrentStateValue } from './mixin/CalendarMixin';
@@ -100,8 +100,7 @@ var FullCalendar = {
         headerRender = props.headerRender,
         disabledDate = props.disabledDate;
     var value = this.sValue,
-        type = this.sType,
-        $listeners = this.$listeners;
+        type = this.sType;
 
 
     var header = null;
@@ -116,7 +115,7 @@ var FullCalendar = {
             type: type,
             value: value
           }),
-          on: _extends({}, $listeners, {
+          on: _extends({}, getListeners(this), {
             typeChange: this.setType,
             valueChange: this.setValue
           }),

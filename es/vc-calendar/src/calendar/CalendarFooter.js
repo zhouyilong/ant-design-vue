@@ -3,7 +3,7 @@ import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../../../_util/vue-types';
 import BaseMixin from '../../../_util/BaseMixin';
-import { getOptionProps } from '../../../_util/props-util';
+import { getOptionProps, getListeners } from '../../../_util/props-util';
 import TodayButton from './TodayButton';
 import OkButton from './OkButton';
 import TimePickerButton from './TimePickerButton';
@@ -41,7 +41,6 @@ var CalendarFooter = {
     var h = arguments[0];
 
     var props = getOptionProps(this);
-    var $listeners = this.$listeners;
     var value = props.value,
         prefixCls = props.prefixCls,
         showOk = props.showOk,
@@ -59,7 +58,7 @@ var CalendarFooter = {
         props: _extends({}, props, {
           value: value
         }),
-        on: $listeners
+        on: getListeners(this)
       };
       var nowEl = null;
       if (showToday) {

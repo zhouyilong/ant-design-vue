@@ -98,11 +98,13 @@ function renderIcon(h, locale, context) {
     }
     computedType = withThemeSuffix(removeTypeTheme(alias(computedType)), dangerousTheme || theme || defaultTheme);
     innerNode = h(VueIcon, {
-      'class': svgClassString,
-      attrs: { type: computedType,
+      attrs: {
+        focusable: 'false',
+
+        type: computedType,
         primaryColor: twoToneColor
       },
-      style: svgStyle
+      'class': svgClassString, style: svgStyle
     });
   }
   var iconTabIndex = tabIndex;
@@ -146,8 +148,6 @@ var Icon = {
     role: PropTypes.string
   },
   render: function render(h, context) {
-    var _extends3;
-
     return h(LocaleReceiver, {
       attrs: {
         componentName: 'Icon'
@@ -156,73 +156,6 @@ var Icon = {
           return renderIcon(h, locale, context);
         } }
     });
-
-    var classString = classNames(_extends({}, getClass(context), (_extends3 = {}, _defineProperty(_extends3, 'anticon', true), _defineProperty(_extends3, 'anticon-' + type, !!type), _extends3)));
-
-    var svgClassString = classNames(_defineProperty({}, 'anticon-spin', !!spin || type === 'loading'));
-
-    var innerNode = void 0;
-
-    // component > children > type
-    if (Component) {
-      var innerSvgProps = {
-        attrs: _extends({}, svgBaseProps, {
-          viewBox: viewBox
-        }),
-        'class': svgClassString
-      };
-      if (!viewBox) {
-        delete innerSvgProps.attrs.viewBox;
-      }
-
-      innerNode = h(
-        Component,
-        innerSvgProps,
-        [children]
-      );
-    }
-    if (children) {
-      warning(Boolean(viewBox) || children.length === 1 && children[0].tag === 'use', 'Make sure that you provide correct `viewBox`' + ' prop (default `0 0 1024 1024`) to the icon.');
-      var _innerSvgProps2 = {
-        attrs: _extends({}, svgBaseProps),
-        'class': svgClassString
-      };
-      innerNode = h(
-        'svg',
-        _mergeJSXProps([_innerSvgProps2, {
-          attrs: { viewBox: viewBox }
-        }]),
-        [children]
-      );
-    }
-
-    if (typeof type === 'string') {
-      var computedType = type;
-      if (theme) {
-        var themeInName = getThemeFromTypeName(type);
-        warning(!themeInName || theme === themeInName, 'The icon name \'' + type + '\' already specify a theme \'' + themeInName + '\',' + (' the \'theme\' prop \'' + theme + '\' will be ignored.'));
-      }
-      computedType = withThemeSuffix(removeTypeTheme(alias(computedType)), dangerousTheme || theme || defaultTheme);
-      innerNode = h(VueIcon, {
-        attrs: {
-          focusable: 'false',
-
-          type: computedType,
-          primaryColor: twoToneColor
-        },
-        'class': svgClassString });
-    }
-    // functional component not support nativeOn，https://github.com/vuejs/vue/issues/7526
-    var iProps = _extends({}, data, {
-      on: _extends({}, listeners, data.nativeOn),
-      'class': classString,
-      staticClass: ''
-    });
-    return h(
-      'i',
-      iProps,
-      [innerNode]
-    );
   }
 };
 

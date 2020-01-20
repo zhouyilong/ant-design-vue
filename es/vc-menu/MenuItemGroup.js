@@ -1,6 +1,6 @@
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
-import { getComponentFromProp } from '../_util/props-util';
+import { getComponentFromProp, getListeners } from '../_util/props-util';
 // import { menuAllProps } from './util'
 
 var MenuItemGroup = {
@@ -36,7 +36,7 @@ var MenuItemGroup = {
     var titleClassName = rootPrefixCls + '-item-group-title';
     var listClassName = rootPrefixCls + '-item-group-list';
     // menuAllProps.props.forEach(key => delete props[key])
-    var listeners = _extends({}, this.$listeners);
+    var listeners = _extends({}, getListeners(this));
     delete listeners.click;
 
     return h(

@@ -6,7 +6,7 @@ import scrollIntoView from 'dom-scroll-into-view';
 import { getSelectKeys, preventDefaultEvent } from './util';
 import { cloneElement } from '../_util/vnode';
 import BaseMixin from '../_util/BaseMixin';
-import { getSlotOptions, getComponentFromProp } from '../_util/props-util';
+import { getSlotOptions, getComponentFromProp, getListeners } from '../_util/props-util';
 
 export default {
   name: 'DropdownMenu',
@@ -115,10 +115,11 @@ export default {
           visible = props.visible;
 
       var menuItemSelectedIcon = getComponentFromProp(this, 'menuItemSelectedIcon');
-      var _$listeners = this.$listeners,
-          menuDeselect = _$listeners.menuDeselect,
-          menuSelect = _$listeners.menuSelect,
-          popupScroll = _$listeners.popupScroll;
+
+      var _getListeners = getListeners(this),
+          menuDeselect = _getListeners.menuDeselect,
+          menuSelect = _getListeners.menuSelect,
+          popupScroll = _getListeners.popupScroll;
 
       if (menuItems && menuItems.length) {
         var selectedKeys = getSelectKeys(menuItems, value);
@@ -210,9 +211,10 @@ export default {
     var h = arguments[0];
 
     var renderMenu = this.renderMenu();
-    var _$listeners2 = this.$listeners,
-        popupFocus = _$listeners2.popupFocus,
-        popupScroll = _$listeners2.popupScroll;
+
+    var _getListeners2 = getListeners(this),
+        popupFocus = _getListeners2.popupFocus,
+        popupScroll = _getListeners2.popupScroll;
 
     return renderMenu ? h(
       'div',

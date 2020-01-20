@@ -8,7 +8,7 @@ import SubMenu from './SubMenu';
 import BaseMixin from '../_util/BaseMixin';
 import { getWidth, setStyle, menuAllProps } from './util';
 import { cloneElement } from '../_util/vnode';
-import { getClass, getPropsData, getEvents } from '../_util/props-util';
+import { getClass, getPropsData, getEvents, getListeners } from '../_util/props-util';
 
 var canUseDOM = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
 
@@ -301,7 +301,7 @@ var DOMWrap = {
 
     var Tag = this.$props.tag;
     var tagProps = {
-      on: this.$listeners
+      on: getListeners(this)
     };
     return h(
       Tag,

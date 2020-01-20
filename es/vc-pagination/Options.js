@@ -1,3 +1,4 @@
+import _mergeJSXProps from 'babel-helper-vue-jsx-merge-props';
 import PropTypes from '../_util/vue-types';
 import KEYCODE from './KeyCode';
 import BaseMixin from '../_util/BaseMixin';
@@ -35,8 +36,13 @@ export default {
       return opt.value + ' ' + this.locale.items_per_page;
     },
     handleChange: function handleChange(e) {
+      var _e$target = e.target,
+          value = _e$target.value,
+          composing = _e$target.composing;
+
+      if (composing || this.goInputText === value) return;
       this.setState({
-        goInputText: e.target.value
+        goInputText: value
       });
     },
     handleBlur: function handleBlur() {
@@ -55,10 +61,11 @@ export default {
         return;
       }
       if (e.keyCode === KEYCODE.ENTER || e.type === 'click') {
+        // https://github.com/vueComponent/ant-design-vue/issues/1316
+        this.quickGo(this.getValidValue());
         this.setState({
           goInputText: ''
         });
-        this.quickGo(this.getValidValue());
       }
     }
   },
@@ -151,7 +158,7 @@ export default {
       goInput = h(
         'div',
         { 'class': prefixCls + '-quick-jumper' },
-        [locale.jump_to, h('input', {
+        [locale.jump_to, h('input', _mergeJSXProps([{
           attrs: {
             disabled: disabled,
             type: 'text'
@@ -160,11 +167,15 @@ export default {
             'value': goInputText
           },
           on: {
-            'change': this.handleChange,
+            'input': this.handleChange,
             'keyup': this.go,
             'blur': this.handleBlur
           }
-        }), locale.page, gotoButton]
+        }, {
+          directives: [{
+            name: 'ant-input'
+          }]
+        }])), locale.page, gotoButton]
       );
     }
 

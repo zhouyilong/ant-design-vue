@@ -3,7 +3,7 @@ import _defineProperty from 'babel-runtime/helpers/defineProperty';
 import _extends from 'babel-runtime/helpers/extends';
 import PropTypes from '../_util/vue-types';
 import BaseMixin from '../_util/BaseMixin';
-import { getOptionProps } from '../_util/props-util';
+import { getOptionProps, getListeners } from '../_util/props-util';
 import VcSlider from '../vc-slider/src/Slider';
 import VcRange from '../vc-slider/src/Range';
 import VcHandle from '../vc-slider/src/Handle';
@@ -143,6 +143,7 @@ var Slider = {
     var getPrefixCls = this.configProvider.getPrefixCls;
     var prefixCls = getPrefixCls('slider', customizePrefixCls);
     var tooltipPrefixCls = getPrefixCls('tooltip', customizeTooltipPrefixCls);
+    var listeners = getListeners(this);
     if (range) {
       var vcRangeProps = {
         props: _extends({}, restProps, {
@@ -153,7 +154,7 @@ var Slider = {
           }
         }),
         ref: 'sliderRef',
-        on: this.$listeners
+        on: listeners
       };
       return h(VcRange, vcRangeProps);
     }
@@ -166,7 +167,7 @@ var Slider = {
         }
       }),
       ref: 'sliderRef',
-      on: this.$listeners
+      on: listeners
     };
     return h(VcSlider, vcSliderProps);
   }

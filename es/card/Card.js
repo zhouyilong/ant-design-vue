@@ -6,7 +6,7 @@ import Row from '../row';
 import Col from '../col';
 import PropTypes from '../_util/vue-types';
 import addEventListener from '../_util/Dom/addEventListener';
-import { getComponentFromProp, getSlotOptions, filterEmpty } from '../_util/props-util';
+import { getComponentFromProp, getSlotOptions, filterEmpty, getListeners } from '../_util/props-util';
 import throttleByAnimationFrame from '../_util/throttleByAnimationFrame';
 import BaseMixin from '../_util/BaseMixin';
 import { ConfigConsumerProps } from '../config-provider';
@@ -134,8 +134,7 @@ export default {
     var prefixCls = getPrefixCls('card', customizePrefixCls);
 
     var $slots = this.$slots,
-        $scopedSlots = this.$scopedSlots,
-        $listeners = this.$listeners;
+        $scopedSlots = this.$scopedSlots;
 
 
     var classString = (_classString = {}, _defineProperty(_classString, '' + prefixCls, true), _defineProperty(_classString, prefixCls + '-loading', loading), _defineProperty(_classString, prefixCls + '-bordered', bordered), _defineProperty(_classString, prefixCls + '-hoverable', !!hoverable), _defineProperty(_classString, prefixCls + '-wider-padding', this.widerPadding), _defineProperty(_classString, prefixCls + '-padding-transition', this.updateWiderPaddingCalled), _defineProperty(_classString, prefixCls + '-contain-grid', this.isContainGrid($slots['default'])), _defineProperty(_classString, prefixCls + '-contain-tabs', tabList && tabList.length), _defineProperty(_classString, prefixCls + '-' + size, size !== 'default'), _defineProperty(_classString, prefixCls + '-type-' + type, !!type), _classString);
@@ -311,7 +310,7 @@ export default {
       _mergeJSXProps([{
         'class': classString,
         ref: 'cardContainerRef'
-      }, { on: omit($listeners, ['tabChange', 'tab-change']) }]),
+      }, { on: omit(getListeners(this), ['tabChange', 'tab-change']) }]),
       [head, coverDom, children ? body : null, actionDom]
     );
   }

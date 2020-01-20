@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { getKeyFromChildrenIndex, loopMenuItem, noop, isMobileDevice } from './util';
 import DOMWrap from './DOMWrap';
 import { cloneElement } from '../_util/vnode';
-import { initDefaultProps, getOptionProps, getPropsData, getEvents, getComponentFromProp } from '../_util/props-util';
+import { initDefaultProps, getOptionProps, getPropsData, getEvents, getComponentFromProp, getListeners } from '../_util/props-util';
 
 function allDisabled(arr) {
   if (!arr.length) {
@@ -307,8 +307,10 @@ var SubPopupMenu = {
         }, extraProps),
         on: {
           click: function click(e) {
-            (childListeners.click || noop)(e);
-            _this.onClick(e);
+            if ('keyPath' in e) {
+              (childListeners.click || noop)(e);
+              _this.onClick(e);
+            }
           },
           itemHover: this.onItemHover,
           openChange: this.onOpenChange,
@@ -371,7 +373,7 @@ var SubPopupMenu = {
       },
       'class': className,
       // Otherwise, the propagated click event will trigger another onClick
-      on: omit(this.$listeners || {}, ['click'])
+      on: omit(getListeners(this), ['click'])
     };
     // if (props.id) {
     //   domProps.id = props.id

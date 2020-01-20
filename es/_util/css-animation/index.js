@@ -101,7 +101,10 @@ var cssAnimation = function cssAnimation(node, transitionName, endCallback) {
 
   node.rcAnimTimeout = requestAnimationTimeout(function () {
     node.rcAnimTimeout = null;
+
+    nodeClasses.add(className);
     nodeClasses.add(activeClassName);
+
     if (active) {
       requestAnimationTimeout(active, 0);
     }
