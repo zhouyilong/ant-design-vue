@@ -10,6 +10,114 @@
 
 ---
 
+## 1.4.10
+
+`2019-12-11`
+
+- 🐞 Fixed the left and right arrows of MonthPicker cannot be worked [#1543](https://github.com/vueComponent/ant-design-vue/issues/1543)
+
+## 1.4.9
+
+`2019-12-10`
+
+- 🐞 Fix body scrolling issue when `Modal` is opened [#1472](https://github.com/vueComponent/ant-design-vue/issues/1472)
+- 🐞 Fix `Drawer` wrapStyle not working [#1481](https://github.com/vueComponent/ant-design-vue/issues/1481)
+- 🐞 Fix `InputNumber` id mount position is incorrect [#1477](https://github.com/vueComponent/ant-design-vue/issues/1477)
+- 🐞 Fix `Tabs` nextClick event does not fire [#1489](https://github.com/vueComponent/ant-design-vue/pull/1489)
+- 🐞 Fix `MonthPicker` cannot be changed in open state [#1510](https://github.com/vueComponent/ant-design-vue/issues/1510)
+- 🐞 Fix the issue that `AutoComplete` does not disappear when entering Chinese [#1506](https://github.com/vueComponent/ant-design-vue/issues/1506)
+- 🐞 Fix the problem that the content cannot pop up when referencing different Vue variables [6362bf](https://github.com/vueComponent/ant-design-vue/commit/6362bf9edb441c0c0096beca1d2c8727003dbb15)
+- 🌟 `Table` `customRender` Add a third column parameter [#1513](https://github.com/vueComponent/ant-design-vue/pull/1513)
+- 🌟 `InputPassword` adds focus and blur methods [#1485](https://github.com/vueComponent/ant-design-vue/pull/1485)
+- 🐞 Fix `Tooltip` report error when using native html element [#1519](https://github.com/vueComponent/ant-design-vue/issues/1519)
+- 🐞 Fix `Menu` report error in edge browser [#1492](https://github.com/vueComponent/ant-design-vue/issues/1492)
+- 🐞 Fix empty centering of `Select` [#1445](https://github.com/vueComponent/ant-design-vue/pull/1445)
+- 🐞 Fix popup window component memory leak problem [#1483](https://github.com/vueComponent/ant-design-vue/pull/1483)
+
+## 1.4.8
+
+`2019-11-28`
+
+- 🐞 Fix `Menu` not trigger click event [#1470](https://github.com/vueComponent/ant-design-vue/issues/1470)
+- 🐞 Fix `Tooltip` not hide in keep-alive [16ec40](https://github.com/vueComponent/ant-design-vue/commit/16ec40a012d7c400bf3028e6c938050dd6d7de2f)
+
+## 1.4.7
+
+`2019-11-27`
+
+- 🌟 `getPopupContainer` of`ConfigProvider` Added popup context as the second parameter for uniform configuration of `getPopupContainer` in`Modal` [7a3c88] (https://github.com/vueComponent/ant-design -vue / commit / 7a3c88107598b4b1cf6842d3254b43dc26103c14)
+- 🐞 Fix `ConfigProvider` reporting error in Vue 2.5 [309baa](https://github.com/vueComponent/ant-design-vue/commit/309baa138a9c9a1885c17ef636c9132349024359)
+- 🐞 Fix `Menu` click event is triggered twice [#1450](https://github.com/vueComponent/ant-design-vue/issues/1427)
+- 🐞 Fix incorrect width of input box in `Select` [#1458](https://github.com/vueComponent/ant-design-vue/issues/1458)
+- 🐞 Fix `Select` the problem that `placeholder` does not disappear when inputting Chinese [#1458](https://github.com/vueComponent/ant-design-vue/issues/1458#issuecomment-557477782)
+- 🌟 Add the TS type declaration for the `Comment` component [#1453](https://github.com/vueComponent/ant-design-vue/pull/1453)
+
+## 1.4.6
+
+`2019-11-20`
+
+- 🐞 Fix `Cascader` can't enter a space question [#1427](https://github.com/vueComponent/ant-design-vue/issues/1427)
+- 🐞 Fix `AutoComplete` can't delete the last character [#1429](https://github.com/vueComponent/ant-design-vue/issues/1427)
+- 🐞 Update `dbclick` in `Tree`'s `expandAction` to `dblclick` [#1437](https://github.com/vueComponent/ant-design-vue/issues/1437)
+- 🐞 Update `dbclick` in the `Table` document to `dblclick` [#1437](https://github.com/vueComponent/ant-design-vue/issues/1437)
+- 🌟 Add the TS type declaration for the `Empty` component [#1439](https://github.com/vueComponent/ant-design-vue/pull/1439)
+
+## 1.4.5
+
+`2019-11-16`
+
+- 🌟 `Form` support `labelCol` `wrapperCol` for setting layout [#1365](https://github.com/vueComponent/ant-design-vue/pull/1365)
+- 🌟 `Input` `Select` `DatePicker` trigger change event after input Chinese, reducing unnecessary performance consumption [#1281](https://github.com/vueComponent/ant-design-vue/issues/1281)
+- 🐞 Fixed when the placeholder of `Input` `Select` is Chinese, the change event is automatically triggered under ie [#1387](https://github.com/vueComponent/ant-design-vue/issues/1387)
+- Tree
+
+  - 🌟 Add the `replaceFields` field to customize the `title` `children` [#1395](https://github.com/vueComponent/ant-design-vue/issues/1395)
+  - 🌟 update event `doubleclick` to `dbclick` [5e27ff](https://github.com/vueComponent/ant-design-vue/commit/5e27ff8da4419f490ab5c6ebeaf43d933519fcd7)
+
+- 🐞 Fix `Input` Delete content under ie9 does not trigger change event [#1421](https://github.com/vueComponent/ant-design-vue/issues/1421)
+- 🐞 Fix `Dropdown` `disabled` invalid problem [#1400](https://github.com/vueComponent/ant-design-vue/issues/1400)
+- 🐞 Fix Select type error when `lableInValue` [#1393](https://github.com/vueComponent/ant-design-vue/pull/1393)
+- 🐞 Fix Comment style question [#1389](https://github.com/vueComponent/ant-design-vue/pull/1389)
+- 🐞 Fix `Statistic` `Password` TypeScript type definition.
+
+## 1.4.4
+
+`2019-10-30`
+
+- 🌟 Progress format support v-slot [#1348](https://github.com/vueComponent/ant-design-vue/issues/1348)
+- 🐞 Fix RangePicker Year Panel not work [#1321](https://github.com/vueComponent/ant-design-vue/issues/1321)
+- 🐞 Fix Pagination simple mode not work [#1333](https://github.com/vueComponent/ant-design-vue/issues/1333)
+- 🐞 Fix AutoComplete flashing on fast input [#1327](https://github.com/vueComponent/ant-design-vue/issues/1327)
+- 🐞 Fix Button loading mode is not centered [#1337](https://github.com/vueComponent/ant-design-vue/issues/1337)
+- 🐞 Fix Menu menu collapsed in Chrome [#873](https://github.com/vueComponent/ant-design-vue/issues/873)
+- 🐞 Fix Checkbox v-model parameter validation failure [#1356](https://github.com/vueComponent/ant-design-vue/issues/1356)
+- 🐞 Fix Checkbox.Group error when update value to undefined [#1356](https://github.com/vueComponent/ant-design-vue/issues/1356)
+
+## 1.4.3
+
+`2019-10-22`
+
+- 🐞 Fix Cascader component style issues caused by Input [#1293](https://github.com/vueComponent/ant-design-vue/issues/1280)
+- 🐞 Fix some component can not use `<template slot="xxx" />` [041839](https://github.com/vueComponent/ant-design-vue/commit/041839b90131d3a4e6a5663986b811d60d4e6ba2)
+
+## 1.4.2
+
+`2019-10-21`
+
+- 🐞 Fix `Radio.Group` triggers multiple change callback issues [#1280](https://github.com/vueComponent/ant-design-vue/issues/1280)
+- 🐞 Fix `Pagination` keyup enter not work [#1316](https://github.com/vueComponent/ant-design-vue/issues/1316)
+
+## 1.4.1
+
+`2019-10-17`
+
+- 🐞 fix `Input.Password` cannot use `v-model` [#1306](https://github.com/vueComponent/ant-design-vue/issues/1306)
+- 🌟 Optimize the clear button of `Input` to display the logic. [#1296](https://github.com/vueComponent/ant-design-vue/issues/1296)
+- 🌟 After click clear button, `Input` becomes the `focus` state.
+- 🐞 fix progress strokeWidth not work [#1301](https://github.com/vueComponent/ant-design-vue/issues/1301)
+- 🐞 Fix Radio.Group triggers multiple change callback issues [#1280](https://github.com/vueComponent/ant-design-vue/issues/1280)
+- 🐞 Fix Form initialValue error [#1291](https://github.com/vueComponent/ant-design-vue/issues/1291)
+
 ## 1.4.0
 
 `2019-10-14`
@@ -260,8 +368,8 @@
 
 1.3.0 brings two new Components, a lot of exciting changes and new features.
 
-- 🔥 Added a new component [Comment](https://vue.ant.design/components/comment/)。
-- 🔥 dded a new component [ConfigProvider](https://vue.ant.design/components/config-provider/) for user to customize some global setting.
+- 🔥 Added a new component [Comment](https://www.antdv.com/components/comment/)。
+- 🔥 dded a new component [ConfigProvider](https://www.antdv.com/components/config-provider/) for user to customize some global setting.
 
 Component Fixes / Enhancements:
 

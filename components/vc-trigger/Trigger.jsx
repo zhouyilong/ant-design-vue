@@ -2,7 +2,13 @@ import Vue from 'vue';
 import ref from 'vue-ref';
 import PropTypes from '../_util/vue-types';
 import contains from '../_util/Dom/contains';
-import { hasProp, getComponentFromProp, getEvents, filterEmpty } from '../_util/props-util';
+import {
+  hasProp,
+  getComponentFromProp,
+  getEvents,
+  filterEmpty,
+  getListeners,
+} from '../_util/props-util';
 import { requestAnimationTimeout, cancelAnimationTimeout } from '../_util/requestAnimationTimeout';
 import addEventListener from '../_util/Dom/addEventListener';
 import warning from '../_util/warning';
@@ -78,6 +84,7 @@ export default {
   inject: {
     vcTriggerContext: { default: () => ({}) },
     savePopupRef: { default: () => noop },
+    dialogContext: { default: () => null },
   },
   data() {
     const props = this.$props;
@@ -114,7 +121,9 @@ export default {
       };
     });
   },
-
+  deactivated() {
+    this.setPopupVisible(false);
+  },
   mounted() {
     this.$nextTick(() => {
       this.renderComponent(null);
@@ -366,7 +375,7 @@ export default {
       }
       mouseProps.mousedown = this.onPopupMouseDown;
       mouseProps.touchstart = this.onPopupMouseDown;
-      const { handleGetPopupClassFromAlign, getRootDomNode, getContainer, $listeners } = self;
+      const { handleGetPopupClassFromAlign, getRootDomNode, getContainer } = self;
       const {
         prefixCls,
         destroyPopupOnHide,
@@ -406,7 +415,7 @@ export default {
           popupStyle,
         },
         on: {
-          align: $listeners.popupAlign || noop,
+          align: getListeners(this).popupAlign || noop,
           ...mouseProps,
         },
         directives: [
@@ -420,7 +429,7 @@ export default {
     },
 
     getContainer() {
-      const { $props: props } = this;
+      const { $props: props, dialogContext } = this;
       const popupContainer = document.createElement('div');
       // Make sure default popup container will never cause scrollbar appearing
       // https://github.com/react-component/trigger/issues/41
@@ -429,7 +438,7 @@ export default {
       popupContainer.style.left = '0';
       popupContainer.style.width = '100%';
       const mountNode = props.getPopupContainer
-        ? props.getPopupContainer(this.$el)
+        ? props.getPopupContainer(this.$el, dialogContext)
         : props.getDocument().body;
       mountNode.appendChild(popupContainer);
       this.popupContainer = popupContainer;
@@ -445,7 +454,8 @@ export default {
             sPopupVisible,
           });
         }
-        this.$listeners.popupVisibleChange && this.$listeners.popupVisibleChange(sPopupVisible);
+        const listeners = getListeners(this);
+        listeners.popupVisibleChange && listeners.popupVisibleChange(sPopupVisible);
       }
       // Always record the point position since mouseEnterDelay will delay the show
       if (sPopupVisible && alignPoint && event) {
@@ -510,7 +520,7 @@ export default {
 
     createTwoChains(event) {
       let fn = () => {};
-      const events = this.$listeners;
+      const events = getListeners(this);
       if (this.childOriginEvents[event] && events[event]) {
         return this[`fire${event}`];
       }
@@ -625,7 +635,7 @@ export default {
       };
     }
 
-    const trigger = cloneElement(child, newChildProps);
+    this.trigger = cloneElement(child, newChildProps);
 
     return (
       <ContainerRender
@@ -637,7 +647,7 @@ export default {
         getContainer={this.getContainer}
         children={({ renderComponent }) => {
           this.renderComponent = renderComponent;
-          return trigger;
+          return this.trigger;
         }}
       />
     );

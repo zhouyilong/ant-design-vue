@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from '../_util/vue-types';
 import Radio from './Radio';
-import { getOptionProps, filterEmpty, hasProp } from '../_util/props-util';
+import { getOptionProps, filterEmpty, hasProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 function noop() {}
 
@@ -30,6 +30,7 @@ export default {
   },
   data() {
     const { value, defaultValue } = this;
+    this.updatingValue = false;
     return {
       stateValue: value === undefined ? defaultValue : value,
     };
@@ -61,6 +62,7 @@ export default {
   },
   watch: {
     value(val) {
+      this.updatingValue = false;
       this.stateValue = val;
     },
   },
@@ -72,16 +74,18 @@ export default {
         this.stateValue = value;
       }
       // nextTick for https://github.com/vueComponent/ant-design-vue/issues/1280
+      if (!this.updatingValue && value !== lastValue) {
+        this.updatingValue = true;
+        this.$emit('input', value);
+        this.$emit('change', ev);
+      }
       this.$nextTick(() => {
-        if (value !== lastValue) {
-          this.$emit('input', value);
-          this.$emit('change', ev);
-        }
+        this.updatingValue = false;
       });
     },
   },
   render() {
-    const { mouseenter = noop, mouseleave = noop } = this.$listeners;
+    const { mouseenter = noop, mouseleave = noop } = getListeners(this);
     const props = getOptionProps(this);
     const { prefixCls: customizePrefixCls, options, buttonStyle } = props;
     const getPrefixCls = this.configProvider.getPrefixCls;

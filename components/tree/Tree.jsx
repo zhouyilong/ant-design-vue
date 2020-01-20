@@ -8,6 +8,7 @@ import {
   filterEmpty,
   getComponentFromProp,
   getClass,
+  getListeners,
 } from '../_util/props-util';
 import { cloneElement } from '../_util/vnode';
 import { ConfigConsumerProps } from '../config-provider';
@@ -87,6 +88,11 @@ function TreeProps() {
     openAnimation: PropTypes.any,
     treeNodes: PropTypes.array,
     treeData: PropTypes.array,
+    /**
+     * @default{title,key,children}
+     * 替换treeNode中 title,key,children字段为treeData中对应的字段
+     */
+    replaceFields: PropTypes.object,
   };
 }
 
@@ -151,27 +157,22 @@ export default {
     },
     updateTreeData(treeData) {
       const { $slots, $scopedSlots } = this;
+      const defaultFields = { children: 'children', title: 'title', key: 'key' };
+      const replaceFields = { ...defaultFields, ...this.$props.replaceFields };
       return treeData.map(item => {
-        const {
-          children,
-          on = {},
-          slots = {},
-          scopedSlots = {},
-          key,
-          class: cls,
-          style,
-          ...restProps
-        } = item;
+        const key = item[replaceFields.key];
+        const children = item[replaceFields.children];
+        const { on = {}, slots = {}, scopedSlots = {}, class: cls, style, ...restProps } = item;
         const treeNodeProps = {
           ...restProps,
           icon:
             $slots[slots.icon] ||
-            ($scopedSlots[scopedSlots.icon] && $scopedSlots[scopedSlots.icon]) ||
+            ($scopedSlots[scopedSlots.icon] && $scopedSlots[scopedSlots.icon](item)) ||
             restProps.icon,
           title:
             $slots[slots.title] ||
             ($scopedSlots[scopedSlots.title] && $scopedSlots[scopedSlots.title](item)) ||
-            restProps.title,
+            restProps[replaceFields.title],
           dataRef: item,
           on,
           key,
@@ -205,7 +206,7 @@ export default {
         __propsSymbol__: Symbol(),
         switcherIcon: nodeProps => this.renderSwitcherIcon(prefixCls, switcherIcon, nodeProps),
       },
-      on: this.$listeners,
+      on: getListeners(this),
       ref: 'tree',
       class: !showIcon && `${prefixCls}-icon-hide`,
     };

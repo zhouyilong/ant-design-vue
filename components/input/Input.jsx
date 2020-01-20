@@ -2,12 +2,9 @@ import classNames from 'classnames';
 import TextArea from './TextArea';
 import omit from 'omit.js';
 import inputProps from './inputProps';
-import { hasProp, getComponentFromProp } from '../_util/props-util';
-import { isIE, isIE9 } from '../_util/env';
+import { hasProp, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
-import Password from './Password';
 import Icon from '../icon';
-import warning from '../_util/warning';
 
 function noop() {}
 
@@ -18,8 +15,12 @@ function fixControlledValue(value) {
   return value;
 }
 
-function hasPrefixSuffix(props) {
-  return 'prefix' in props || props.suffix || props.allowClear;
+function hasPrefixSuffix(instance) {
+  return !!(
+    getComponentFromProp(instance, 'prefix') ||
+    getComponentFromProp(instance, 'suffix') ||
+    instance.$props.allowClear
+  );
 }
 
 export default {
@@ -36,7 +37,7 @@ export default {
     configProvider: { default: () => ConfigConsumerProps },
   },
   data() {
-    const { value, defaultValue } = this.$props;
+    const { value = '', defaultValue = '' } = this.$props;
     return {
       stateValue: !hasProp(this, 'value') ? defaultValue : value,
     };
@@ -83,8 +84,7 @@ export default {
     },
 
     setValue(value, e) {
-      // https://github.com/vueComponent/ant-design-vue/issues/92
-      if (isIE && !isIE9 && this.stateValue === value) {
+      if (this.stateValue === value) {
         return;
       }
       if (!hasProp(this, 'value')) {
@@ -92,9 +92,7 @@ export default {
       } else {
         this.$forceUpdate();
       }
-      if (!e.target.composing) {
-        this.$emit('change.value', value);
-      }
+      this.$emit('change.value', value);
       let event = e;
       if (e.type === 'click' && this.$refs.input) {
         // click clear icon
@@ -116,16 +114,27 @@ export default {
 
     handleReset(e) {
       this.setValue('', e);
+      this.$nextTick(() => {
+        this.focus();
+      });
     },
 
     handleChange(e) {
-      this.setValue(e.target.value, e);
+      const { value, composing } = e.target;
+      if (composing && this.lazy) return;
+      this.setValue(value, e);
     },
 
     renderClearIcon(prefixCls) {
-      const { allowClear } = this.$props;
+      const { allowClear, disabled } = this.$props;
       const { stateValue } = this;
-      if (!allowClear || stateValue === undefined || stateValue === null || stateValue === '') {
+      if (
+        !allowClear ||
+        disabled ||
+        stateValue === undefined ||
+        stateValue === null ||
+        stateValue === ''
+      ) {
         return null;
       }
       return (
@@ -190,7 +199,7 @@ export default {
     renderLabeledIcon(prefixCls, children) {
       const { size } = this.$props;
       let suffix = this.renderSuffix(prefixCls);
-      if (!hasPrefixSuffix(this.$props)) {
+      if (!hasPrefixSuffix(this)) {
         return children;
       }
       let prefix = getComponentFromProp(this, 'prefix');
@@ -223,15 +232,17 @@ export default {
         'allowClear',
         'value',
         'defaultValue',
+        'lazy',
       ]);
-      const { stateValue, getInputClassName, handleKeyDown, handleChange, $listeners } = this;
+      const { stateValue, getInputClassName, handleKeyDown, handleChange } = this;
       const inputProps = {
+        directives: [{ name: 'ant-input' }],
         domProps: {
           value: fixControlledValue(stateValue),
         },
         attrs: { ...otherProps, ...this.$attrs },
         on: {
-          ...$listeners,
+          ...getListeners(this),
           keydown: handleKeyDown,
           input: handleChange,
           change: noop,
@@ -240,22 +251,19 @@ export default {
         ref: 'input',
         key: 'ant-input',
       };
-      if ($listeners['change.value']) {
-        inputProps.directives = [{ name: 'ant-input' }];
-      }
       return this.renderLabeledIcon(prefixCls, <input {...inputProps} />);
     },
   },
   render() {
     if (this.$props.type === 'textarea') {
-      const { $listeners } = this;
       const textareaProps = {
         props: this.$props,
         attrs: this.$attrs,
         on: {
-          ...$listeners,
-          change: this.handleChange,
+          ...getListeners(this),
+          input: this.handleChange,
           keydown: this.handleKeyDown,
+          change: noop,
         },
         directives: [
           {

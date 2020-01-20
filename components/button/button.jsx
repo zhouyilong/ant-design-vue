@@ -1,7 +1,7 @@
 import Wave from '../_util/wave';
 import Icon from '../icon';
 import buttonTypes from './buttonTypes';
-import { filterEmpty } from '../_util/props-util';
+import { filterEmpty, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 
 const rxTwoCNChar = /^[\u4e00-\u9fa5]{2}$/;
@@ -45,13 +45,14 @@ export default {
       const autoInsertSpace = this.configProvider.autoInsertSpaceInButton !== false;
 
       const sizeCls = sizeMap[size] || '';
+      const iconType = sLoading ? 'loading' : icon;
       const children = filterEmpty($slots.default);
       return {
         [`${prefixCls}`]: true,
         [`${prefixCls}-${type}`]: type,
         [`${prefixCls}-${shape}`]: shape,
         [`${prefixCls}-${sizeCls}`]: sizeCls,
-        [`${prefixCls}-icon-only`]: !children && children !== 0 && icon,
+        [`${prefixCls}-icon-only`]: children.length === 0 && iconType,
         [`${prefixCls}-loading`]: sLoading,
         [`${prefixCls}-background-ghost`]: ghost || type === 'ghost',
         [`${prefixCls}-two-chinese-chars`]: hasTwoCNChar && autoInsertSpace,
@@ -127,18 +128,7 @@ export default {
     },
   },
   render() {
-    const {
-      type,
-      htmlType,
-      classes,
-      icon,
-      disabled,
-      handleClick,
-      sLoading,
-      $slots,
-      $attrs,
-      $listeners,
-    } = this;
+    const { type, htmlType, classes, icon, disabled, handleClick, sLoading, $slots, $attrs } = this;
     const buttonProps = {
       attrs: {
         ...$attrs,
@@ -146,7 +136,7 @@ export default {
       },
       class: classes,
       on: {
-        ...$listeners,
+        ...getListeners(this),
         click: handleClick,
       },
     };

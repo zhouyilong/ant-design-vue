@@ -19,6 +19,7 @@ import {
   getAttrs,
   getOptionProps,
   getSlots,
+  getListeners,
 } from '../_util/props-util';
 import getTransitionProps from '../_util/getTransitionProps';
 import { cloneElement } from '../_util/vnode';
@@ -147,6 +148,7 @@ const Select = {
     };
     return {
       ...state,
+      _mirrorInputValue: state._inputValue, // https://github.com/vueComponent/ant-design-vue/issues/1458
       ...this.getDerivedStateFromProps(props, state),
     };
   },
@@ -166,6 +168,9 @@ const Select = {
   watch: {
     __propsSymbol__() {
       Object.assign(this.$data, this.getDerivedStateFromProps(getOptionProps(this), this.$data));
+    },
+    '$data._inputValue': function(val) {
+      this.$data._mirrorInputValue = val;
     },
   },
   updated() {
@@ -302,9 +307,16 @@ const Select = {
       return value;
     },
 
-    onInputChange(event) {
+    onInputChange(e) {
+      const { value: val, composing } = e.target;
+      const { _inputValue = '' } = this.$data;
+      if (composing || _inputValue === val) {
+        this.setState({
+          _mirrorInputValue: val,
+        });
+        return;
+      }
       const { tokenSeparators } = this.$props;
-      const val = event.target.value;
       if (
         isMultipleOrTags(this.$props) &&
         tokenSeparators.length &&
@@ -604,14 +616,20 @@ const Select = {
     getPlaceholderElement() {
       const { $props: props, $data: state } = this;
       let hidden = false;
-      if (state._inputValue) {
+      if (state._mirrorInputValue) {
         hidden = true;
       }
       const value = state._value;
       if (value.length) {
         hidden = true;
       }
-      if (isCombobox(props) && value.length === 1 && (state._value && !state._value[0])) {
+      if (
+        !state._mirrorInputValue &&
+        isCombobox(props) &&
+        value.length === 1 &&
+        state._value &&
+        !state._value[0]
+      ) {
         hidden = false;
       }
       const placeholder = props.placeholder;
@@ -731,7 +749,7 @@ const Select = {
     },
     _getInputElement() {
       const props = this.$props;
-      const { _inputValue: inputValue } = this.$data;
+      const { _inputValue: inputValue, _mirrorInputValue } = this.$data;
       const attrs = getAttrs(this);
       const defaultInput = <input id={attrs.id} autoComplete="off" />;
 
@@ -764,13 +782,16 @@ const Select = {
                 name: 'ant-ref',
                 value: this.saveInputRef,
               },
+              {
+                name: 'ant-input',
+              },
             ],
             on: {
               input: this.onInputChange,
               keydown: chaining(
                 this.onInputKeydown,
                 inputEvents.keydown,
-                this.$listeners.inputKeydown,
+                getListeners(this).inputKeydown,
               ),
               focus: chaining(this.inputFocus, inputEvents.focus),
               blur: chaining(this.inputBlur, inputEvents.blur),
@@ -788,7 +809,7 @@ const Select = {
             // ref='inputMirrorRef'
             class={`${props.prefixCls}-search__field__mirror`}
           >
-            {inputValue}&nbsp;
+            {_mirrorInputValue}&nbsp;
           </span>
         </div>
       );
@@ -1534,8 +1555,7 @@ const Select = {
     const realOpen = this.getRealOpenState();
     const empty = this._empty;
     const options = this._options || [];
-    const { $listeners } = this;
-    const { mouseenter = noop, mouseleave = noop, popupScroll = noop } = $listeners;
+    const { mouseenter = noop, mouseleave = noop, popupScroll = noop } = getListeners(this);
     const selectionProps = {
       props: {},
       attrs: {
